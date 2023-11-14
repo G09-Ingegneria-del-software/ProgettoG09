@@ -20,11 +20,23 @@ app.use((req: Request, res: Response, next) => {
 // TODO: add connection to MongoDB
 
 // Registration of the routers
-// TODO: split logic into routers in external files
+import userRouter from './router/user';
+import categoryRouter from './router/category';
+import budgetRouter from './router/budget';
+import chatRouter from './router/chat';
+import walletRouter from './router/wallet';
+import transactionRouter from './router/transaction';
+
 app.get('/', (req: Request, res: Response) => {
   res.send('Welcome to Express & TypeScript Server');
 });
 
+app.use('/api/user', userRouter);
+app.use('/api/category', categoryRouter);
+app.use('/api/budget', budgetRouter);
+app.use('/api/chat', chatRouter);
+app.use('/api/wallet', walletRouter);
+app.use('/api/transaction', transactionRouter); 
 
 // Start the Express server, and expose the port
 app.listen(port, () => {

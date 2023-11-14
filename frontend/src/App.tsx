@@ -1,11 +1,34 @@
-import React from 'react';
-import './App.css';
+
+import { BrowserRouter, Routes, Route} from "react-router-dom"
+
+// Importing pages
+import SignUp from './pages/SignUp';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard'; 
+import Wallets from './pages/Wallets';
+import Transactions from './pages/Transactions';
+import ChatBot from './pages/ChatBot';
+import Settings from './pages/Settings';
 
 function App() {
+
+  const isLoggedIn = true;
+
   return (
-    <div className="App">
-		<h1 className="text-sky-400">Hello World</h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={isLoggedIn ? <Dashboard /> : <Login />} />   
+        <Route path="/wallets" element={<Wallets />}></Route>
+        <Route path="/transactions" element={<Transactions />}></Route>
+        <Route path="/chat-bot" element={<ChatBot />}></Route>
+        <Route path="/settings" element={<Settings />}></Route>
+
+        <Route path="/sign-up" element={<SignUp />}></Route>
+        <Route path="/login" element={<Login />}></Route>
+
+        <Route path="*" element={isLoggedIn ? <Dashboard /> : <Login />}/>
+      </Routes>
+    </BrowserRouter> 
   );
 }
 

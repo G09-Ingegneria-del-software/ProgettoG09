@@ -1,12 +1,13 @@
 import React from 'react'
 
 type Props = {
-    subtitle: string
+    subtitle: string,
+    textColor?: string | "main"
 }
 
-const Subtitle: React.FC<Props> = ({subtitle}: Props) => {
+const Subtitle: React.FC<Props> = ({subtitle, textColor}: Props) => {
     return (
-        <h2 className="text-main">{subtitle}</h2>
+        <h2 className={`text-${textColor}`}>{subtitle}</h2>
     )
 }
 

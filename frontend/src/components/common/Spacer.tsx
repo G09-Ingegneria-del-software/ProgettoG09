@@ -1,7 +1,13 @@
+import React from "react";
 
-const Spacer = () => {
+type Props = {
+    width?: string | "100%",
+    height?: string | "100%"
+}
+
+const Spacer: React.FC<Props> = ({width, height}: Props) => {
     return (  
-        <div className="relative w-full h-full">
+        <div style={{position: 'relative', width, height}}>
         </div>
     );
 }

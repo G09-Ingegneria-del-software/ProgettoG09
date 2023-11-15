@@ -63,7 +63,7 @@ const SideBar = () => {
                 </nav>
             </section>
 
-            <Spacer />
+            <Spacer height='100%'/>
 
             <section className="my-4 flex flex-col items-start gap-8">
                 <Link to="/settings"><p>Settings</p></Link>

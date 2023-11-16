@@ -12,7 +12,7 @@ export type Money = {
 
 export type Transaction = {
     description: string,
-    type: {text: "expense", color: "red"} | {text: "income", color: "green"} | {text: "investment", color: "cyan"},
+    type: {text: "expense", color: "red"} | {text: "income", color: "lime"} | {text: "investment", color: "cyan"},
     money: Money,
     date: Date
 }

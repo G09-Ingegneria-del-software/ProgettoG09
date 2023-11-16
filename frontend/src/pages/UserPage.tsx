@@ -9,7 +9,7 @@ const UserPage = (props: any) => {
         <React.Fragment>
             <div className="absolute flex w-full h-full">
                 <SideBar />
-                <section className="p-4">
+                <section className="py-4 px-24 w-full">
                     {props.children}
                 </section>
             </div>

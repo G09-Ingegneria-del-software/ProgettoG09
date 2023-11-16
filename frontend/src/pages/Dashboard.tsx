@@ -23,9 +23,10 @@ const Dashboard = () => {
         <UserPage>
             <Title title="Dashboard" />
             <Description description="Updated 12 hrs ago"/>
-            {/* <ButtonIcon text="Add transaction" color="active" iconSrc={require("../assets/icons/credit_card.svg").default}/> */}
-            
-            <div className="grid grid-rows-flow grid-cols-2 gap-20">
+
+            <Spacer height="2rem"/>
+
+            <div className="grid grid-rows-flow grid-cols-2 gap-12">
                 {/* Balance section */}
                 <DashboardSection subtitle='Balance' description='Everything about your balance on the account'>
                     <Card description='Your current balance' label='€ 1234567.89' />
@@ -179,10 +180,10 @@ const LatestTransactionsSection = () => {
     return (  
         <div className="w-full bg-white rounded-lg shadow-lg px-8 py-4 h-[320px] overflow-y-scroll">
             <ul className="">
-                {lastTransactions.map(({description, money, type, date}: Transaction) => {
+                {lastTransactions.map(({description, money, type, date}: Transaction, i) => {
                     const {color} = type;
                     
-                    return <li className=''>
+                    return <li key={i}>
                             <div className="flex justify-between items-center gap-2">
                                 <div className="relative w-[2rem] h-[2rem]">
                                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[2rem] h-[2rem] rounded-full" style={{backgroundColor: color, opacity: 0.2}}>

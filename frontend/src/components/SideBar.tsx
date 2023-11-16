@@ -55,9 +55,9 @@ const SideBar = () => {
             <section className="my-4 flex flex-col gap-2">
                 <nav className="flex flex-col min-w-[240px] text-base font-normal">
                     <ul className="flex flex-col gap-2">
-                        {links.map(({label, href}: LinkType) => {
+                        {links.map(({label, href}: LinkType, i) => {
                             const baseStyles: string = "px-3 py-4 rounded-lg";
-                            if (label !== "Settings") return <Link className={label === selectedLink.label ? `${baseStyles} bg-active text-white` : baseStyles} to={href}><li >{label}</li></Link>
+                            if (label !== "Settings") return <Link key={i} className={label === selectedLink.label ? `${baseStyles} bg-active text-white` : baseStyles} to={href}><li >{label}</li></Link>
                         })}
                     </ul>
                 </nav>

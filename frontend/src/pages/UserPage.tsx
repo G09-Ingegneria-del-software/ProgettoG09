@@ -7,7 +7,7 @@ import SideBar from '../components/SideBar';
 const UserPage = (props: any) => {
     return (
         <React.Fragment>
-            <div className="flex">
+            <div className="absolute flex w-full h-full">
                 <SideBar />
                 <section className="p-4">
                     {props.children}

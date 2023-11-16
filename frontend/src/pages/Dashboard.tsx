@@ -1,3 +1,6 @@
+// Importing libraries
+import { useState, useEffect } from "react"
+
 // Importing pages
 import UserPage from './UserPage';
 
@@ -8,6 +11,12 @@ import Description from '../components/common/Description';
 import {ButtonIcon} from '../components/common/Button';
 import Card from "../components/Card"
 import Subtitle from '../components/common/Subtitle';
+
+import Line from "../components/common/Line";
+import Spacer from "../components/common/Spacer";
+
+// Importing types
+import { Transaction, Currency } from '../type';
 
 const Dashboard = () => {
     return (
@@ -44,37 +53,160 @@ const Dashboard = () => {
                 </DashboardSection>
                 {/* Last expenses */}
                 <DashboardSection subtitle='Expenses for the last 3 months' description='List of all transactions so far'>
-                    <div className="grid grid-flow-row grid-cols-2 gap-2">
-                        <div className="bg-white rounded-lg p-6 shadow-lg">
-                            <div className="flex justify-between items-center gap-2">
-                                <div className="flex flex-col justify-center items-center w-[3rem] h-[3rem] p-1 bg-slate-300 rounded-full">
-                                    <img src={require("../assets/icons/home_alt_fill.svg").default} alt="category-icon" />
-                                </div>
-                                <p className="text-[2.25rem]">€ 129.62</p>
-                            </div>
-                            <Description description='Spent on home accessories'/>
-                        </div>
-                        
-                        <div className="bg-white rounded-lg p-6 shadow-lg">
-                            <div className="flex justify-between items-center gap-2">
-                                <div className="flex flex-col justify-center items-center w-[3rem] h-[3rem] p-1 bg-slate-300 rounded-full">
-                                    <img src={require("../assets/icons/home_alt_fill.svg").default} alt="category-icon" />
-                                </div>
-                                <p className="text-[2.25rem]">€ 129.62</p>
-                            </div>
-                            <Description description='Spent on home accessories'/>
-                        </div>
-                    </div>
+                    <CategoryExpenses />
                 </DashboardSection>
                 {/* Last transactions */}
                 <DashboardSection subtitle='Last transactions' description='History of the last transactions'>
-                    <div className="flex flex-col gap-2">
-                    </div>
+                    <LatestTransactionsSection />
                 </DashboardSection>
             </div>
 
 
         </UserPage>
+    );
+}
+
+const CategoryExpenses = () => {
+
+
+    return (
+        <div className="overflow-y-scroll grid grid-flow-row grid-cols-2 gap-2">
+            <div className="bg-white rounded-lg p-6 shadow-lg">
+                <div className="flex justify-between items-center gap-2">
+                    <div className="flex flex-col justify-center items-center w-[3rem] h-[3rem] p-1 bg-slate-300 rounded-full">
+                        <img src={require("../assets/icons/home_alt_fill.svg").default} alt="category-icon" />
+                    </div>
+                    <p className="text-[2.25rem]">€ 129.62</p>
+                </div>
+                <Description description='Spent on home accessories'/>
+            </div>                        
+        </div>
+    );
+}
+
+const LatestTransactionsSection = () => {
+    
+   
+    const [lastTransactions, setLastTransactions] = useState<Transaction[]>([]); 
+    
+    useEffect(() => {
+        setLastTransactions([
+            {
+                description: "Spesa da 500€ con Ivano", 
+                type: {
+                    text: "expense",
+                    color: "red"
+                }, 
+                money: {amount: 500.00, currency: Currency.EUR}, 
+                date: new Date(Date.now())
+            },
+            {
+                description: "Spesa da 500€ con Ivano", 
+                type: {
+                    text: "expense",
+                    color: "red"
+                }, 
+                money: {amount: 500.00, currency: Currency.EUR}, 
+                date: new Date(Date.now())
+            },
+            {
+                description: "Spesa da 500€ con Ivano", 
+                type: {
+                    text: "expense",
+                    color: "red"
+                }, 
+                money: {amount: 500.00, currency: Currency.EUR}, 
+                date: new Date(Date.now())
+            },
+            {
+                description: "Spesa da 500€ con Ivano", 
+                type: {
+                    text: "expense",
+                    color: "red"
+                }, 
+                money: {amount: 500.00, currency: Currency.EUR}, 
+                date: new Date(Date.now())
+            },
+            {
+                description: "Spesa da 500€ con Ivano", 
+                type: {
+                    text: "expense",
+                    color: "red"
+                }, 
+                money: {amount: 500.00, currency: Currency.EUR}, 
+                date: new Date(Date.now())
+            },
+            {
+                description: "Spesa da 500€ con Ivano", 
+                type: {
+                    text: "expense",
+                    color: "red"
+                }, 
+                money: {amount: 500.00, currency: Currency.EUR}, 
+                date: new Date(Date.now())
+            },
+            {
+                description: "Spesa da 500€ con Ivano", 
+                type: {
+                    text: "expense",
+                    color: "red"
+                }, 
+                money: {amount: 500.00, currency: Currency.EUR}, 
+                date: new Date(Date.now())
+            },
+            {
+                description: "Spesa da 500€ con Ivano", 
+                type: {
+                    text: "expense",
+                    color: "red"
+                }, 
+                money: {amount: 500.00, currency: Currency.EUR}, 
+                date: new Date(Date.now())
+            },
+            {
+                description: "Spesa da 500€ con Ivano", 
+                type: {
+                    text: "expense",
+                    color: "red"
+                }, 
+                money: {amount: 500.00, currency: Currency.EUR}, 
+                date: new Date(Date.now())
+            },
+
+        ]);
+    }, []);
+
+    return (  
+        <div className="w-full bg-white rounded-lg shadow-lg px-8 py-4 h-[320px] overflow-y-scroll">
+            <ul className="">
+                {lastTransactions.map(({description, money, type, date}: Transaction) => {
+                    const {color} = type;
+                    
+                    return <li className=''>
+                            <div className="flex justify-between items-center gap-2">
+                                <div className="relative w-[2rem] h-[2rem]">
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[2rem] h-[2rem] rounded-full" style={{backgroundColor: color, opacity: 0.2}}>
+                                    </div>
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1.2rem] h-[1.2rem] rounded-full" style={{backgroundColor: color}}>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col justify-center items-start gap-1">
+                                    <p className=''>{description}</p>
+                                    <small className="text-secondary">{date.toDateString()}</small>
+                                </div>
+                                <div className="">
+                                    <p className="weight-800" style={{color: color}}>
+                                        {type.text === "expense" ? "-" : "+"}{money.amount}€
+                                    </p>
+                                </div>
+                            </div>
+
+                            <Spacer height="1rem"/>
+                            <Line color="#F2F3F7"/>
+                        </li>   
+                })}
+            </ul>
+        </div>
     );
 }
 

@@ -37,7 +37,7 @@ const SideBar = () => {
     }, [window.location.href]);
 
     return (  
-        <aside className="static h-[100vh] w-full max-w-[20rem] flex flex-col bg-clip-border rounded-xl bg-[#E4EDFF] p-4 shadow-md shadow-blue-gray-900/5">
+        <aside className="static flex-1 w-full max-w-[20rem] flex flex-col bg-clip-border rounded-xl bg-[#E4EDFF] p-4 shadow-md shadow-blue-gray-900/5">
             <section className="my-4 flex gap-2 justify-start items-center">
                 <img src={logoSrc} alt="logo-img" />
                 <h2 className="leading-7 text-secondary">money <br /> expense</h2>

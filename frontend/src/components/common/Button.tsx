@@ -2,12 +2,13 @@ import React from 'react'
 
 interface ButtonTextProps {
     text: string,
-    color: string
+    color: string,
+    handleClick?: React.MouseEventHandler<HTMLButtonElement>
 }
 
-export const ButtonText: React.FC<ButtonTextProps> = ({text, color}: ButtonTextProps) => {
+export const ButtonText: React.FC<ButtonTextProps> = ({text, color, handleClick}: ButtonTextProps) => {
     return (  
-        <button className={`px-6 py-3 rounded-lg shadow-xl text-white bg-${color} transition ease-in-out duration-150 hover:scale-105 hover:opacity-[0.9]`}>
+        <button onClick={handleClick} className={`px-6 py-3 rounded-lg shadow-xl text-${color === 'white' ? "main" : "white"} bg-${color} transition ease-in-out duration-150 hover:scale-105 hover:opacity-[0.9]`}>
             {text}
         </button>
     );

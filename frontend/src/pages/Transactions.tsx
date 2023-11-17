@@ -1,5 +1,5 @@
 // Importing libraries
-import {useState} from "react"
+import {useEffect, useState} from "react"
 
 // Importing pages
 import UserPage from './UserPage';
@@ -8,7 +8,7 @@ import UserPage from './UserPage';
 import Title from '../components/common/Title';
 import Description from '../components/common/Description';
 import Spacer from "../components/common/Spacer";
-import { ButtonIcon } from "../components/common/Button";
+import { ButtonIcon, ButtonText } from "../components/common/Button";
 
 // Importing types
 import { Currency, Transaction } from "../type";
@@ -43,50 +43,91 @@ const Transactions = () => {
 const TransactionTable = () => {
 
     const transactions: Transaction[] = [
-        {type: {text: "expense", color: "red"}, description: "Spesa al supermercato", money: {amount: 500, currency: Currency.EUR}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Spesa al supermercato con Ivano da 500000 euro, voglio una bugatti", money: {amount: 500, currency: Currency.EUR}, date: new Date(Date.now())},
         {type: {text: "income", color: "lime"}, description: "Stipendio", money: {amount: 10500, currency: Currency.JPY}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
         {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
     ]
 
+    const limit: number = 5;
+
+    const [curPage, setCurPage] = useState<number>(1);
+    const [numPages, setNumPages] = useState<number>(1);
+    const [curTransactions, setCurTransactions] = useState<Transaction[]>([]);
+
+    useEffect(() => {
+        setCurTransactions(transactions.slice((curPage-1)*limit, (curPage)*limit));
+        setNumPages(Math.round(transactions.length/limit + 1));
+    }, [curPage]);
+
     return (
         <div className="w-full bg-white rounded-xl shadow-lg p-8">
-            <table className="w-full table-fixed">
-                <thead>
-                    <tr className="flex justify-start items-center">
-                        <th> </th>
-                        <th><h2>Description</h2></th>
-                        <th><h2>Date</h2></th>
-                        <th><h2>Amount</h2></th>
-                        <th> </th>
-                        <th> </th>
+            <table className="items-center bg-transparent w-full border-collapse ">
+                    <thead className="rounded-lg">
+                    <tr className="">
+                        <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
+                            Type
+                        </th>
+                        <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
+                            Description
+                        </th>
+                        <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
+                            Date
+                        </th>
+                        <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
+                            Amount
+                        </th>
+                        <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
+                            Edit
+                        </th>
+                        <th className="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
+                            Delete
+                        </th>
                     </tr>
-                </thead>
-                <tbody>
-                    {transactions.map(({type, description, money, date}: Transaction, i) => {
+                    </thead>
 
-                        return <tr className="flex justify-start items-center">
-                            <td> 
-                                <div className="relative w-[2rem] h-[2rem]">
-                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[2rem] h-[2rem] rounded-full" style={{backgroundColor: type.color, opacity: 0.2}}>
+                    <tbody className="">
+                        {curTransactions.map(({ type, description, money, date }: Transaction, i) => {
+                            return <tr key={i}>
+                                <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-main">
+                                    <div className="relative w-[1.5rem] h-[1.5rem]">
+                                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1.5rem] h-[1.5rem] rounded-full" style={{ backgroundColor: type.color, opacity: 0.2 }}>
+                                        </div>
+                                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[0.8rem] h-[0.8rem] rounded-full" style={{ backgroundColor: type.color }}>
+                                        </div>
                                     </div>
-                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1.2rem] h-[1.2rem] rounded-full" style={{backgroundColor: type.color}}>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>{description}</td>
-                            <td className="text-secondary">{date.getDay()}/{date.getMonth()}/{date.getFullYear()}</td>
-                            <td style={{color: type.color}}>{type.text === "expense" ? "-" : ""}{money.amount}</td>
-                            <td>
-                                <ButtonIcon iconSrc={require("../assets/icons/edit.svg").default} text="" color="white"/>
-                            </td>
-                            <Spacer width="1rem"/>
-                            <td>
-                                <ButtonIcon iconSrc={require("../assets/icons/trash.svg").default} text="" color="white"/>
-                            </td>
-                        </tr>
-                    })}
-                </tbody>
-            </table>
+                                </th>
+                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base whitespace-nowrap p-4"><p className="w-[300px] leading-8 whitespace-normal line-clamp-2">{description}</p></td>
+                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-secondary">{date.getDay()}/{date.getMonth()}/{date.getFullYear()}</td>
+                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4" style={{ color: type.color }}>{type.text === "expense" ? "-" : ""}{money.amount}</td>
+                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                                    <ButtonIcon iconSrc={require("../assets/icons/edit.svg").default} text="" color="white" />
+                                </td>
+                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 ">
+                                    <ButtonIcon iconSrc={require("../assets/icons/trash.svg").default} text="" color="white" />
+                                </td>
+                            </tr>
+                        })}
+                    </tbody>
+                </table>
+
+                <Spacer height="2rem"/>
+
+                {/* Pagination component */}
+                <div className="flex justify-center items-center">
+                    <ul className="w-1/2 flex justify-center gap-[4rem] bg-white rounded-lg">
+                        {
+                            [...Array(numPages)].map((_, i) => {
+                                return <li key={i} className="">
+                                    <ButtonText handleClick={() => setCurPage(i+1)} text={(i+1).toString()} color="white" />
+                                </li>
+                            })
+                        }
+                        
+                    </ul>
+                </div>
         </div>
     );
 }

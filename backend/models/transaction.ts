@@ -7,6 +7,7 @@ const schema = new Schema({
     type: {type:String, required:true},
     money: {type: Number, required:true},
     description: {type: String},
+    date: {type: Date, default: Date.now},
     user: {type:String, required:true},
 });
 
@@ -17,6 +18,7 @@ interface TransactionType {
     type: string,
     money: number,
     description?: string,
+    date: Date,
     user: string,
 }
 

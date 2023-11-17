@@ -3,34 +3,37 @@ import Category, {CategoryType} from "../models/category";
 
 // Create new category
 export const createCategory = (req: express.Request, res: express.Response) => {
-    let data, _ = Category.findOne({name: req.body.name, user: req.body.user});
-
-    if (!data) {
-        const newCategory = new Category({
-            _id : req.body.name,
-            name: req.body.name,
-            tags: req.body.tags,
-            color: req.body.color,
-            user: req.body.user
-        });
-
-        newCategory.save()
-        .then((data: CategoryType) => {
-            res.status(201).send(`Category created ${data}`);
-        })
-        .catch((err: Error) => {
-            console.error(err);
-            if (err.message.includes('duplicate key error')) {
-                res.status(409).send('Category name already in use');
-            }else {
-                res.status(500).send('Internal Server Error');
-            }
-        });
-
-    }else {
-        res.status(409).send('Category name already in use');
-    }
+    Category.findOne({name: req.body.name, user: req.body.user})
+    .then((data: CategoryType | null) => {
+        if (!data) {
+            const newCategory = new Category({
+                _id : req.body.name,
+                name: req.body.name,
+                tags: req.body.tags,
+                color: req.body.color,
+                user: req.body.user
+            });
     
+            newCategory.save()
+            .then((data: CategoryType) => {
+                res.status(201).send(`Category created ${data}`);
+            })
+            .catch((err: Error) => {
+                if (err.message.includes('duplicate key error')) {
+                    res.status(409).send('Category name already in use');
+                }else {
+                    res.status(500).send('Internal Server Error');
+                }
+            });
+    
+        }else {
+            res.status(409).send('Category name already in use');
+        }
+    })
+    .catch((err: Error) => {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    });
 };
 
 // Get all categories
@@ -59,7 +62,7 @@ export const getCategoriesByUser = (req: express.Request, res: express.Response)
 
 // Get category by name
 export const getCategory = (req: express.Request, res: express.Response) => {
-    Category.findOne({name: req.params.name, user: req.body.user})
+    Category.findOne({name: req.params.name, user: req.params.user})
     .then((data: CategoryType | null) => {
         if (data) {
             res.status(200).send(data);
@@ -76,7 +79,7 @@ export const getCategory = (req: express.Request, res: express.Response) => {
 
 // Update category
 export const updateCategory = (req: express.Request, res: express.Response) => {
-    Category.findOne({name: req.body.name}).then((data: CategoryType | null) => {
+    Category.findOne({name: req.body.name, user: req.body.user}).then((data: CategoryType | null) => {
         if (data) {
             res.status(409).send('Category name already in use');
         }else {

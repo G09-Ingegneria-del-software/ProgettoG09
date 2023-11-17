@@ -1,18 +1,19 @@
 import express from "express";
 import Transaction, {TransactionType} from "../models/transaction";
 import Wallet from "../models/wallet";
-import Budget, {BudgetType} from "../models/budget";
+import Budget from "../models/budget";
 
 // Create new transaction
 export const createTransaction = async (req: express.Request, res: express.Response) => {
     try {
         const newTransaction = new Transaction({
-            _id : req.body._id,
+            _id: new Date().toISOString() + " - " + req.body.user,
             category: req.body.category,
             wallet: req.body.wallet,
             type: req.body.type,
             money: req.body.money,
             description: req.body.description,
+            date: new Date(),
             user: req.body.user,
         });
 
@@ -58,7 +59,7 @@ export const getTransactions = async (req: express.Request, res: express.Respons
 
 // Get all transactions by user
 export const getTransactionsByUser = async (req: express.Request, res: express.Response) => {
-    Transaction.find({user: req.body.user})
+    Transaction.find({user: req.params.user})
     .then((data: TransactionType[]) => {
         res.status(200).send(data);
     })
@@ -70,7 +71,7 @@ export const getTransactionsByUser = async (req: express.Request, res: express.R
 
 // Get transaction by user after a date
 export const getTransactionsByUserAfterDate = async (req: express.Request, res: express.Response) => {
-    Transaction.find({user: req.body.user, date: {$gte: req.body.date}})
+    Transaction.find({user: req.params.user, date: {$gte: new Date(req.params.date)}})
     .then((data: TransactionType[]) => {
         res.status(200).send(data);
     })
@@ -83,7 +84,7 @@ export const getTransactionsByUserAfterDate = async (req: express.Request, res: 
 // Delete transaction by id
 export const deleteTransactionById = async (req: express.Request, res: express.Response) => {
     try {
-        const data = await Transaction.findByIdAndDelete(req.body._id);
+        const data = await Transaction.findByIdAndDelete(req.params.id);
         if (data) {
             res.status(200).send('Transaction deleted');
         } else {

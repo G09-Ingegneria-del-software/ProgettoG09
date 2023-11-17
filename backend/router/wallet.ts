@@ -4,9 +4,9 @@ import { createWallet, getWallet, getWallets, getWalletsByUser, updateWallet, de
 const walletRouter = express.Router();
 
 walletRouter.post('/', createWallet);
-walletRouter.get('/wallets', getWallets);
-walletRouter.get('/', getWalletsByUser);
-walletRouter.get('/:name', getWallet);
+walletRouter.get('/', getWallets);
+walletRouter.get('/user/:name', getWalletsByUser);
+walletRouter.get('/:user/:name', getWallet);
 walletRouter.put('/:name', updateWallet);
 walletRouter.delete('/:user/:name', deleteWallet);
 

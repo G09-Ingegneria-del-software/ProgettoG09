@@ -1,11 +1,16 @@
 import express from "express";
 import User, {UserType} from "../models/user";
+import { passwordChecker } from "../utils/passwordChecker";
 
 // Create new user in signup
 export const signUp = (req: express.Request, res: express.Response) => {
-    User.findOne({email: req.body.email}, (err: Error | null, user: UserType | null) => {
-        if (!user) {
+    User.findOne({email: req.body.email})
+    .then((data: UserType | null) => {
+        if (!data) {
             // create it
+            if (!passwordChecker(req.body.password)){
+                return res.status(400).send('Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number and one special character');
+            }
             const newUser = new User({
                 _id : req.body.email,
                 firstName: req.body.firstName,
@@ -17,51 +22,44 @@ export const signUp = (req: express.Request, res: express.Response) => {
 
             newUser.save()
             .then((data: UserType) => {
-                console.log(data);
                 res.status(201).send('User created');
             })
             .catch((err: Error) => {
-                console.error(err);
                 res.status(500).send('Internal Server Error');
             });
 
         }else {
-            if (err) {
-                console.error(err);
-                res.status(500).send('Internal Server Error');
-            } else {
-                // already exists
-                res.status(409).send('User already exists');
-            }
+            res.status(409).send('User already exists');
         }
+    })
+    .catch((err: Error) => {
+        res.status(500).send('Internal Server Error');
     });
 };
 
 // Get users
 export const getUsers = (req: express.Request, res: express.Response) => {
-    User.find({}, (err: Error, users: UserType[]) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Internal Server Error');
-        } else {
-            res.status(200).send(users);
-        }
+    User.find()
+    .then((data: UserType[]) => {
+        res.status(200).send(data);
+    })
+    .catch((err: Error) => {
+        res.status(500).send('Internal Server Error');
     });
 }
 
 // Get user by email
 export const getUserByEmail = (req: express.Request, res: express.Response) => {
-    User.findOne({email: req.params.email}, (err: Error, user: UserType | null) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Internal Server Error');
-        } else {
-            if (!user){
-                res.status(404).send("User not found");
-            }else {
-                res.status(200).send(user);
-            }
+    User.findOne({email: req.params.email})
+    .then((data: UserType | null) => {
+        if (!data){
+            res.status(404).send("User not found");
+        }else {
+            res.status(200).send(data);
         }
+    })
+    .catch((err: Error) => {
+        res.status(500).send('Internal Server Error');
     });
 }
 
@@ -95,35 +93,53 @@ export const deleteUserByEmail = async (req: express.Request, res: express.Respo
 
 // Update user data
 export const updateData = (req: express.Request, res: express.Response) => {
-    User.findOne({email: req.params.email}, (err: Error, user: UserType | null) => {
-        if(!user) {
-            return res.status(404).send("User not found");
-        } else {
-            if(err) return res.status(500).json({Error: err});
-
-            User.updateOne({email: req.params.email}, req.body, (err: Error) => {
-                if(err) return res.status(500).json({Error: err});
-                user = req.body;
-                return res.status(200).json(user);
-            });
+    User.findOneAndUpdate({email: req.params.email}, req.body, {new: true})
+    .then((data: UserType | null) => {
+        if (!data){
+            res.status(404).send("User not found");
+        }else {
+            res.status(200).send(data);
         }
+    })
+    .catch((err: Error) => {
+        res.status(500).send('Internal Server Error');
     });
 };
 
 export const updatePassword = (req: express.Request, res: express.Response) => {
-    User.findOne({email: req.params.email}, (err: Error, user: UserType | null) => {
-        if(!user) {
-            return res.status(404).send("User not found");
-        } else {
-            if(err) return res.status(500).json({Error: err});
-
-            User.updateOne({email: req.params.email}, 
-                { $set: {password: req.body.password,}}, (err: Error) => {
-                
-                if(err) return res.status(500).json({Error: err});
-                user = req.body;
-                return res.status(200).json(user);
-            });
+    User.findOneAndUpdate({email: req.params.email}, {password: req.body.password}, {new: true})
+    .then((data: UserType | null) => {
+        if (!data){
+            res.status(404).send("User not found");
+        }else {
+            res.status(200).send(data);
         }
+    })
+    .catch((err: Error) => {
+        res.status(500).send('Internal Server Error');
     });
 };
+
+export const toggleBlock = (req: express.Request, res: express.Response) => {
+    User.findOne({email: req.params.email})
+    .then((data: UserType | null) => {
+        if (!data){
+            res.status(404).send("User not found");
+        } else {
+            User.findOneAndUpdate({email: req.params.email}, {isBlocked: !data.isBlocked}, {new: true})
+            .then((data: UserType | null) => {
+                if (!data){
+                    res.status(404).send("User not found");
+                }else {
+                    res.status(200).send(data);
+                }
+            })
+            .catch((err: Error) => {
+                res.status(500).send('Internal Server Error');
+            });
+        }
+    })
+    .catch((err: Error) => {
+        res.status(500).send('Internal Server Error');
+    });
+}

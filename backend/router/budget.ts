@@ -4,9 +4,9 @@ import { createBudget, getBudgets,getBudgetsByUser, getBudget, updateBudget, del
 const budgetRouter = express.Router();
 
 budgetRouter.post('/', createBudget);
-budgetRouter.get('/budgets', getBudgets);
-budgetRouter.get('/', getBudgetsByUser);
-budgetRouter.get('/:name', getBudget);
+budgetRouter.get('/', getBudgets);
+budgetRouter.get('/user/:name', getBudgetsByUser);
+budgetRouter.get('/:user/:name', getBudget);
 budgetRouter.put('/:name', updateBudget);
 budgetRouter.delete('/:user/:name', deleteBudget);
 

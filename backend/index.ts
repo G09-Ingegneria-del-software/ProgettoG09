@@ -27,7 +27,6 @@ mongoose
 import userRouter from './router/user';
 import categoryRouter from './router/category';
 import budgetRouter from './router/budget';
-import chatRouter from './router/chat';
 import walletRouter from './router/wallet';
 import transactionRouter from './router/transaction';
 
@@ -38,7 +37,6 @@ app.get('/', (req: Request, res: Response) => {
 app.use('/api/user', userRouter);
 app.use('/api/category', categoryRouter);
 app.use('/api/budget', budgetRouter);
-app.use('/api/chat', chatRouter);
 app.use('/api/wallet', walletRouter);
 app.use('/api/transaction', transactionRouter); 
 

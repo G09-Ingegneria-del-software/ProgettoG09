@@ -3,8 +3,9 @@ import Budget, {BudgetType} from "../models/budget";
 
 // Create new budget
 export const createBudget = (req: express.Request, res: express.Response) => {
-    Budget.findOne({name: req.body.name, user: req.body.user}, (err: Error | null, budget: BudgetType | null) => {
-        if (!budget) {
+    Budget.findOne({name: req.body.name, user: req.body.user})
+    .then((data: BudgetType | null) => {
+        if (!data) {
             const newBudget = new Budget({
                 _id : req.body.name,
                 name: req.body.name,
@@ -18,23 +19,18 @@ export const createBudget = (req: express.Request, res: express.Response) => {
 
             newBudget.save()
             .then((data: BudgetType) => {
-                console.log(data);
                 res.status(201).send('Budget created');
             })
             .catch((err: Error) => {
-                console.error(err);
                 res.status(500).send('Internal Server Error');
             });
 
         }else {
-            if (err) {
-                console.error(err);
-                res.status(500).send('Internal Server Error');
-            } else {
-                // already exists
-                res.status(409).send('Budget name already in use');
-            }
+            res.status(409).send('Budget name already in use');
         }
+    })
+    .catch((err: Error) => {
+        res.status(500).send('Internal Server Error');
     });
 }
 
@@ -52,7 +48,7 @@ export const getBudgets = (req: express.Request, res: express.Response) => {
 
 // Get all budgets by user
 export const getBudgetsByUser = (req: express.Request, res: express.Response) => {
-    Budget.find({user: req.body.user})
+    Budget.find({user: req.params.name})
     .then((data: BudgetType[]) => {
         res.status(200).send(data);
     })
@@ -64,7 +60,7 @@ export const getBudgetsByUser = (req: express.Request, res: express.Response) =>
 
 // Get budget by name
 export const getBudget = (req: express.Request, res: express.Response) => {
-    Budget.findOne({name: req.params.name, user: req.body.user})
+    Budget.findOne({name: req.params.name, user: req.params.user})
     .then((data: BudgetType | null) => {
         if (data) {
             res.status(200).send(data);
@@ -80,23 +76,29 @@ export const getBudget = (req: express.Request, res: express.Response) => {
 
 // Update budget
 export const updateBudget = (req: express.Request, res: express.Response) => {
-    Budget.findOneAndUpdate({name: req.params.name, user: req.body.user}, req.body, {new: true})
-    .then((data: BudgetType | null) => {
+    Budget.findOne({name: req.body.name, user: req.body.user}).then((data: BudgetType | null) => {
         if (data) {
-            res.status(200).send(data);
-        } else {
-            res.status(404).send('Budget not found');
+            res.status(409).send('Budget name already in use');
+        }else {
+            Budget.findOneAndUpdate({name: req.params.name, user: req.body.user}, req.body, {new: true})
+                .then((data: BudgetType | null) => {
+                    if (data) {
+                        res.status(200).send(data);
+                    } else {
+                        res.status(404).send('Budget not found');
+                    }
+                })
+                .catch((err: Error) => {
+                    console.error(err);
+                    res.status(500).send('Internal Server Error');
+                });
         }
     })
-    .catch((err: Error) => {
-        console.error(err);
-        res.status(500).send('Internal Server Error');
-    });
 }
 
 // Delete budget
 export const deleteBudget = (req: express.Request, res: express.Response) => {
-    Budget.findOneAndDelete({name: req.params.name, user: req.body.user})
+    Budget.findOneAndDelete({name: req.params.name, user: req.params.user})
     .then((data: BudgetType | null) => {
         if (data) {
             res.status(200).send('Budget deleted');

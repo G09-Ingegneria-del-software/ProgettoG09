@@ -1,21 +1,44 @@
 import express from "express";
 import Transaction, {TransactionType} from "../models/transaction";
-// TODO: add the logic that once a transaction is done, wallet is updated as well
+import Wallet from "../models/wallet";
+import Budget from "../models/budget";
+
 // Create new transaction
 export const createTransaction = async (req: express.Request, res: express.Response) => {
     try {
         const newTransaction = new Transaction({
-            _id : req.body._id,
-            name: req.body.name,
-            description: req.body.description,
-            money: req.body.money,
-            date: req.body.date,
+            _id: new Date().toISOString() + " - " + req.body.user,
             category: req.body.category,
             wallet: req.body.wallet,
+            type: req.body.type,
+            money: req.body.money,
+            description: req.body.description,
+            date: new Date(),
             user: req.body.user,
         });
 
+        let wallet = await Wallet.findOne({name: req.body.wallet, user: req.body.user});
+        if (!wallet) {
+            res.status(404).send('Wallet not found');
+        }
+        
         await newTransaction.save();
+        if (req.body.type === 'income') {
+            wallet!.money += req.body.money;
+        }else {
+            wallet!.money -= req.body.money;
+        }
+        await wallet!.save();
+
+        // Try to search for budgets with the given category
+        let budgets = await Budget.find({category: req.body.category, user: req.body.user});
+        if (budgets && req.body.type === 'expense') {
+            for (let i = 0; i < budgets.length; i++) {
+                budgets[i].actualMoney -= req.body.money;
+                await budgets[i].save();
+            }
+        }
+
         res.status(201).send('Transaction created');
     } catch (err) {
         console.error(err);
@@ -36,7 +59,7 @@ export const getTransactions = async (req: express.Request, res: express.Respons
 
 // Get all transactions by user
 export const getTransactionsByUser = async (req: express.Request, res: express.Response) => {
-    Transaction.find({user: req.body.user})
+    Transaction.find({user: req.params.user})
     .then((data: TransactionType[]) => {
         res.status(200).send(data);
     })
@@ -48,7 +71,7 @@ export const getTransactionsByUser = async (req: express.Request, res: express.R
 
 // Get transaction by user after a date
 export const getTransactionsByUserAfterDate = async (req: express.Request, res: express.Response) => {
-    Transaction.find({user: req.body.user, date: {$gte: req.body.date}})
+    Transaction.find({user: req.params.user, date: {$gte: new Date(req.params.date)}})
     .then((data: TransactionType[]) => {
         res.status(200).send(data);
     })
@@ -61,7 +84,7 @@ export const getTransactionsByUserAfterDate = async (req: express.Request, res: 
 // Delete transaction by id
 export const deleteTransactionById = async (req: express.Request, res: express.Response) => {
     try {
-        const data = await Transaction.findByIdAndDelete(req.body._id);
+        const data = await Transaction.findByIdAndDelete(req.params.id);
         if (data) {
             res.status(200).send('Transaction deleted');
         } else {

@@ -1,5 +1,6 @@
 import express, { Express, Request, Response , Application } from 'express';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 
 // Load the environment variables from the .env file
 dotenv.config();
@@ -16,29 +17,34 @@ app.use((req: Request, res: Response, next) => {
   next();
 });
 
+// Logging settings
+var morgan = require('morgan');
+app.use(morgan('dev'))
+
 // MongoDB connection
-// TODO: add connection to MongoDB
+mongoose
+.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/expense-tracker')
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((err) => console.error('Error connecting to MongoDB:', err));
 
 // Registration of the routers
 import userRouter from './router/user';
 import categoryRouter from './router/category';
 import budgetRouter from './router/budget';
-import chatRouter from './router/chat';
 import walletRouter from './router/wallet';
 import transactionRouter from './router/transaction';
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Welcome to Express & TypeScript Server');
+app.get('/health', (req: Request, res: Response) => {
+  res.status(200).send("Healthy");
 });
 
 app.use('/api/user', userRouter);
 app.use('/api/category', categoryRouter);
 app.use('/api/budget', budgetRouter);
-app.use('/api/chat', chatRouter);
 app.use('/api/wallet', walletRouter);
 app.use('/api/transaction', transactionRouter); 
 
 // Start the Express server, and expose the port
 app.listen(port, () => {
-  console.log(`Server is Fire at http://localhost:${port}`);
+  console.log(`Server started at http://localhost:${port}`);
 });

@@ -1,5 +1,6 @@
 import express, { Express, Request, Response , Application } from 'express';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 
 // Load the environment variables from the .env file
 dotenv.config();
@@ -17,7 +18,10 @@ app.use((req: Request, res: Response, next) => {
 });
 
 // MongoDB connection
-// TODO: add connection to MongoDB
+mongoose
+  .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/expense-tracker')
+.then(() => console.log('Connected to MongoDB'))
+.catch((err) => console.error('Error connecting to MongoDB:', err));
 
 // Registration of the routers
 import userRouter from './router/user';
@@ -40,5 +44,5 @@ app.use('/api/transaction', transactionRouter);
 
 // Start the Express server, and expose the port
 app.listen(port, () => {
-  console.log(`Server is Fire at http://localhost:${port}`);
+  console.log(`Server started at http://localhost:${port}`);
 });

@@ -1,21 +1,43 @@
 import express from "express";
 import Transaction, {TransactionType} from "../models/transaction";
-// TODO: add the logic that once a transaction is done, wallet is updated as well
+import Wallet from "../models/wallet";
+import Budget, {BudgetType} from "../models/budget";
+
 // Create new transaction
 export const createTransaction = async (req: express.Request, res: express.Response) => {
     try {
         const newTransaction = new Transaction({
             _id : req.body._id,
-            name: req.body.name,
-            description: req.body.description,
-            money: req.body.money,
-            date: req.body.date,
             category: req.body.category,
             wallet: req.body.wallet,
+            type: req.body.type,
+            money: req.body.money,
+            description: req.body.description,
             user: req.body.user,
         });
 
+        let wallet = await Wallet.findOne({name: req.body.wallet, user: req.body.user});
+        if (!wallet) {
+            res.status(404).send('Wallet not found');
+        }
+        
         await newTransaction.save();
+        if (req.body.type === 'income') {
+            wallet!.money += req.body.money;
+        }else {
+            wallet!.money -= req.body.money;
+        }
+        await wallet!.save();
+
+        // Try to search for budgets with the given category
+        let budgets = await Budget.find({category: req.body.category, user: req.body.user});
+        if (budgets && req.body.type === 'expense') {
+            for (let i = 0; i < budgets.length; i++) {
+                budgets[i].actualMoney -= req.body.money;
+                await budgets[i].save();
+            }
+        }
+
         res.status(201).send('Transaction created');
     } catch (err) {
         console.error(err);

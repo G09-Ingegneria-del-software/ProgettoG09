@@ -3,36 +3,34 @@ import Category, {CategoryType} from "../models/category";
 
 // Create new category
 export const createCategory = (req: express.Request, res: express.Response) => {
-    Category.findOne({name: req.body.name, user: req.body.user}, (err: Error | null, category: CategoryType | null) => {
-       if (!category) {
-            const newCategory = new Category({
-                _id : req.body.name,
-                name: req.body.name,
-                tags: req.body.tags,
-                color: req.body.color,
-                user: req.body.user
-            });
+    let data, _ = Category.findOne({name: req.body.name, user: req.body.user});
 
-            newCategory.save()
-            .then((data: CategoryType) => {
-                console.log(data);
-                res.status(201).send('Category created');
-            })
-            .catch((err: Error) => {
-                console.error(err);
-                res.status(500).send('Internal Server Error');
-            });
+    if (!data) {
+        const newCategory = new Category({
+            _id : req.body.name,
+            name: req.body.name,
+            tags: req.body.tags,
+            color: req.body.color,
+            user: req.body.user
+        });
 
-       }else {
-            if (err) {
-                console.error(err);
-                res.status(500).send('Internal Server Error');
-            } else {
-                // already exists
+        newCategory.save()
+        .then((data: CategoryType) => {
+            res.status(201).send(`Category created ${data}`);
+        })
+        .catch((err: Error) => {
+            console.error(err);
+            if (err.message.includes('duplicate key error')) {
                 res.status(409).send('Category name already in use');
+            }else {
+                res.status(500).send('Internal Server Error');
             }
-        }
-    });
+        });
+
+    }else {
+        res.status(409).send('Category name already in use');
+    }
+    
 };
 
 // Get all categories
@@ -49,7 +47,7 @@ export const getCategories = (req: express.Request, res: express.Response) => {
 
 // Get all categories by user
 export const getCategoriesByUser = (req: express.Request, res: express.Response) => {
-    Category.find({user: req.body.user})
+    Category.find({user: req.params.name})
     .then((data: CategoryType[]) => {
         res.status(200).send(data);
     })
@@ -78,23 +76,30 @@ export const getCategory = (req: express.Request, res: express.Response) => {
 
 // Update category
 export const updateCategory = (req: express.Request, res: express.Response) => {
-    Category.findOneAndUpdate({name: req.params.name, user: req.body.user}, req.body, {new: true})
-    .then((data: CategoryType | null) => {
+    Category.findOne({name: req.body.name}).then((data: CategoryType | null) => {
         if (data) {
-            res.status(200).send(data);
-        } else {
-            res.status(404).send('Category not found');
-        }
-    })
-    .catch((err: Error) => {
-        console.error(err);
-        res.status(500).send('Internal Server Error');
+            res.status(409).send('Category name already in use');
+        }else {
+            Category.findOneAndUpdate({name: req.params.name, user: req.body.user}, req.body, {new: true})
+                .then((data: CategoryType | null) => {
+                    if (data) {
+                        res.status(200).send(data);
+                    } else {
+                        res.status(404).send('Category not found');
+                    }
+                })
+                .catch((err: Error) => {
+                    console.error(err);
+                    res.status(500).send('Internal Server Error');
+                });
+            }
     });
+
 }
 
 // Delete category
 export const deleteCategory = (req: express.Request, res: express.Response) => {
-    Category.findOneAndDelete({name: req.params.name, user: req.body.user})
+    Category.findOneAndDelete({name: req.params.name, user: req.params.user})
     .then((data: CategoryType | null) => {
         if (data) {
             res.status(200).send('Category deleted');

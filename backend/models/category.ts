@@ -3,7 +3,7 @@ import { Schema, model } from 'mongoose';
 
 const schema = new Schema({
     _id : {type:String},
-    name: {type:String, required:true},
+    name: {type:String, required:true, unique:true},
     tags: {type: [String]},
     color: {type:String},
     user: {type:String, required:true},

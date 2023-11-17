@@ -8,6 +8,6 @@ transactionRouter.get('/', getTransactions);
 transactionRouter.get('/user', getTransactionsByUser);
 transactionRouter.get('/user/date', getTransactionsByUserAfterDate);
 transactionRouter.put('/', updateTransactionById);
-transactionRouter.delete('/', deleteTransactionById);
+transactionRouter.delete('/:user/:_id', deleteTransactionById);
 
 export default transactionRouter;

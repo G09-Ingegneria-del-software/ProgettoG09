@@ -95,7 +95,7 @@ export const updateWallet = (req: express.Request, res: express.Response) => {
 
 // Delete wallet by name and user
 export const deleteWallet = (req: express.Request, res: express.Response) => {
-    Wallet.findOneAndDelete({name: req.body.name, user: req.body.user})
+    Wallet.findOneAndDelete({name: req.params.name, user: req.params.user})
     .then((data: WalletType | null) => {
         if (data) {
             res.status(200).send('Wallet deleted');

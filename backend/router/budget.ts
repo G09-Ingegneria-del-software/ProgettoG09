@@ -8,6 +8,6 @@ budgetRouter.get('/budgets', getBudgets);
 budgetRouter.get('/', getBudgetsByUser);
 budgetRouter.get('/:name', getBudget);
 budgetRouter.put('/:name', updateBudget);
-budgetRouter.delete('/:name', deleteBudget);
+budgetRouter.delete('/:user/:name', deleteBudget);
 
 export default budgetRouter;

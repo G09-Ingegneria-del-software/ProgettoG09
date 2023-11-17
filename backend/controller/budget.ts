@@ -96,7 +96,7 @@ export const updateBudget = (req: express.Request, res: express.Response) => {
 
 // Delete budget
 export const deleteBudget = (req: express.Request, res: express.Response) => {
-    Budget.findOneAndDelete({name: req.params.name, user: req.body.user})
+    Budget.findOneAndDelete({name: req.params.name, user: req.params.user})
     .then((data: BudgetType | null) => {
         if (data) {
             res.status(200).send('Budget deleted');

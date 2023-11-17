@@ -8,6 +8,6 @@ walletRouter.get('/wallets', getWallets);
 walletRouter.get('/', getWalletsByUser);
 walletRouter.get('/:name', getWallet);
 walletRouter.put('/:name', updateWallet);
-walletRouter.delete('/:name', deleteWallet);
+walletRouter.delete('/:user/:name', deleteWallet);
 
 export default walletRouter;

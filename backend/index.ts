@@ -17,11 +17,15 @@ app.use((req: Request, res: Response, next) => {
   next();
 });
 
+// Logging settings
+var morgan = require('morgan');
+app.use(morgan('dev'))
+
 // MongoDB connection
 mongoose
-  .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/expense-tracker')
-.then(() => console.log('Connected to MongoDB'))
-.catch((err) => console.error('Error connecting to MongoDB:', err));
+.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/expense-tracker')
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((err) => console.error('Error connecting to MongoDB:', err));
 
 // Registration of the routers
 import userRouter from './router/user';
@@ -30,8 +34,8 @@ import budgetRouter from './router/budget';
 import walletRouter from './router/wallet';
 import transactionRouter from './router/transaction';
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Welcome to Express & TypeScript Server');
+app.get('/health', (req: Request, res: Response) => {
+  res.status(200).send("Healthy");
 });
 
 app.use('/api/user', userRouter);

@@ -1,5 +1,5 @@
 // Importing libraries
-import {useEffect, useState} from "react"
+import React, {useEffect, useState} from "react"
 
 // Importing pages
 import UserPage from './UserPage';
@@ -11,9 +11,66 @@ import Spacer from "../components/common/Spacer";
 import { ButtonIcon, ButtonText } from "../components/common/Button";
 
 // Importing types
-import { Currency, Transaction } from "../type";
+import { Currency, Transaction, Comparator } from "../type";
 
 const Transactions = () => {
+
+    const [transactions, setTransactions] = useState<Transaction[]>([
+        {type: {text: "expense", color: "red"}, description: "Spesa al supermercato con Ivano da 500000 euro, voglio una bugatti", money: {amount: 500, currency: Currency.EUR}, date: new Date(Date.now())},
+        {type: {text: "income", color: "lime"}, description: "Stipendio", money: {amount: 10500, currency: Currency.JPY}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
+    ]);
+
+    const sortByList: Comparator[] = [
+        {label: "Sort by...", tag: "sort_by"},
+        {label: "Date", tag: "date"},
+        {label: "Amount", tag: "amount"},
+        {label: "Category", tag: "category"},
+    ]
+    const filterByList: Comparator[] = [
+        {label: "Filter by...", tag: "filter_by"},
+        {label: "Date", tag: "date"},
+        {label: "Amount", tag: "amount"},
+        {label: "Category", tag: "category"},
+        {label: "Type", tag: "type"},
+    ]
+
+    const [sortBy, setSortBy] = useState<string>(sortByList[0].tag); // used in select
+    const [filterBy, setFilterBy] = useState<string>(filterByList[0].tag); // used in select
+
+    // const [comparatorType]
+
+    useEffect(() => {
+        // Applying filter
+        // transactions.filter((t: Transaction) => t[filterBy] === "26/09/2023");
+
+        // Applying sorting
+        transactions.sort((a, b) => (a[sortBy] as unknown as number) - (b[sortBy] as unknown as number));
+        
+        console.log(transactions);
+
+        setTransactions(transactions);
+
+    }, [sortBy, filterBy]);
+
     return (  
         <UserPage>
             <Title title="Transactions" />
@@ -24,14 +81,14 @@ const Transactions = () => {
             <div className="flex flex-col">
                 {/* Tool bar for searching, sorting, filtering and exporting */}
                 <div className="flex justify-between items-center gap-4">
-                    <SearchBar />
+                    <SearchBar sortBy={sortBy} setSortBy={setSortBy} sortByList={sortByList} filterBy={filterBy} setFilterBy={setFilterBy} filterByList={filterByList}/>
                     <ButtonIcon text="Export" color="active" iconSrc={require("../assets/icons/file_blank_fill.svg").default}/>
                 </div>
 
                 <Spacer height="2rem" />
 
                 {/* Table */}
-                <TransactionTable />
+                <TransactionTable transactions={transactions}/>
 
             </div>
             
@@ -40,16 +97,10 @@ const Transactions = () => {
     );
 }
 
-const TransactionTable = () => {
-
-    const transactions: Transaction[] = [
-        {type: {text: "expense", color: "red"}, description: "Spesa al supermercato con Ivano da 500000 euro, voglio una bugatti", money: {amount: 500, currency: Currency.EUR}, date: new Date(Date.now())},
-        {type: {text: "income", color: "lime"}, description: "Stipendio", money: {amount: 10500, currency: Currency.JPY}, date: new Date(Date.now())},
-        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
-        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
-        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
-        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
-    ]
+type TransactionTableProps = {
+    transactions: Transaction[],
+}
+const TransactionTable: React.FC<TransactionTableProps> = ({transactions}: TransactionTableProps) => {
 
     const limit: number = 5;
 
@@ -58,8 +109,9 @@ const TransactionTable = () => {
     const [curTransactions, setCurTransactions] = useState<Transaction[]>([]);
 
     useEffect(() => {
+
         setCurTransactions(transactions.slice((curPage-1)*limit, (curPage)*limit));
-        setNumPages(Math.round(transactions.length/limit + 1));
+        setNumPages(Math.ceil(transactions.length/limit));
     }, [curPage]);
 
     return (
@@ -121,7 +173,7 @@ const TransactionTable = () => {
                         {
                             [...Array(numPages)].map((_, i) => {
                                 return <li key={i} className="">
-                                    <ButtonText handleClick={() => setCurPage(i+1)} text={(i+1).toString()} color="white" />
+                                    <ButtonText handleClick={() => setCurPage(i+1)} text={(i+1).toString()} color={i+1 === curPage ? "active" : "white"} />
                                 </li>
                             })
                         }
@@ -132,26 +184,17 @@ const TransactionTable = () => {
     );
 }
 
-const SearchBar = () => {
+type SearchBarProps = {
+    sortBy: string,
+    setSortBy: React.Dispatch<React.SetStateAction<string>>,
+    sortByList: Comparator[],
+    filterBy: string,
+    setFilterBy: React.Dispatch<React.SetStateAction<string>>,
+    filterByList: Comparator[],
+}
+const SearchBar: React.FC<SearchBarProps> = ({sortBy, setSortBy, sortByList, filterBy, setFilterBy, filterByList}) => {
 
     const searchIconSrc: string = require("../assets/icons/search.svg").default;
-    
-    const sortByList: string[] = [
-        "Sort by...",
-        "Date",
-        "Amount",
-        "Category"
-    ]
-    const filterByList: string[] = [
-        "Filter by...",
-        "Date",
-        "Amount",
-        "Category",
-        "Type"
-    ]
-
-    const [sortBy, setSortBy] = useState<string>(sortByList[0]);
-    const [filterBy, setFilterBy] = useState<string>(filterByList[0]);
 
     return (
         <div className="relative flex-1 h-16 bg-white flex justify-between items-center rounded-xl shadow-lg">
@@ -164,12 +207,12 @@ const SearchBar = () => {
                 
                 {/* Sort by */}
                 <select onChange={e => setSortBy(e.target.value)} value={sortBy} id="sortBy" name="sortBy" className="bg-[#E9ECFF] rounded-md text-secondary w-[150px] px-2 py-2 my-1 mx-4" >
-                    {sortByList.map((s, i) => <option key={i} disabled={i === 0} >{s}</option>)}
+                    {sortByList.map(({label}, i) => <option key={i} disabled={i === 0} >Sort by {label}</option>)}
                 </select>
 
                 {/* Filter by */}
                 <select onChange={e => setFilterBy(e.target.value)} value={filterBy} id="filterBy" name="filterBy" className="bg-[#E9ECFF] rounded-md text-secondary w-[150px] px-2 py-2 my-1 mr-4" >
-                    {filterByList.map((s, i) => <option key={i} disabled={i === 0} >{s}</option>)}
+                    {filterByList.map(({label}, i) => <option key={i} disabled={i === 0} >Filter by {label}</option>)}
                 </select>
 
 

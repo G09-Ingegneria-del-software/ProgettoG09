@@ -1,6 +1,6 @@
 import { generateToken, verifyToken } from "../utils/token";
 import { Request, Response } from "express";
-import User, {UserType} from "../models/user";
+import User from "../models/user";
 
 const SECRET = process.env.JWT_SECRET || "secret";
 

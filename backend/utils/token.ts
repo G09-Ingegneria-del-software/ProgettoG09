@@ -5,5 +5,10 @@ export const generateToken = (secret: string, expiresIn: Number, payload: object
 }
 
 export const verifyToken = (secret: string, token: string) => {
-  return jwt.verify(token, secret);
+  try {
+    jwt.verify(token, secret);
+    return true;
+  }catch(err) {
+    return false;
+  }
 }

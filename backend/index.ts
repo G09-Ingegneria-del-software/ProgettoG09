@@ -27,16 +27,25 @@ mongoose
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('Error connecting to MongoDB:', err));
 
+// Auth endpoint
+import authRouter from './router/auth';
+app.use('/auth', authRouter);
+
+// Health check enpoint
+app.get('/health', (req: Request, res: Response) => {
+  res.status(200).send("Healthy");
+});
+
+// Middleware for Authentification
+import { checker } from './controller/checker';
+app.use("/api", checker);
+
 // Registration of the routers
 import userRouter from './router/user';
 import categoryRouter from './router/category';
 import budgetRouter from './router/budget';
 import walletRouter from './router/wallet';
 import transactionRouter from './router/transaction';
-
-app.get('/health', (req: Request, res: Response) => {
-  res.status(200).send("Healthy");
-});
 
 app.use('/api/user', userRouter);
 app.use('/api/category', categoryRouter);

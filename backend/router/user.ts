@@ -7,7 +7,6 @@ const userRouter = express.Router();
 userRouter.get("/", getUsers);
 userRouter.get("/email/:email", getUserByEmail);
 userRouter.get("/:id", getUserById);
-userRouter.post("/signup", signUp);
 userRouter.put("/:email", updateData);
 userRouter.put("/password/:email", updatePassword);
 userRouter.put("/block/:email", toggleBlock);

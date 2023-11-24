@@ -1,6 +1,6 @@
 import { generateToken, verifyToken } from "../utils/token";
 import { Request, Response } from "express";
-import User, {UserType} from "../models/user";
+import User from "../models/user";
 
 const SECRET = process.env.JWT_SECRET || "secret";
 
@@ -19,6 +19,7 @@ export const login = async (req: Request, res: Response) => {
 
     var payload = {email: user.email, id: user._id};
     var tkn = generateToken(SECRET, 23200, payload);
+    res.setHeader('x-access-token', tkn);
     return res.status(200).json({success: true, token: tkn, id:user._id})
 }
 
@@ -31,7 +32,7 @@ export const isLogged = (req: Request, res: Response) => {
 
     try {
         const decoded = verifyToken(SECRET, token);
-        return res.status(200).json({ success: true, decoded });
+        return res.status(200).json({ success: true, message: "Valid token" });
     } catch (error) {
         return res.status(401).json({ message: "Invalid token" });
     }

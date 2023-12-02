@@ -1,6 +1,17 @@
-import express, { Express, Request, Response , Application } from 'express';
+import express, { Request, Response , Application } from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+
+// Routers
+import authRouter from './router/auth';
+import userRouter from './router/user';
+import categoryRouter from './router/category';
+import budgetRouter from './router/budget';
+import walletRouter from './router/wallet';
+import transactionRouter from './router/transaction';
+
+// Iternal utilities and Middlewares
+import { checker } from './controller/checker';
 
 // Load the environment variables from the .env file
 dotenv.config();
@@ -17,6 +28,7 @@ app.use((req: Request, res: Response, next) => {
   next();
 });
 
+
 // Logging settings
 var morgan = require('morgan');
 app.use(morgan('dev'))
@@ -28,7 +40,6 @@ mongoose
   .catch((err) => console.error('Error connecting to MongoDB:', err));
 
 // Auth endpoint
-import authRouter from './router/auth';
 app.use('/auth', authRouter);
 
 // Health check enpoint
@@ -36,17 +47,18 @@ app.get('/health', (req: Request, res: Response) => {
   res.status(200).send("Healthy");
 });
 
+// Documentation endpoint
+const swaggerAutogen = require('swagger-autogen')()
+
+const outputFile = './swagger_output.json'
+const endpointsFiles = ['./router/auth.ts', './router/user.ts', './router/category.ts', './router/budget.ts', './router/wallet.ts', './router/transaction.ts']
+
+swaggerAutogen(outputFile, endpointsFiles)
+
 // Middleware for Authentification
-import { checker } from './controller/checker';
 app.use("/api", checker);
 
 // Registration of the routers
-import userRouter from './router/user';
-import categoryRouter from './router/category';
-import budgetRouter from './router/budget';
-import walletRouter from './router/wallet';
-import transactionRouter from './router/transaction';
-
 app.use('/api/user', userRouter);
 app.use('/api/category', categoryRouter);
 app.use('/api/budget', budgetRouter);

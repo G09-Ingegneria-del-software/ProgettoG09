@@ -48,12 +48,14 @@ app.get('/health', (req: Request, res: Response) => {
 });
 
 // Documentation endpoint
-const swaggerAutogen = require('swagger-autogen')()
-
-const outputFile = './swagger_output.json'
-const endpointsFiles = ['./router/auth.ts', './router/user.ts', './router/category.ts', './router/budget.ts', './router/wallet.ts', './router/transaction.ts']
-
-swaggerAutogen(outputFile, endpointsFiles)
+// const swaggerAutogen = require('swagger-autogen')()
+// const outputFile = './swagger.json'
+// const endpointsFiles = ['./router/auth.ts', './router/user.ts', './router/category.ts', './router/budget.ts', './router/wallet.ts', './router/transaction.ts']
+// swaggerAutogen(outputFile, endpointsFiles)
+//Documentazione
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument) );
 
 // Middleware for Authentification
 app.use("/api", checker);

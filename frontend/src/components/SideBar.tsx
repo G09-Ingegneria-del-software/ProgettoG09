@@ -23,7 +23,6 @@ const SideBar = () => {
         {label: "Dashboard", href: "/"},
         {label: "Wallets", href: "/wallets"},
         {label: "Transactions", href: "/transactions"},
-        {label: "Chat bot", href: "/chat-bot"},
         {label: "Settings", href: "/settings"},
     ]
 

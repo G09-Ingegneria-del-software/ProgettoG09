@@ -7,7 +7,6 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard'; 
 import Wallets from './pages/Wallets';
 import Transactions from './pages/Transactions';
-import ChatBot from './pages/ChatBot';
 import Settings from './pages/Settings';
 
 function App() {
@@ -20,7 +19,6 @@ function App() {
         <Route path="/" element={isLoggedIn ? <Dashboard /> : <Login />} />   
         <Route path="/wallets" element={<Wallets />}></Route>
         <Route path="/transactions" element={<Transactions />}></Route>
-        <Route path="/chat-bot" element={<ChatBot />}></Route>
         <Route path="/settings" element={<Settings />}></Route>
 
         <Route path="/sign-up" element={<SignUp />}></Route>

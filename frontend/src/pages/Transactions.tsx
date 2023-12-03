@@ -41,37 +41,7 @@ const Transactions = () => {
 
     const [curTransactions, setCurTransactions] = useState<Transaction[]>(transactions);
 
-    const sortByList: Comparator[] = [
-        {label: "Sort by...", tag: "sort_by"},
-        {label: "Date", tag: "date"},
-        {label: "Amount", tag: "amount"},
-        {label: "Category", tag: "category"},
-    ]
-    const filterByList: Comparator[] = [
-        {label: "Filter by...", tag: "filter_by"},
-        {label: "Date", tag: "date"},
-        {label: "Amount", tag: "amount"},
-        {label: "Category", tag: "category"},
-        {label: "Type", tag: "type"},
-    ]
-
-    const [sortBy, setSortBy] = useState<string>(sortByList[0].tag); // used in select
-    const [filterBy, setFilterBy] = useState<string>(filterByList[0].tag); // used in select
-
     // const [comparatorType]
-
-    useEffect(() => {
-        // Applying filter
-        // transactions.filter((t: Transaction) => t[filterBy] === "26/09/2023");
-
-        // Applying sorting
-        // transactions.sort((a, b) => (a[sortBy] as unknown as number) - (b[sortBy] as unknown as number));
-        
-        // console.log(transactions);
-
-        // setTransactions(transactions);
-
-    }, [sortBy, filterBy]);
 
     return (  
         <UserPage>
@@ -83,7 +53,7 @@ const Transactions = () => {
             <div className="flex flex-col">
                 {/* Tool bar for searching, sorting, filtering and exporting */}
                 <div className="flex justify-between items-center gap-4">
-                    <SearchBar sortBy={sortBy} setSortBy={setSortBy} sortByList={sortByList} filterBy={filterBy} setFilterBy={setFilterBy} filterByList={filterByList} transactions={transactions} curTransactions={curTransactions} setCurTransactions={setCurTransactions}/>
+                    <SearchBar transactions={transactions} curTransactions={curTransactions} setCurTransactions={setCurTransactions}/>
                     {/* <ButtonIcon text="Export" color="active" iconSrc={require("../assets/icons/file_blank_fill.svg").default}/> */}
                 </div>
 
@@ -189,17 +159,28 @@ const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, set
 }
 
 type SearchBarProps = {
-    sortBy: string,
-    setSortBy: React.Dispatch<React.SetStateAction<string>>,
-    sortByList: Comparator[],
-    filterBy: string,
-    setFilterBy: React.Dispatch<React.SetStateAction<string>>,
-    filterByList: Comparator[],
     transactions: Transaction[],
     curTransactions: Transaction[],
     setCurTransactions: (t: Transaction[]) => void
 }
-const SearchBar: React.FC<SearchBarProps> = ({sortBy, setSortBy, sortByList, filterBy, setFilterBy, filterByList, transactions, curTransactions, setCurTransactions}) => {
+const SearchBar: React.FC<SearchBarProps> = ({transactions, curTransactions, setCurTransactions}) => {
+
+    const sortByList: Comparator[] = [
+        {label: "Sort by...", tag: "sort_by"},
+        {label: "Date", tag: "date"},
+        {label: "Amount", tag: "amount"},
+        {label: "Category", tag: "category"},
+    ]
+    const filterByList: Comparator[] = [
+        {label: "Filter by...", tag: "filter_by"},
+        {label: "Date", tag: "date"},
+        {label: "Amount", tag: "amount"},
+        {label: "Category", tag: "category"},
+        {label: "Type", tag: "type"},
+    ]
+
+    const [sortBy, setSortBy] = useState<string>(sortByList[0].tag); // used in select
+    const [filterBy, setFilterBy] = useState<string>(filterByList[0].tag); // used in select
 
     const searchIconSrc: string = require("../assets/icons/search.svg").default;
 
@@ -214,6 +195,21 @@ const SearchBar: React.FC<SearchBarProps> = ({sortBy, setSortBy, sortByList, fil
         }
     }
 
+    const handleSortByChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setSortBy(e.target.value);
+
+        console.log(e.target.value);
+        // console.log(sortBy, curTransactions[0][sortBy]);
+
+        setCurTransactions(
+            curTransactions.sort((a: Transaction, b: Transaction) => {
+                if (a[sortBy] > b[sortBy]) return 1;
+                else if (a[sortBy] < b[sortBy]) return -1;
+                return 0;
+            })
+        )
+    }
+
     return (
         <div className="relative flex-1 h-16 bg-white flex justify-between items-center rounded-xl shadow-lg">
                 <div className="relative px-4">
@@ -224,7 +220,7 @@ const SearchBar: React.FC<SearchBarProps> = ({sortBy, setSortBy, sortByList, fil
                 </div>
                 
                 {/* Sort by */}
-                <select onChange={e => setSortBy(e.target.value)} value={sortBy} id="sortBy" name="sortBy" className="bg-[#E9ECFF] rounded-md text-secondary w-[150px] px-2 py-2 my-1 mx-4" >
+                <select onChange={handleSortByChange} value={sortBy} id="sortBy" name="sortBy" className="bg-[#E9ECFF] rounded-md text-secondary w-[150px] px-2 py-2 my-1 mx-4" >
                     {sortByList.map(({label}, i) => <option key={i} disabled={i === 0} >Sort by {label}</option>)}
                 </select>
 

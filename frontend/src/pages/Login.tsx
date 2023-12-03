@@ -1,5 +1,6 @@
-import React,{useState,ChangeEvent} from 'react'
+import React,{useState,ChangeEvent} from 'react';
 import BackgroundImage from "../assets/images/login_wallpaper.jpg";
+import {useNavigate} from 'react-router-dom';
 
 const Login = () => {
     const[email, setEmail] = useState('');
@@ -23,6 +24,13 @@ const Login = () => {
         console.log('Email:', email);
         console.log('Password:', password);
       };
+    
+    const navigate = useNavigate ();
+    const handleSignUpClick = () => {
+        navigate ('/sign-up');
+    };
+    
+    
 
     return (
         <div className="flex">
@@ -82,7 +90,7 @@ const Login = () => {
                         {/*button */}
                         <button className="w-full bg-[#66ccff] text-white py-2 rounded-md hover:bg-[#3399ff]" onClick={handleSubmit}>Login</button>
 
-                        <p className="py-16 text-sm text-secondary"> Not a User yet? <a href='#' className="text-[#66ccff] hover: text-[#3399ff]">Signup</a></p>
+                        <p className="py-16 text-sm text-secondary"> Not a User yet? <a href='#' className="text-[#66ccff] hover: text-[#3399ff]" onClick = {handleSignUpClick}>Signup</a></p>
                     </div>
                     <div className="col-span-1"></div>
 

@@ -52,6 +52,7 @@ app.get('/health', (req: Request, res: Response) => {
 // const outputFile = './swagger.json'
 // const endpointsFiles = ['./router/auth.ts', './router/user.ts', './router/category.ts', './router/budget.ts', './router/wallet.ts', './router/transaction.ts']
 // swaggerAutogen(outputFile, endpointsFiles)
+
 //Documentazione
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
@@ -61,11 +62,11 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument) );
 app.use("/api", checker);
 
 // Registration of the routers
-app.use('/api/user', userRouter);
-app.use('/api/category', categoryRouter);
-app.use('/api/budget', budgetRouter);
-app.use('/api/wallet', walletRouter);
-app.use('/api/transaction', transactionRouter); 
+app.use('', userRouter);
+app.use('', categoryRouter);
+app.use('', budgetRouter);
+app.use('', walletRouter);
+app.use('', transactionRouter); 
 
 // Start the Express server, and expose the port
 app.listen(port, () => {

@@ -4,10 +4,10 @@ import { getUsers, getUserByEmail, deleteUser,
 
 const userRouter = express.Router();
 
-userRouter.get("/", getUsers); 
-userRouter.get("/:email", getUserByEmail);
-userRouter.put("/:email", updateData); 
-userRouter.put("/password/:email", updatePassword); 
-userRouter.delete("/:email", deleteUser); 
+userRouter.get("/api/user/", getUsers); 
+userRouter.get("/api/user/:email", getUserByEmail);
+userRouter.put("/api/user/:email", updateData); 
+userRouter.put("/api/user/password/:email", updatePassword); 
+userRouter.delete("/api/user/:email", deleteUser); 
 
 export default userRouter;

@@ -3,11 +3,11 @@ import { createTransaction, getTransactions,getTransactionById, getTransactionsB
 
 const transactionRouter = express.Router();
 
-transactionRouter.post('/', createTransaction); 
-transactionRouter.get('/', getTransactions); 
-transactionRouter.get('/user/:name', getTransactionById);
-transactionRouter.get('/:id', getTransactionsByUser);
-transactionRouter.put('/', updateTransactionById);
-transactionRouter.delete('/:id', deleteTransactionById); 
+transactionRouter.post('/api/transaction/', createTransaction); 
+transactionRouter.get('/api/transaction/', getTransactions); 
+transactionRouter.get('/api/transaction/user/:name', getTransactionById);
+transactionRouter.get('/api/transaction/:id', getTransactionsByUser);
+transactionRouter.put('/api/transaction/', updateTransactionById);
+transactionRouter.delete('/api/transaction/:id', deleteTransactionById); 
 
 export default transactionRouter;

@@ -3,11 +3,11 @@ import { createBudget, getBudgets,getBudgetsByUser, getBudget, updateBudget, del
 
 const budgetRouter = express.Router();
 
-budgetRouter.post('/', createBudget);
-budgetRouter.get('/', getBudgets);
-budgetRouter.get('/user/:name', getBudgetsByUser);
-budgetRouter.get('/:user/:name', getBudget);
-budgetRouter.put('/:name', updateBudget);
-budgetRouter.delete('/:user/:name', deleteBudget);
+budgetRouter.post('/api/budget/', createBudget);
+budgetRouter.get('/api/budget/', getBudgets);
+budgetRouter.get('/api/budget/user/:name', getBudgetsByUser);
+budgetRouter.get('/api/budget/:user/:name', getBudget);
+budgetRouter.put('/api/budget/:name', updateBudget);
+budgetRouter.delete('/api/budget/:user/:name', deleteBudget);
 
 export default budgetRouter;

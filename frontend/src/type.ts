@@ -22,3 +22,8 @@ export type Comparator = {
     label: string, 
     tag: string
 }; 
+
+export type Wallet = {
+    id: string,
+    title: string
+}

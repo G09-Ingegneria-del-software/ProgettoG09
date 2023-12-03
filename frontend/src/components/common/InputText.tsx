@@ -4,8 +4,8 @@ import React from "react";
 type InputProps = {
     label: string,
     value: string,
-    type?: string | "text"
     setValue: (value: string) => void,    
+    type?: string | "text"
     disabled?: boolean | false
 };
 

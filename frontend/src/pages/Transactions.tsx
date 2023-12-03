@@ -39,6 +39,8 @@ const Transactions = () => {
         {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: 12345, currency: Currency.USD}, date: new Date(Date.now())},
     ]);
 
+    const [curTransactions, setCurTransactions] = useState<Transaction[]>(transactions);
+
     const sortByList: Comparator[] = [
         {label: "Sort by...", tag: "sort_by"},
         {label: "Date", tag: "date"},
@@ -63,11 +65,11 @@ const Transactions = () => {
         // transactions.filter((t: Transaction) => t[filterBy] === "26/09/2023");
 
         // Applying sorting
-        transactions.sort((a, b) => (a[sortBy] as unknown as number) - (b[sortBy] as unknown as number));
+        // transactions.sort((a, b) => (a[sortBy] as unknown as number) - (b[sortBy] as unknown as number));
         
-        console.log(transactions);
+        // console.log(transactions);
 
-        setTransactions(transactions);
+        // setTransactions(transactions);
 
     }, [sortBy, filterBy]);
 
@@ -81,14 +83,14 @@ const Transactions = () => {
             <div className="flex flex-col">
                 {/* Tool bar for searching, sorting, filtering and exporting */}
                 <div className="flex justify-between items-center gap-4">
-                    <SearchBar sortBy={sortBy} setSortBy={setSortBy} sortByList={sortByList} filterBy={filterBy} setFilterBy={setFilterBy} filterByList={filterByList}/>
-                    <ButtonIcon text="Export" color="active" iconSrc={require("../assets/icons/file_blank_fill.svg").default}/>
+                    <SearchBar sortBy={sortBy} setSortBy={setSortBy} sortByList={sortByList} filterBy={filterBy} setFilterBy={setFilterBy} filterByList={filterByList} transactions={transactions} curTransactions={curTransactions} setCurTransactions={setCurTransactions}/>
+                    {/* <ButtonIcon text="Export" color="active" iconSrc={require("../assets/icons/file_blank_fill.svg").default}/> */}
                 </div>
 
                 <Spacer height="2rem" />
 
                 {/* Table */}
-                <TransactionTable transactions={transactions}/>
+                <TransactionTable curTransactions={curTransactions} setCurTransactions={setCurTransactions}/>
 
             </div>
             
@@ -98,21 +100,23 @@ const Transactions = () => {
 }
 
 type TransactionTableProps = {
-    transactions: Transaction[],
+    curTransactions: Transaction[],
+    setCurTransactions: (t: Transaction[]) => void
 }
-const TransactionTable: React.FC<TransactionTableProps> = ({transactions}: TransactionTableProps) => {
+const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, setCurTransactions}: TransactionTableProps) => {
 
     const limit: number = 5;
 
     const [curPage, setCurPage] = useState<number>(1);
     const [numPages, setNumPages] = useState<number>(1);
-    const [curTransactions, setCurTransactions] = useState<Transaction[]>([]);
+
+    const [visibleTransactions, setVisibleTransactions] = useState<Transaction[]>(curTransactions);
+
 
     useEffect(() => {
-
-        setCurTransactions(transactions.slice((curPage-1)*limit, (curPage)*limit));
-        setNumPages(Math.ceil(transactions.length/limit));
-    }, [curPage]);
+        setVisibleTransactions(curTransactions.slice((curPage-1)*limit, (curPage)*limit));
+        setNumPages(Math.ceil(curTransactions.length/limit));
+    }, [curPage, curTransactions]);
 
     return (
         <div className="w-full bg-white rounded-xl shadow-lg p-8">
@@ -141,7 +145,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({transactions}: Trans
                     </thead>
 
                     <tbody className="">
-                        {curTransactions.map(({ type, description, money, date }: Transaction, i) => {
+                        {visibleTransactions.map(({ type, description, money, date }: Transaction, i) => {
                             return <tr key={i}>
                                 <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-main">
                                     <div className="relative w-[1.5rem] h-[1.5rem]">
@@ -191,10 +195,24 @@ type SearchBarProps = {
     filterBy: string,
     setFilterBy: React.Dispatch<React.SetStateAction<string>>,
     filterByList: Comparator[],
+    transactions: Transaction[],
+    curTransactions: Transaction[],
+    setCurTransactions: (t: Transaction[]) => void
 }
-const SearchBar: React.FC<SearchBarProps> = ({sortBy, setSortBy, sortByList, filterBy, setFilterBy, filterByList}) => {
+const SearchBar: React.FC<SearchBarProps> = ({sortBy, setSortBy, sortByList, filterBy, setFilterBy, filterByList, transactions, curTransactions, setCurTransactions}) => {
 
     const searchIconSrc: string = require("../assets/icons/search.svg").default;
+
+    const filterByDescription = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let substring: string = e.currentTarget.value;
+        if (substring !== "") {        
+            setCurTransactions(
+                curTransactions.filter((t: Transaction) => t.description.toLowerCase().includes(substring))
+            );
+        } else {
+            setCurTransactions(transactions);
+        }
+    }
 
     return (
         <div className="relative flex-1 h-16 bg-white flex justify-between items-center rounded-xl shadow-lg">
@@ -202,7 +220,7 @@ const SearchBar: React.FC<SearchBarProps> = ({sortBy, setSortBy, sortByList, fil
                     <img className="" src={searchIconSrc}/>
                 </div>
                 <div className='flex-1 h-full flex items-center justify-center'>
-                    <input type="text" id='searchText' placeholder="Search for transactions..." className="w-full h-full outline-none focus:border-b-active"/>
+                    <input onChange={filterByDescription} type="text" id='searchText' placeholder="Search for transactions..." className="w-full h-full outline-none focus:border-b-active"/>
                 </div>
                 
                 {/* Sort by */}

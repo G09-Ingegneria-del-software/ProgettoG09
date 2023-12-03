@@ -57,9 +57,24 @@ export const getTransactions = async (req: express.Request, res: express.Respons
     }
 }
 
+// Get transaction by id
+export const getTransactionById = async (req: express.Request, res: express.Response) => {
+    try {
+        const data = await Transaction.findById(req.params.id);
+        if (data) {
+            res.status(200).send(data);
+        } else {
+            res.status(404).send('Transaction not found');
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+}
+
 // Get all transactions by user
 export const getTransactionsByUser = async (req: express.Request, res: express.Response) => {
-    Transaction.find({user: req.params.user})
+    Transaction.find({user: req.params.name})
     .then((data: TransactionType[]) => {
         res.status(200).send(data);
     })
@@ -69,17 +84,17 @@ export const getTransactionsByUser = async (req: express.Request, res: express.R
     });
 }
 
-// Get transaction by user after a date
-export const getTransactionsByUserAfterDate = async (req: express.Request, res: express.Response) => {
-    Transaction.find({user: req.params.user, date: {$gte: new Date(req.params.date)}})
-    .then((data: TransactionType[]) => {
-        res.status(200).send(data);
-    })
-    .catch((err: Error) => {
-        console.error(err);
-        res.status(500).send('Internal Server Error');
-    });
-}
+// // Get transaction by user after a date
+// export const getTransactionsByUserAfterDate = async (req: express.Request, res: express.Response) => {
+//     Transaction.find({user: req.params.user, date: {$gte: new Date(req.params.date)}})
+//     .then((data: TransactionType[]) => {
+//         res.status(200).send(data);
+//     })
+//     .catch((err: Error) => {
+//         console.error(err);
+//         res.status(500).send('Internal Server Error');
+//     });
+// }
 
 // Delete transaction by id
 export const deleteTransactionById = async (req: express.Request, res: express.Response) => {

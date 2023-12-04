@@ -12,6 +12,7 @@ import { ButtonIcon, ButtonText } from "../components/common/Button";
 import Modal from "../components/common/Modal";
 import Select from "../components/common/Select";
 import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
+import PopoverText from "../components/common/Popover";
 
 // Importing types
 import { CurrencyValues, Transaction, TransactionValues, Comparator } from "../type";
@@ -81,7 +82,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, set
     const [newType, setNewType] = useState("expense");
     const [newDescription, setNewDescription] = useState<string>("");
     const [newAmount, setNewAmount] = useState<number>(0);
-    const [newCurrency, setNewCurrency] = useState<CurrencyValues>(CurrencyValues.EUR);
+    const [newCurrency, setNewCurrency] = useState<string>(CurrencyValues.EUR);
     const [newDate, setNewDate] = useState<DateValueType>({
         startDate: new Date(),
         endDate: new Date(),
@@ -117,13 +118,15 @@ const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, set
             {/* Edit modal */}
             <Modal open={editModalOpen} setOpen={setEditModalOpen} title="Edit transaction" description="In this section you'll be able to edit your transaction modifying type, description, money and date" buttonLabel="Save" onSubmitClick={handleSaveTransaction}>
                 <div className="flex flex-col justify-start gap-4">
-                    <Select label="Type" data={K.transactionTypes} />
+                    <Select label="Type" data={K.transactionTypes} value={newType} onChange={setNewType}/>
                     <InputText label="Description" value={newDescription} setValue={setNewDescription} />
                     <InputText label="Amount" value={newAmount.toString()} setValue={setNewAmount} />
-                    <Select label="Currency" data={K.currencies} />
+                    <Select label="Currency" data={K.currencies} value={newCurrency} onChange={setNewCurrency}/>
                     <div className="flex flex-col gap-1">
                         <label className="text-secondary">Date</label>
-                        <Datepicker primaryColor="indigo" value={newDate} onChange={handleDateChange} />
+                        <div className="focus:outline-none border-1 border-secondary">
+                            <Datepicker primaryColor="indigo" value={newDate} onChange={handleDateChange} />
+                        </div>
                     </div>
                 </div> 
             </Modal>
@@ -228,7 +231,9 @@ const SearchBar: React.FC<SearchBarProps> = ({transactions, curTransactions, set
     ]
 
     const [sortBy, setSortBy] = useState<Comparator>(sortByList[0]); // used in select
-    const [filterBy, setFilterBy] = useState<Comparator>(filterByList[0]); // used in select
+    const [typeValue, setTypeValue] = useState<string>(TransactionValues.EXPENSE); // used in select
+    const [dateValue, setDateValue] = useState<Date>(new Date(Date.now())); // used in select
+    const [amountValue, setAmountValue] = useState<number>(0); // used in select
 
     const searchIconSrc: string = require("../assets/icons/search.svg").default;
 
@@ -243,8 +248,8 @@ const SearchBar: React.FC<SearchBarProps> = ({transactions, curTransactions, set
         }
     }
 
-    const handleSortByChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const newSortByStr = e.currentTarget.value.split(' ')[0].toLowerCase();
+    const handleSortByChange = (value: string) => {
+        const newSortByStr = value.split(' ')[0].toLowerCase();
         const newSortBy = sortByList.find(cmp => cmp.tag === newSortByStr) || sortByList[0];
         setSortBy(newSortBy);
 
@@ -257,28 +262,28 @@ const SearchBar: React.FC<SearchBarProps> = ({transactions, curTransactions, set
                 break;
         }
 
-        setCurTransactions(curTransactions);
+        setCurTransactions([...curTransactions]);
     }
 
     return (
-        <div className="relative flex-1 h-16 bg-white flex justify-between items-center rounded-xl shadow-lg">
-                <div className="relative px-4">
+        <div className="relative px-4 flex-1 h-16 bg-white flex justify-between items-center rounded-xl shadow-lg">
+                <div className="relative mr-2">
                     <img className="" src={searchIconSrc}/>
                 </div>
                 <div className='flex-1 h-full flex items-center justify-center'>
                     <input onChange={filterByDescription} type="text" id='searchText' placeholder="Search for transactions..." className="w-full h-full outline-none focus:border-b-active"/>
                 </div>
                 
-                {/* Sort by */}
-                <select onChange={handleSortByChange} value={sortBy.label} id="sortBy" name="sortBy" className="bg-[#E9ECFF] rounded-md text-secondary w-[150px] px-2 py-2 my-1 mx-4" >
-                    {sortByList.map(({label}, i) => <option key={i} disabled={i === 0} >{label}</option>)}
-                </select>
+                <div className="flex justify-end items-center gap-4">
+                    {/* Sort by */}
+                    <Select data={sortByList.map(item => item.label)} value={sortBy.label} onChange={handleSortByChange} />
+                    {/* <select onChange={handleSortByChange} value={sortBy.label} id="sortBy" name="sortBy" className="bg-[#E9ECFF] rounded-md text-secondary w-[150px] px-2 py-2 my-1 mx-4" >
+                            {sortByList.map(({label}, i) => <option key={i} disabled={i === 0} >{label}</option>)}
+                        </select> */}
 
-                {/* Filter by */}
-                {/* <select onChange={e => setFilterBy(e.target.value)} value={filterBy} id="filterBy" name="filterBy" className="bg-[#E9ECFF] rounded-md text-secondary w-[150px] px-2 py-2 my-1 mr-4" >
-                    {filterByList.map(({label}, i) => <option key={i} disabled={i === 0} >Filter by {label}</option>)}
-                </select> */}
-
+                    {/* Filter by */}
+                    <PopoverText typeValue={typeValue} setTypeValue={setTypeValue} startDate={dateValue} setStartDate={setDateValue} amountValue={amountValue} setAmountValue={setAmountValue} />
+                </div>
 
         </div>
     );

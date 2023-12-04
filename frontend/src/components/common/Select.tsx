@@ -8,22 +8,23 @@ function classNames(...classes: string[]) {
 
 type SelectProps = {
   label?: string,
-  data: string[]
+  data: string[],
+  value: string,
+  onChange: (value: string) => void,
 };
 
-const Select: React.FC<SelectProps>  = ({label, data}: SelectProps) => {
-  const [selected, setSelected] = useState<string>(data[0]);
+const Select: React.FC<SelectProps>  = ({label, data, value, onChange}: SelectProps) => {
 
   return (
     <div className="flex flex-col justify-start gap-1">
       <label className="text-secondary">{label}</label>
-      <Listbox value={selected} onChange={setSelected}>
+      <Listbox value={value} onChange={onChange}>
         {({ open }) => (
           <>
-            <div className="relative mt-2">
+            <div className="relative">
               <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6">
                 <span className="flex items-center">
-                  <span className="w-[200px] ml-3 block truncate">{selected}</span>
+                  <span className="w-[200px] ml-3 block truncate">{value}</span>
                 </span>
                 <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
                   <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />

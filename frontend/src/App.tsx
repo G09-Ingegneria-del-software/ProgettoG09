@@ -1,5 +1,6 @@
-
-import { BrowserRouter, Routes, Route} from "react-router-dom"
+// Importing libraries
+import { useEffect } from "react";
+import { BrowserRouter, Routes, Route, useLocation} from "react-router-dom"
 
 // Importing pages
 import SignUp from './pages/SignUp';
@@ -10,6 +11,12 @@ import Transactions from './pages/Transactions';
 import Settings from './pages/Settings';
 
 function App() {
+
+  // const location = useLocation();
+  // useEffect(() => {
+  //   // @ts-ignore
+  //   HSStaticMethods.autoInit();
+  // }, [location.pathname]);
 
   const isLoggedIn = true;
 

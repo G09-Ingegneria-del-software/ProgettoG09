@@ -21,9 +21,8 @@ const Login = () => {
     
     const handleSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        console.log('Email:', email);
-        console.log('Password:', password);
-      };
+
+    };
     
     const navigate = useNavigate ();
     const handleSignUpClick = () => {
@@ -72,7 +71,7 @@ const Login = () => {
                             </div>
                         </div>
 
-                        {/*lower form */}
+                        {/*Lower form */}
 
                         <div className="py-5 flex items-center">
                             <label className="flex items-center">
@@ -87,7 +86,7 @@ const Login = () => {
                             <a href='#' className="ml-auto text-secondary hover:text-[#66ccff]">Forgot Password?</a>
                         </div>
 
-                        {/*button */}
+                        {/*Login button*/}
                         <button className="w-full bg-[#66ccff] text-white py-2 rounded-md hover:bg-[#3399ff]" onClick={handleSubmit}>Login</button>
 
                         <p className="py-16 text-sm text-secondary"> Not a User yet? <a href='#' className="text-[#66ccff] hover: text-[#3399ff]" onClick = {handleSignUpClick}>Signup</a></p>

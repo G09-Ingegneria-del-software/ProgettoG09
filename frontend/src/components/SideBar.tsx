@@ -30,6 +30,7 @@ const SideBar = () => {
     ]
 
     const [selectedLink, setSelectedLink] = useState<LinkType>(links[0]);
+    const [selectedWallet, setSelectedWallet] = useState<string>(K.wallets[0]);
 
     useEffect(() => {
         const href: string = window.location.href;
@@ -38,7 +39,8 @@ const SideBar = () => {
         } 
     }, [window.location.href]);
 
-
+    // const handleWalletChange = (value: string) => {
+    // };
 
     return (  
         <aside className="static flex-1 w-full max-w-[20rem] flex flex-col bg-clip-border rounded-xl bg-[#E4EDFF] p-4 shadow-md shadow-blue-gray-900/5">
@@ -51,7 +53,7 @@ const SideBar = () => {
 
             <section className="my-4 flex flex-col gap-2">
                 <p>Welcome back, <br /> <b>{firstName} {lastName}</b></p>
-                <Select data={K.wallets}/>
+                <Select data={K.wallets} value={selectedWallet} onChange={setSelectedWallet}/>
             </section>
 
             <Line />

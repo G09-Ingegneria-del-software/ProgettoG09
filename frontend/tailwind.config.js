@@ -5,8 +5,10 @@ const colors = require("tailwindcss/colors");
 module.exports = {
   content: [
     "./src/**/*.{html,js,jsx,ts,tsx}",
-    "./node_modules/react-tailwindcss-datepicker/dist/index.esm.js"
+    "./node_modules/react-tailwindcss-datepicker/dist/index.esm.js",
+    './node_modules/preline/preline.js',
   ],
+  darkMode: '',
   theme: {
     colors,
     extend: {
@@ -25,6 +27,7 @@ module.exports = {
   },
   plugins: [
     require('@tailwindcss/line-clamp'),
+    require('preline/plugin'),
   ],
 }
 

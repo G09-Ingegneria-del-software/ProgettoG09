@@ -2,8 +2,12 @@
   "swagger": "2.0",
   "info": {
     "version": "1.0.0",
-    "title": "REST API",
-    "description": ""
+    "title": "Money Expense Rest API",
+    "description": "API documentatio for the project Money Expenses",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+  }
   },
   "host": "localhost:3000",
   "basePath": "/",
@@ -11,21 +15,23 @@
     "http"
   ],
   "paths": {
-    "/login": {
+    "/auth/login": {
       "post": {
-        "description": "",
+        "description": "Login the user",
         "parameters": [
           {
-            "name": "body",
+            "name": "Login user",
             "in": "body",
             "schema": {
               "type": "object",
               "properties": {
                 "email": {
-                  "example": "any"
+                  "type": "string", 
+                  "example": "mario.rossi@gmail.com"
                 },
                 "password": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "password"
                 }
               }
             }
@@ -36,17 +42,17 @@
             "description": "OK"
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Incorrect credentials"
           },
           "404": {
-            "description": "Not Found"
+            "description": "User Not Found"
           }
         }
       }
     },
-    "/isLogged": {
+    "/auth/isLogged": {
       "post": {
-        "description": "",
+        "description": "Check if user is authenticated",
         "parameters": [
           {
             "name": "x-access-token",
@@ -59,12 +65,12 @@
             "description": "OK"
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unvalid token"
           }
         }
       }
     },
-    "/logout": {
+    "/auth/logout": {
       "post": {
         "description": "",
         "parameters": [
@@ -81,27 +87,31 @@
         }
       }
     },
-    "/signup": {
+    "/auth/signup": {
       "post": {
         "description": "",
         "parameters": [
           {
-            "name": "body",
+            "name": "Dati utente",
             "in": "body",
             "schema": {
               "type": "object",
               "properties": {
                 "email": {
-                  "example": "any"
+                  "type":"string",
+                  "example": "mario.rossi@gmail.com"
                 },
                 "password": {
-                  "example": "any"
+                  "type":"string",
+                  "example": "password"
                 },
                 "firstName": {
-                  "example": "any"
+                  "type":"string",
+                  "example": "Mario"
                 },
                 "lastName": {
-                  "example": "any"
+                  "type":"string",
+                  "example": "Rossi"
                 }
               }
             }
@@ -109,13 +119,13 @@
         ],
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "User Created"
           },
           "400": {
             "description": "Bad Request"
           },
           "409": {
-            "description": "Conflict"
+            "description": "User already exists"
           },
           "500": {
             "description": "Internal Server Error"
@@ -125,7 +135,7 @@
     },
     "/api/user/": {
       "get": {
-        "description": "",
+        "description": "Get all users",
         "responses": {
           "200": {
             "description": "OK"
@@ -138,7 +148,7 @@
     },
     "/api/user/{email}": {
       "get": {
-        "description": "",
+        "description": "Get user by email",
         "parameters": [
           {
             "name": "email",
@@ -152,7 +162,7 @@
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
+            "description": "User not found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -174,7 +184,7 @@
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
+            "description": "User not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -196,7 +206,7 @@
             "description": "No Content"
           },
           "404": {
-            "description": "Not Found"
+            "description": "User not Found"
           }
         }
       }
@@ -218,7 +228,8 @@
               "type": "object",
               "properties": {
                 "password": {
-                  "example": "any"
+                  "type":"string",
+                  "example": "password"
                 }
               }
             }
@@ -229,7 +240,7 @@
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
+            "description": "User not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -248,16 +259,20 @@
               "type": "object",
               "properties": {
                 "name": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "Kitchen expenses"
                 },
                 "user": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "mario.rossi@gmail.com"
                 },
                 "tags": {
-                  "example": "any"
+                  "type": "string[]",
+                  "example": ["grocery", "home"]
                 },
                 "color": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "#fff"
                 }
               }
             }
@@ -265,10 +280,10 @@
         ],
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Category created"
           },
           "409": {
-            "description": "Conflict"
+            "description": "Category name already in use"
           },
           "500": {
             "description": "Internal Server Error"
@@ -276,7 +291,7 @@
         }
       },
       "get": {
-        "description": "",
+        "description": "Get all categories",
         "responses": {
           "200": {
             "description": "OK"
@@ -289,7 +304,7 @@
     },
     "/api/category/user/{name}": {
       "get": {
-        "description": "",
+        "description": "Get all categories that are owned by a given user",
         "parameters": [
           {
             "name": "name",
@@ -310,7 +325,7 @@
     },
     "/api/category/{user}/{name}": {
       "get": {
-        "description": "",
+        "description": "Get the category that belongs to a user with a given name",
         "parameters": [
           {
             "name": "user",
@@ -330,7 +345,7 @@
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Category not found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -338,7 +353,7 @@
         }
       },
       "delete": {
-        "description": "",
+        "description": "Delete a specific cateogory",
         "parameters": [
           {
             "name": "user",
@@ -358,7 +373,7 @@
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Category not found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -368,7 +383,7 @@
     },
     "/api/category/{name}": {
       "put": {
-        "description": "",
+        "description": "Modifies a given category",
         "parameters": [
           {
             "name": "name",
@@ -383,10 +398,12 @@
               "type": "object",
               "properties": {
                 "name": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "Kitchen expenses"
                 },
                 "user": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "mario.rossi@gmail.com"
                 }
               }
             }
@@ -397,10 +414,10 @@
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Category not found"
           },
           "409": {
-            "description": "Conflict"
+            "description": "Category name already in use"
           },
           "500": {
             "description": "Internal Server Error"
@@ -410,7 +427,7 @@
     },
     "/api/budget/": {
       "post": {
-        "description": "",
+        "description": "Creates a budget",
         "parameters": [
           {
             "name": "body",
@@ -419,22 +436,28 @@
               "type": "object",
               "properties": {
                 "name": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "Grocery"
                 },
                 "user": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "mario.rossi@gmail.com"
                 },
                 "description": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "Monthly for grocery expenses"
                 },
                 "initialMoney": {
-                  "example": "any"
+                  "type": "number",
+                  "example": "100"
                 },
                 "category": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "Home Expenses"
                 },
                 "color": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "#fff"
                 }
               }
             }
@@ -442,10 +465,10 @@
         ],
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Budget created"
           },
           "409": {
-            "description": "Conflict"
+            "description": "Budget name already in use"
           },
           "500": {
             "description": "Internal Server Error"
@@ -453,7 +476,7 @@
         }
       },
       "get": {
-        "description": "",
+        "description": "Get all budgets",
         "responses": {
           "200": {
             "description": "OK"
@@ -466,7 +489,7 @@
     },
     "/api/budget/user/{name}": {
       "get": {
-        "description": "",
+        "description": "Get all budgets of a user",
         "parameters": [
           {
             "name": "name",
@@ -487,7 +510,7 @@
     },
     "/api/budget/{user}/{name}": {
       "get": {
-        "description": "",
+        "description": "Get a budget with a name that belongs to a user",
         "parameters": [
           {
             "name": "user",
@@ -507,7 +530,7 @@
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Budget not found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -515,7 +538,7 @@
         }
       },
       "delete": {
-        "description": "",
+        "description": "Deletes a budget",
         "parameters": [
           {
             "name": "user",
@@ -535,7 +558,7 @@
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Budget not found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -545,7 +568,7 @@
     },
     "/api/budget/{name}": {
       "put": {
-        "description": "",
+        "description": "Modifies a given budget",
         "parameters": [
           {
             "name": "name",
@@ -560,10 +583,12 @@
               "type": "object",
               "properties": {
                 "name": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "Grocery"
                 },
                 "user": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "mario.rossi@gmail.com"
                 }
               }
             }
@@ -574,10 +599,7 @@
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
-          },
-          "409": {
-            "description": "Conflict"
+            "description": "Budget not found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -587,7 +609,7 @@
     },
     "/api/wallet/": {
       "post": {
-        "description": "",
+        "description": "Creates a wallet",
         "parameters": [
           {
             "name": "body",
@@ -596,22 +618,28 @@
               "type": "object",
               "properties": {
                 "name": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "Paypal Account"
                 },
                 "user": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "mario.rossi@gmail.com"
                 },
                 "description": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "Money in Paypla"
                 },
                 "money": {
-                  "example": "any"
+                  "type": "number",
+                  "example": "112.23"
                 },
                 "categories": {
-                  "example": "any"
+                  "type": "string[]",
+                  "example": ["grocery", "home"]
                 },
                 "color": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "#00f"
                 }
               }
             }
@@ -627,7 +655,7 @@
         }
       },
       "get": {
-        "description": "",
+        "description": "Get all wallets",
         "responses": {
           "200": {
             "description": "OK"
@@ -640,7 +668,7 @@
     },
     "/api/wallet/user/{name}": {
       "get": {
-        "description": "",
+        "description": "Get all wallets of a user",
         "parameters": [
           {
             "name": "name",
@@ -661,7 +689,7 @@
     },
     "/api/wallet/{user}/{name}": {
       "get": {
-        "description": "",
+        "description": "Get a wallet with a name that belongs to a user",
         "parameters": [
           {
             "name": "user",
@@ -681,7 +709,7 @@
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Walllet not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -689,7 +717,7 @@
         }
       },
       "delete": {
-        "description": "",
+        "description": "Deletes a wallet",
         "parameters": [
           {
             "name": "user",
@@ -709,7 +737,7 @@
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Wallet not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -719,7 +747,7 @@
     },
     "/api/wallet/{name}": {
       "put": {
-        "description": "",
+        "description": "Modifies a given wallet",
         "parameters": [
           {
             "name": "name",
@@ -734,10 +762,12 @@
               "type": "object",
               "properties": {
                 "name": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "Paypal Account"
                 },
                 "user": {
-                  "example": "any"
+                  "type":"string",
+                  "example": "mario.rossi@gmail.com"
                 }
               }
             }
@@ -748,10 +778,7 @@
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
-          },
-          "409": {
-            "description": "Conflict"
+            "description": "Wallet not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -761,7 +788,7 @@
     },
     "/api/transaction/": {
       "post": {
-        "description": "",
+        "description": "Creates a transaction",
         "parameters": [
           {
             "name": "body",
@@ -770,22 +797,28 @@
               "type": "object",
               "properties": {
                 "user": {
-                  "example": "any"
+                  "type":"string",
+                  "example": "mario.rossi@gmail.com"
                 },
                 "category": {
-                  "example": "any"
+                  "type":"string",
+                  "example": "Grocery"
                 },
                 "wallet": {
-                  "example": "any"
+                  "type":"string",
+                  "example": "Paypal Account"
                 },
                 "type": {
-                  "example": "any"
+                  "type":"string",
+                  "example": "expenses"
                 },
                 "money": {
-                  "example": "any"
+                  "type":"number",
+                  "example": "12.00"
                 },
                 "description": {
-                  "example": "any"
+                  "type":"string",
+                  "example": "Bougth the vegetables for the week"
                 }
               }
             }
@@ -796,7 +829,7 @@
             "description": "Created"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Wallet not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -804,7 +837,7 @@
         }
       },
       "get": {
-        "description": "",
+        "description": "Get all transactions",
         "responses": {
           "200": {
             "description": "OK"
@@ -815,7 +848,7 @@
         }
       },
       "put": {
-        "description": "",
+        "description": "Modifies a given transaction",
         "parameters": [
           {
             "name": "body",
@@ -824,7 +857,8 @@
               "type": "object",
               "properties": {
                 "_id": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "uuid"
                 }
               }
             }
@@ -835,7 +869,7 @@
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Transaction not found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -845,7 +879,7 @@
     },
     "/api/transaction/user/{name}": {
       "get": {
-        "description": "",
+        "description": "Get all transactions that are owned by a given user",
         "parameters": [
           {
             "name": "name",
@@ -858,9 +892,6 @@
           "200": {
             "description": "OK"
           },
-          "404": {
-            "description": "Not Found"
-          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -869,7 +900,7 @@
     },
     "/api/transaction/{id}": {
       "get": {
-        "description": "",
+        "description": "Gets a given transaction",
         "parameters": [
           {
             "name": "id",
@@ -899,10 +930,10 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Transaction deleted"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Transaction not found"
           },
           "500": {
             "description": "Internal Server Error"

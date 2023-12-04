@@ -14,7 +14,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     if (user.password !== password) {
-        return res.status(401).json({ message: "Incorrect password" });
+        return res.status(401).json({ message: "Incorrect credentials" });
     }
 
     var payload = {email: user.email, id: user._id};

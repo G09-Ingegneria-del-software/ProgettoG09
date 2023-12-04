@@ -63,24 +63,8 @@ export const getUserByEmail = (req: express.Request, res: express.Response) => {
     });
 }
 
-// Get user by id
-export const getUserById = (req: express.Request, res: express.Response) => {
-    User.findById(req.params.id, (err: Error, user: UserType | null) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Internal Server Error');
-        } else {
-            if (!user){
-                res.status(404).send("User not found");
-            }else {
-                res.status(200).send(user);
-            }
-        }
-    });
-}
-
 // Delete user by email
-export const deleteUserByEmail = async (req: express.Request, res: express.Response) => {
+export const deleteUser = async (req: express.Request, res: express.Response) => {
     let data = await User.findOne({email: req.params.email}).exec();
 
     if (!data){
@@ -119,27 +103,3 @@ export const updatePassword = (req: express.Request, res: express.Response) => {
         res.status(500).send('Internal Server Error');
     });
 };
-
-export const toggleBlock = (req: express.Request, res: express.Response) => {
-    User.findOne({email: req.params.email})
-    .then((data: UserType | null) => {
-        if (!data){
-            res.status(404).send("User not found");
-        } else {
-            User.findOneAndUpdate({email: req.params.email}, {isBlocked: !data.isBlocked}, {new: true})
-            .then((data: UserType | null) => {
-                if (!data){
-                    res.status(404).send("User not found");
-                }else {
-                    res.status(200).send(data);
-                }
-            })
-            .catch((err: Error) => {
-                res.status(500).send('Internal Server Error');
-            });
-        }
-    })
-    .catch((err: Error) => {
-        res.status(500).send('Internal Server Error');
-    });
-}

@@ -3,11 +3,11 @@ import { createWallet, getWallet, getWallets, getWalletsByUser, updateWallet, de
 
 const walletRouter = express.Router();
 
-walletRouter.post('/', createWallet);
-walletRouter.get('/', getWallets);
-walletRouter.get('/user/:name', getWalletsByUser);
-walletRouter.get('/:user/:name', getWallet);
-walletRouter.put('/:name', updateWallet);
-walletRouter.delete('/:user/:name', deleteWallet);
+walletRouter.post('/api/wallet/', createWallet);
+walletRouter.get('/api/wallet/', getWallets);
+walletRouter.get('/api/wallet/user/:name', getWalletsByUser);
+walletRouter.get('/api/wallet/:user/:name', getWallet);
+walletRouter.put('/api/wallet/:name', updateWallet);
+walletRouter.delete('/api/wallet/:user/:name', deleteWallet);
 
 export default walletRouter;

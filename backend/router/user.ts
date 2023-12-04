@@ -1,15 +1,13 @@
 import express from 'express';
-import { signUp, getUsers, getUserByEmail, getUserById, deleteUserByEmail, 
-    updatePassword, updateData, toggleBlock } from '../controller/user';
+import { getUsers, getUserByEmail, deleteUser, 
+    updatePassword, updateData } from '../controller/user';
 
 const userRouter = express.Router();
 
-userRouter.get("/", getUsers);
-userRouter.get("/email/:email", getUserByEmail);
-userRouter.get("/:id", getUserById);
-userRouter.put("/:email", updateData);
-userRouter.put("/password/:email", updatePassword);
-userRouter.put("/block/:email", toggleBlock);
-userRouter.delete("/:email", deleteUserByEmail);
+userRouter.get("/api/user/", getUsers); 
+userRouter.get("/api/user/:email", getUserByEmail);
+userRouter.put("/api/user/:email", updateData); 
+userRouter.put("/api/user/password/:email", updatePassword); 
+userRouter.delete("/api/user/:email", deleteUser); 
 
 export default userRouter;

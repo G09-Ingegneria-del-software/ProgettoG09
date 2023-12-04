@@ -71,30 +71,19 @@ export const getWallet = (req: express.Request, res: express.Response) => {
 }
 
 // Update wallet by name and user
-export const updateWallet = (req: express.Request, res: express.Response) => {
-    Wallet.findOne({name: req.body.name, user: req.body.user})
-    .then((data: WalletType | null) => {
-        if (data) {
-            res.status(409).send('Wallet name already in use');
-        }else{
-            Wallet.findOneAndUpdate({name: req.params.name, user: req.body.user}, req.body, {new: true})
-                .then((data: WalletType | null) => {
-                    if (data) {
-                        res.status(200).send('Wallet updated');
-                    } else {
-                        res.status(404).send('Wallet not found');
-                    }
-                })
-                .catch((err: Error) => {
-                    console.error(err);
-                    res.status(500).send('Internal Server Error');
-                });
-        }}
-    )
-    .catch((err: Error) => {
-        console.error(err);
-        res.status(500).send('Internal Server Error');
-    });
+export const updateWallet = (req: express.Request, res: express.Response) => {    
+    Wallet.findOneAndUpdate({name: req.params.name, user: req.body.user}, req.body, {new: true})
+        .then((data: WalletType | null) => {
+            if (data) {
+                res.status(200).send('Wallet updated');
+            } else {
+                res.status(404).send('Wallet not found');
+            }
+        })
+        .catch((err: Error) => {
+            console.error(err);
+            res.status(500).send('Internal Server Error');
+        });
 }
 // Delete wallet by name and user
 export const deleteWallet = (req: express.Request, res: express.Response) => {

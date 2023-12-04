@@ -16,7 +16,7 @@ import Line from "../components/common/Line";
 import Spacer from "../components/common/Spacer";
 
 // Importing types
-import { Transaction, Currency } from '../type';
+import { Transaction, CurrencyValues } from '../type';
 
 const Dashboard = () => {
     return (
@@ -98,7 +98,7 @@ const LatestTransactionsSection = () => {
                     text: "expense",
                     color: "red"
                 }, 
-                money: {amount: 500.00, currency: Currency.EUR}, 
+                money: {amount: 500.00, currency: CurrencyValues.EUR}, 
                 date: new Date(Date.now())
             },
             {
@@ -107,7 +107,7 @@ const LatestTransactionsSection = () => {
                     text: "expense",
                     color: "red"
                 }, 
-                money: {amount: 500.00, currency: Currency.EUR}, 
+                money: {amount: 500.00, currency: CurrencyValues.EUR}, 
                 date: new Date(Date.now())
             },
             {
@@ -116,7 +116,7 @@ const LatestTransactionsSection = () => {
                     text: "expense",
                     color: "red"
                 }, 
-                money: {amount: 500.00, currency: Currency.EUR}, 
+                money: {amount: 500.00, currency: CurrencyValues.EUR}, 
                 date: new Date(Date.now())
             },
             {
@@ -125,7 +125,7 @@ const LatestTransactionsSection = () => {
                     text: "expense",
                     color: "red"
                 }, 
-                money: {amount: 500.00, currency: Currency.EUR}, 
+                money: {amount: 500.00, currency: CurrencyValues.EUR}, 
                 date: new Date(Date.now())
             },
             {
@@ -134,7 +134,7 @@ const LatestTransactionsSection = () => {
                     text: "expense",
                     color: "red"
                 }, 
-                money: {amount: 500.00, currency: Currency.EUR}, 
+                money: {amount: 500.00, currency: CurrencyValues.EUR}, 
                 date: new Date(Date.now())
             },
             {
@@ -143,7 +143,7 @@ const LatestTransactionsSection = () => {
                     text: "expense",
                     color: "red"
                 }, 
-                money: {amount: 500.00, currency: Currency.EUR}, 
+                money: {amount: 500.00, currency: CurrencyValues.EUR}, 
                 date: new Date(Date.now())
             },
             {
@@ -152,7 +152,7 @@ const LatestTransactionsSection = () => {
                     text: "expense",
                     color: "red"
                 }, 
-                money: {amount: 500.00, currency: Currency.EUR}, 
+                money: {amount: 500.00, currency: CurrencyValues.EUR}, 
                 date: new Date(Date.now())
             },
             {
@@ -161,7 +161,7 @@ const LatestTransactionsSection = () => {
                     text: "expense",
                     color: "red"
                 }, 
-                money: {amount: 500.00, currency: Currency.EUR}, 
+                money: {amount: 500.00, currency: CurrencyValues.EUR}, 
                 date: new Date(Date.now())
             },
             {
@@ -170,7 +170,7 @@ const LatestTransactionsSection = () => {
                     text: "expense",
                     color: "red"
                 }, 
-                money: {amount: 500.00, currency: Currency.EUR}, 
+                money: {amount: 500.00, currency: CurrencyValues.EUR}, 
                 date: new Date(Date.now())
             },
 

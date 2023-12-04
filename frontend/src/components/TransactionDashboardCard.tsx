@@ -4,7 +4,7 @@ import React, {useState, useEffect} from 'react'
 import Line from './common/Line';
 
 // Importing types
-import { Transaction, Currency } from '../type';
+import { Transaction, CurrencyValues } from '../type';
 
 
 const TransactionDashboardCard = () => {
@@ -20,7 +20,7 @@ const TransactionDashboardCard = () => {
                     text: "expense",
                     color: "red"
                 }, 
-                money: {amount: 500.00, currency: Currency.EUR}, 
+                money: {amount: 500.00, currency: CurrencyValues.EUR}, 
                 date: new Date(Date.now())
             } 
         ]);

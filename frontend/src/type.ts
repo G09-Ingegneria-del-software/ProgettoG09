@@ -1,29 +1,43 @@
+export type Selectable = {
+  id?: string,
+  title: string,
+}
 
-export enum Currency {
+export interface Wallet extends Selectable {
+    id: string,
+}
+
+export interface TransactionType extends Selectable {
+    title: TransactionValues
+}
+
+export enum TransactionValues {
+    EXPENSE="expense",
+    INCOME="income",
+    INVESTMENT="investment"
+}
+
+export enum CurrencyValues {
     EUR="EUR",
     USD="USD",
-    JPY="JPY"
+    JPY="JPY",
+    GBP="GBP",
+    RUB="RUB",
 }
 
 export type Money = {
     amount: number,
-    currency: Currency
+    currency: CurrencyValues
 }
 
 export type Transaction = {
-    [key: string]: string | {text: string, color: string} | Money | Date,
     description: string,
     type: {text: "expense", color: "red"} | {text: "income", color: "lime"} | {text: "investment", color: "cyan"},
     money: Money,
-    date: Date
+    date: Date,
 }
 
 export type Comparator = {
     label: string, 
     tag: string
 }; 
-
-export type Wallet = {
-    id: string,
-    title: string
-}

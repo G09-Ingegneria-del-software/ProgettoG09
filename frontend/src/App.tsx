@@ -11,7 +11,7 @@ import Settings from './pages/Settings';
 
 function App() {
 
-  const isLoggedIn = false;
+  const isLoggedIn = true;
 
   return (
     <BrowserRouter>

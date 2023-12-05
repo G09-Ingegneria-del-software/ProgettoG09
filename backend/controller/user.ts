@@ -12,7 +12,6 @@ export const signUp = (req: express.Request, res: express.Response) => {
                 return res.status(400).send('Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number and one special character');
             }
             const newUser = new User({
-                _id : req.body.email,
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
                 email: req.body.email,

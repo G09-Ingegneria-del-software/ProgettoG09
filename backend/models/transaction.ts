@@ -4,7 +4,7 @@ const schema = new Schema({
     _id : {type:String},
     category: {type:String, required:true},
     wallet: {type:String, required:true},
-    type: {type:String, required:true},
+    type: {type: String, enum: ["income", "expense"], required:true},
     money: {type: Number, required:true},
     description: {type: String},
     date: {type: Date, default: Date.now},

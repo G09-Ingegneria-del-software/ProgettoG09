@@ -7,7 +7,7 @@ import Budget from "../models/budget";
 export const createTransaction = async (req: express.Request, res: express.Response) => {
     try {
         const newTransaction = new Transaction({
-            _id: new Date().toISOString() + " - " + req.body.user,
+            // _id: new Date().toISOString() + " - " + req.body.user,
             category: req.body.category,
             wallet: req.body.wallet,
             type: req.body.type,

@@ -7,7 +7,6 @@ export const createWallet = (req: express.Request, res: express.Response) => {
     .then((data: WalletType | null) => {
         if (!data){
             let newWallet = new Wallet({
-                _id : req.body.name,
                 name: req.body.name,
                 description: req.body.description,
                 money: req.body.money,

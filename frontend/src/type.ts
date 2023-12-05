@@ -12,9 +12,9 @@ export interface TransactionType extends Selectable {
 }
 
 export enum TransactionValues {
+    ALL="all",
     EXPENSE="expense",
     INCOME="income",
-    INVESTMENT="investment"
 }
 
 export enum CurrencyValues {

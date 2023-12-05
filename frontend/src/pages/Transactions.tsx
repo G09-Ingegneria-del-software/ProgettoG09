@@ -24,12 +24,12 @@ import { K } from "../K";
 const Transactions = () => {
 
     const [transactions, setTransactions] = useState<Transaction[]>([
-        {type: {text: "expense", color: "red"}, description: "Spesa al supermercato con Ivano da 500000 euro, voglio una bugatti", money: {amount: 500, currency: CurrencyValues.EUR}, date: new Date(Date.now())},
-        {type: {text: "income", color: "lime"}, description: "Stipendio: sono un programmatore della Google", money: {amount: 10500, currency: CurrencyValues.JPY}, date: new Date(Date.now())},
-        {type: {text: "expense", color: "red"}, description: "Benzina", money: {amount: -150.23, currency: CurrencyValues.USD}, date: new Date(Date.now())},
-        {type: {text: "expense", color: "red"}, description: "Spesa", money: {amount: -123.45, currency: CurrencyValues.USD}, date: new Date(Date.now())},
-        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: -123.24, currency: CurrencyValues.USD}, date: new Date(Date.now())},
-        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: -79.99, currency: CurrencyValues.USD}, date: new Date(Date.now())},
+        {type: {text: "expense", color: "red"}, description: "Spesa al supermercato con Ivano da 500000 euro, voglio una bugatti", money: {amount: 500, currency: CurrencyValues.EUR}, date: new Date("2023-12-05")},
+        {type: {text: "income", color: "lime"}, description: "Stipendio: sono un programmatore della Google", money: {amount: 10500, currency: CurrencyValues.JPY}, date: new Date("2023-12-04")},
+        {type: {text: "expense", color: "red"}, description: "Benzina", money: {amount: -150.23, currency: CurrencyValues.USD}, date: new Date("2023-11-30")},
+        {type: {text: "expense", color: "red"}, description: "Spesa", money: {amount: -123.45, currency: CurrencyValues.USD}, date: new Date("2023-11-27")},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: -123.24, currency: CurrencyValues.USD}, date: new Date("2023-12-04")},
+        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: -79.99, currency: CurrencyValues.USD}, date: new Date("2023-12-01")},
     ]);
 
     const [curTransactions, setCurTransactions] = useState<Transaction[]>(transactions);
@@ -121,7 +121,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, set
                     <Select label="Type" data={K.transactionTypes} value={newType} onChange={setNewType}/>
                     <InputText label="Description" value={newDescription} setValue={setNewDescription} />
                     <InputText label="Amount" value={newAmount.toString()} setValue={setNewAmount} />
-                    <Select label="Currency" data={K.currencies} value={newCurrency} onChange={setNewCurrency}/>
+                    {/* <Select label="Currency" data={K.currencies} value={newCurrency} onChange={setNewCurrency}/> */}
                     <div className="flex flex-col gap-1">
                         <label className="text-secondary">Date</label>
                         <div className="focus:outline-none border-1 border-secondary">
@@ -170,7 +170,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, set
                                     </div>
                                 </th>
                                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base whitespace-nowrap p-4"><p className="w-[300px] leading-8 whitespace-normal line-clamp-1">{description}</p></td>
-                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-secondary">{date.getDay()}/{date.getMonth()}/{date.getFullYear()}</td>
+                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-secondary">{date.getDate()}/{date.getMonth()+1}/{date.getFullYear()}</td>
                                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4" style={{ color: type.color }}>{money.amount}</td>
                                 {/* Edit transaction */}
                                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
@@ -231,9 +231,10 @@ const SearchBar: React.FC<SearchBarProps> = ({transactions, curTransactions, set
     ]
 
     const [sortBy, setSortBy] = useState<Comparator>(sortByList[0]); // used in select
-    const [typeValue, setTypeValue] = useState<string>(TransactionValues.EXPENSE); // used in select
-    const [dateValue, setDateValue] = useState<Date>(new Date(Date.now())); // used in select
-    const [amountValue, setAmountValue] = useState<number>(0); // used in select
+    const [typeFilter, setTypeFilter] = useState<string>(TransactionValues.EXPENSE); // used in select
+    const [startDateFilter, setStartDateFilter] = useState<Date>(new Date(Date.now())); // used in select
+    const [endDateFilter, setEndDateFilter] = useState<Date>(new Date(Date.now())); // used in select
+    const [amountFilter, setAmountFilter] = useState<string>(""); // used in select
 
     const searchIconSrc: string = require("../assets/icons/search.svg").default;
 
@@ -255,7 +256,7 @@ const SearchBar: React.FC<SearchBarProps> = ({transactions, curTransactions, set
 
         switch (newSortBy.tag) {
             case "date":
-                curTransactions.sort((a: Transaction, b: Transaction) => a.date.getDate() - b.date.getDate());
+                curTransactions.sort((a: Transaction, b: Transaction) => a.date.getTime() - b.date.getTime());
                 break;
             case "amount":
                 curTransactions.sort((a: Transaction, b: Transaction) => a.money.amount - b.money.amount);
@@ -264,6 +265,31 @@ const SearchBar: React.FC<SearchBarProps> = ({transactions, curTransactions, set
 
         setCurTransactions([...curTransactions]);
     }
+
+    const handleFilterByChange = (typeFilter: string, startDateFilter: Date, endDateFilter: Date, amountFilter: string) => {
+        // Type filtering
+        if (typeFilter != TransactionValues.ALL) {
+            curTransactions = transactions.filter((t: Transaction) => t.type.text === typeFilter);
+        } else {
+            curTransactions = transactions;
+        }
+
+        // Date filtering
+        if (startDateFilter && endDateFilter) {
+            curTransactions = transactions.filter((t: Transaction) => t.date >= new Date(startDateFilter) && t.date <= new Date(endDateFilter));
+        }
+
+        // Amount filtering
+        if (amountFilter != "") { 
+            curTransactions = transactions.filter((t: Transaction) => t.money.amount >= parseFloat(amountFilter));
+        }
+
+        setCurTransactions([...curTransactions]);
+    }
+
+    useEffect(() => {
+        handleFilterByChange(typeFilter, startDateFilter, endDateFilter, amountFilter);
+    }, [typeFilter, startDateFilter, amountFilter]);
 
     return (
         <div className="relative px-4 flex-1 h-16 bg-white flex justify-between items-center rounded-xl shadow-lg">
@@ -277,12 +303,9 @@ const SearchBar: React.FC<SearchBarProps> = ({transactions, curTransactions, set
                 <div className="flex justify-end items-center gap-4">
                     {/* Sort by */}
                     <Select data={sortByList.map(item => item.label)} value={sortBy.label} onChange={handleSortByChange} />
-                    {/* <select onChange={handleSortByChange} value={sortBy.label} id="sortBy" name="sortBy" className="bg-[#E9ECFF] rounded-md text-secondary w-[150px] px-2 py-2 my-1 mx-4" >
-                            {sortByList.map(({label}, i) => <option key={i} disabled={i === 0} >{label}</option>)}
-                        </select> */}
 
                     {/* Filter by */}
-                    <PopoverText typeValue={typeValue} setTypeValue={setTypeValue} startDate={dateValue} setStartDate={setDateValue} amountValue={amountValue} setAmountValue={setAmountValue} />
+                    <PopoverText typeValue={typeFilter} setTypeValue={setTypeFilter} startDate={startDateFilter} setStartDate={setStartDateFilter} endDate={endDateFilter} setEndDate={setEndDateFilter} amountValue={amountFilter} setAmountValue={setAmountFilter} />
                 </div>
 
         </div>

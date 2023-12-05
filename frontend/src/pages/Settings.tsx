@@ -73,12 +73,12 @@ const Settings = () => {
                     </div>
                     <div className='w-full flex justify-start items-center gap-8'>
                         <InputText label="Email" value={email} setValue={setEmail} disabled={true} />
-                        <div className="w-[300px] h-full flex justify-start items-center">
+                        {/* <div className="w-[300px] h-full flex justify-start items-center">
                             <div className="flex items-center mt-7">
                                 <input onChange={() => setDoubleFactorAuth(!hasDoubleFactorAuth)} name="doubleFactorAuth" type="checkbox" className="h-4 w-4 rounded-xl border-gray-300 text-active focus:outline-none focus:ring-indigo" checked={hasDoubleFactorAuth}/>
                                 <label htmlFor='doubleFactorAuth' className="ml-2 text-active">Enable 2 factor auth</label>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                     <div className='w-full flex justify-start items-center gap-8'>
                         <InputText label="Password" value={password} setValue={setPassword} type="password" disabled={true} />

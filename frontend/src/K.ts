@@ -10,9 +10,9 @@ export const K = {
         "YEN"
     ],
     transactionTypes: [
+        "all",
         "income",
         "expense",
-        "investment"
     ],
     wallets: [
         "American express",

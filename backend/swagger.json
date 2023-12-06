@@ -10,6 +10,32 @@
   }
   },
   "host": "localhost:3000",
+  "tags": [
+    {
+        "name": "User",
+        "description": "API per il modello 'User'. Gestisce gli utenti in piattaforma"
+    },
+    {
+        "name" : "Authentication",
+        "description": "API per gestire login e logout, signup e gestione delle sessioni mediante token"
+    },
+    {
+        "name" : "Category",
+        "description": "API per il modello 'Category'. Gestische le categorie in piattaforma"
+    },
+    {
+        "name" : "Budget",
+        "description": "API per il modello 'Budget'. Gestisce i budget in piattaforma"
+    },
+    {
+        "name" : "Transaction",
+        "description": "API per il modello 'Transaction'. Gestisce le transazioni in piattaforma"
+    },
+    {
+        "name" : "Wallet",
+        "description" : "API per il modello 'Wallet'. Gestisce i wallet in piattaforma"
+    }
+],
   "basePath": "/",
   "schemes": [
     "http"
@@ -17,7 +43,10 @@
   "paths": {
     "/auth/login": {
       "post": {
-        "description": "Login the user",
+        "tags" : [
+          "Authentication"
+        ],
+        "summary": "Login the user",
         "parameters": [
           {
             "name": "Login user",
@@ -52,7 +81,10 @@
     },
     "/auth/isLogged": {
       "post": {
-        "description": "Check if user is authenticated",
+        "tags" : [
+          "Authentication"
+        ],
+        "summary": "Check if user is authenticated",
         "parameters": [
           {
             "name": "x-access-token",
@@ -72,7 +104,10 @@
     },
     "/auth/logout": {
       "post": {
-        "description": "",
+        "tags" : [
+          "Authentication"
+        ],
+        "summary": "Logout the user from the session",
         "parameters": [
           {
             "name": "x-access-token",
@@ -89,7 +124,10 @@
     },
     "/auth/signup": {
       "post": {
-        "description": "",
+        "tags" : [
+          "Authentication"
+        ],
+        "summary": "Creates a new user in the application",
         "parameters": [
           {
             "name": "Dati utente",
@@ -135,7 +173,10 @@
     },
     "/api/user/": {
       "get": {
-        "description": "Get all users",
+        "tags" : [
+          "User"
+        ],
+        "summary": "Get all users",
         "responses": {
           "200": {
             "description": "OK"
@@ -148,7 +189,10 @@
     },
     "/api/user/{email}": {
       "get": {
-        "description": "Get user by email",
+        "tags" : [
+          "User"
+        ],
+        "summary": "Get user by email",
         "parameters": [
           {
             "name": "email",
@@ -170,7 +214,10 @@
         }
       },
       "put": {
-        "description": "",
+        "tags" : [
+          "User"
+        ],
+        "summary": "Modifies one user",
         "parameters": [
           {
             "name": "email",
@@ -192,7 +239,10 @@
         }
       },
       "delete": {
-        "description": "",
+        "tags" : [
+          "User"
+        ],
+        "summary": "Deletes a user",
         "parameters": [
           {
             "name": "email",
@@ -213,7 +263,10 @@
     },
     "/api/user/password/{email}": {
       "put": {
-        "description": "",
+        "tags" : [
+          "User"
+        ],
+        "summary": "Modifies a user password",
         "parameters": [
           {
             "name": "email",
@@ -250,7 +303,10 @@
     },
     "/api/category/": {
       "post": {
-        "description": "",
+        "tags" : [
+          "Category"
+        ],
+        "summary": "Creates a category",
         "parameters": [
           {
             "name": "body",
@@ -291,7 +347,10 @@
         }
       },
       "get": {
-        "description": "Get all categories",
+        "tags" : [
+          "Category"
+        ],
+        "summary": "Get all categories",
         "responses": {
           "200": {
             "description": "OK"
@@ -304,7 +363,10 @@
     },
     "/api/category/user/{name}": {
       "get": {
-        "description": "Get all categories that are owned by a given user",
+        "tags" : [
+          "Category"
+        ],
+        "summary": "Get all categories that are owned by a given user",
         "parameters": [
           {
             "name": "name",
@@ -325,7 +387,10 @@
     },
     "/api/category/{user}/{name}": {
       "get": {
-        "description": "Get the category that belongs to a user with a given name",
+        "tags" : [
+          "Category"
+        ],
+        "summary": "Get the category that belongs to a user with a given name",
         "parameters": [
           {
             "name": "user",
@@ -353,7 +418,10 @@
         }
       },
       "delete": {
-        "description": "Delete a specific cateogory",
+        "tags" : [
+          "Category"
+        ],
+        "summary": "Delete a specific cateogory",
         "parameters": [
           {
             "name": "user",
@@ -383,7 +451,10 @@
     },
     "/api/category/{name}": {
       "put": {
-        "description": "Modifies a given category",
+        "tags" : [
+          "Category"
+        ],
+        "summary": "Modifies a given category",
         "parameters": [
           {
             "name": "name",
@@ -427,7 +498,10 @@
     },
     "/api/budget/": {
       "post": {
-        "description": "Creates a budget",
+        "tags" : [
+          "Budget"
+        ],
+        "summary": "Creates a budget",
         "parameters": [
           {
             "name": "body",
@@ -476,7 +550,10 @@
         }
       },
       "get": {
-        "description": "Get all budgets",
+        "tags" : [
+          "Budget"
+        ],
+        "summary": "Get all budgets",
         "responses": {
           "200": {
             "description": "OK"
@@ -489,7 +566,10 @@
     },
     "/api/budget/user/{name}": {
       "get": {
-        "description": "Get all budgets of a user",
+        "tags" : [
+          "Budget"
+        ],
+        "summary": "Get all budgets of a user",
         "parameters": [
           {
             "name": "name",
@@ -510,7 +590,10 @@
     },
     "/api/budget/{user}/{name}": {
       "get": {
-        "description": "Get a budget with a name that belongs to a user",
+        "tags" : [
+          "Budget"
+        ],
+        "summary": "Get a budget with a name that belongs to a user",
         "parameters": [
           {
             "name": "user",
@@ -538,7 +621,10 @@
         }
       },
       "delete": {
-        "description": "Deletes a budget",
+        "tags" : [
+          "Budget"
+        ],
+        "summary": "Deletes a budget",
         "parameters": [
           {
             "name": "user",
@@ -568,7 +654,10 @@
     },
     "/api/budget/{name}": {
       "put": {
-        "description": "Modifies a given budget",
+        "tags" : [
+          "Budget"
+        ],
+        "summary": "Modifies a given budget",
         "parameters": [
           {
             "name": "name",
@@ -609,7 +698,10 @@
     },
     "/api/wallet/": {
       "post": {
-        "description": "Creates a wallet",
+        "tags" : [
+          "Wallet"
+        ],
+        "summary": "Creates a wallet",
         "parameters": [
           {
             "name": "body",
@@ -655,7 +747,10 @@
         }
       },
       "get": {
-        "description": "Get all wallets",
+        "tags" : [
+          "Wallet"
+        ],
+        "summary": "Get all wallets",
         "responses": {
           "200": {
             "description": "OK"
@@ -668,7 +763,10 @@
     },
     "/api/wallet/user/{name}": {
       "get": {
-        "description": "Get all wallets of a user",
+        "tags" : [
+          "Wallet"
+        ],
+        "summary": "Get all wallets of a user",
         "parameters": [
           {
             "name": "name",
@@ -689,7 +787,10 @@
     },
     "/api/wallet/{user}/{name}": {
       "get": {
-        "description": "Get a wallet with a name that belongs to a user",
+        "tags" : [
+          "Wallet"
+        ],
+        "summary": "Get a wallet with a name that belongs to a user",
         "parameters": [
           {
             "name": "user",
@@ -717,7 +818,10 @@
         }
       },
       "delete": {
-        "description": "Deletes a wallet",
+        "tags" : [
+          "Wallet"
+        ],
+        "summary": "Deletes a wallet",
         "parameters": [
           {
             "name": "user",
@@ -747,7 +851,10 @@
     },
     "/api/wallet/{name}": {
       "put": {
-        "description": "Modifies a given wallet",
+        "tags" : [
+          "Wallet"
+        ],
+        "summary": "Modifies a given wallet",
         "parameters": [
           {
             "name": "name",
@@ -788,7 +895,10 @@
     },
     "/api/transaction/": {
       "post": {
-        "description": "Creates a transaction",
+        "tags" : [
+          "Transaction"
+        ],
+        "summary": "Creates a transaction",
         "parameters": [
           {
             "name": "body",
@@ -828,6 +938,9 @@
           "201": {
             "description": "Created"
           },
+          "401": {
+            "description": "No token provided"
+          },
           "404": {
             "description": "Wallet not Found"
           },
@@ -837,7 +950,10 @@
         }
       },
       "get": {
-        "description": "Get all transactions",
+        "tags" : [
+          "Transaction"
+        ],
+        "summary": "Get all transactions",
         "responses": {
           "200": {
             "description": "OK"
@@ -848,7 +964,10 @@
         }
       },
       "put": {
-        "description": "Modifies a given transaction",
+        "tags" : [
+          "Transaction"
+        ],
+        "summary": "Modifies a given transaction",
         "parameters": [
           {
             "name": "body",
@@ -879,7 +998,10 @@
     },
     "/api/transaction/user/{name}": {
       "get": {
-        "description": "Get all transactions that are owned by a given user",
+        "tags" : [
+          "Transaction"
+        ],
+        "summary": "Get all transactions that are owned by a given user",
         "parameters": [
           {
             "name": "name",
@@ -900,7 +1022,10 @@
     },
     "/api/transaction/{id}": {
       "get": {
-        "description": "Gets a given transaction",
+        "tags" : [
+          "Transaction"
+        ],
+        "summary": "Gets a given transaction",
         "parameters": [
           {
             "name": "id",
@@ -919,7 +1044,10 @@
         }
       },
       "delete": {
-        "description": "",
+        "tags" : [
+          "Transaction"
+        ],
+        "summary": "Deletes a transaction",
         "parameters": [
           {
             "name": "id",

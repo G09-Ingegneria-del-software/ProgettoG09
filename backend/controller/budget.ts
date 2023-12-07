@@ -19,7 +19,7 @@ export const createBudget = (req: express.Request, res: express.Response) => {
 
             newBudget.save()
             .then((data: BudgetType) => {
-                res.status(201).send('Budget created');
+                res.status(201).send(data);
             })
             .catch((err: Error) => {
                 res.status(500).send('Internal Server Error');

@@ -18,7 +18,7 @@ export const createWallet = (req: express.Request, res: express.Response) => {
 
             newWallet.save()
             .then((data: WalletType) => {
-                res.status(201).send('Wallet created');
+                res.status(201).send(data);
             })
             .catch((err: Error) => {
                 console.error(err);

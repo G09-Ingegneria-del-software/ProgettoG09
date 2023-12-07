@@ -7,6 +7,7 @@ export const createCategory = (req: express.Request, res: express.Response) => {
     .then((data: CategoryType | null) => {
         if (!data) {
             const newCategory = new Category({
+                _id: req.body.name + req.body.user + Date.now(),
                 name: req.body.name,
                 tags: req.body.tags,
                 color: req.body.color,

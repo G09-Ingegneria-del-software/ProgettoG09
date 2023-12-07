@@ -7,6 +7,7 @@ export const createBudget = (req: express.Request, res: express.Response) => {
     .then((data: BudgetType | null) => {
         if (!data) {
             const newBudget = new Budget({
+                _id: req.body.name + req.body.user + Date.now(),
                 name: req.body.name,
                 description: req.body.description,
                 initialMoney: req.body.initialMoney,

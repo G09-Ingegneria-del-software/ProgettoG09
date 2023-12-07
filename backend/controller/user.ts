@@ -12,6 +12,7 @@ export const signUp = (req: express.Request, res: express.Response) => {
                 return res.status(400).send('Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number and one special character');
             }
             const newUser = new User({
+                _id: req.body.email + Date.now(),
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
                 email: req.body.email,
@@ -24,6 +25,7 @@ export const signUp = (req: express.Request, res: express.Response) => {
                 res.status(201).send('User created');
             })
             .catch((err: Error) => {
+                console.log(err)
                 res.status(500).send('Internal Server Error');
             });
 
@@ -32,6 +34,7 @@ export const signUp = (req: express.Request, res: express.Response) => {
         }
     })
     .catch((err: Error) => {
+        console.log(err)
         res.status(500).send('Internal Server Error');
     });
 };

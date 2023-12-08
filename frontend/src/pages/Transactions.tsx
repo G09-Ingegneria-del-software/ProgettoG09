@@ -1,5 +1,6 @@
 // Importing libraries
-import React, {useEffect, useState} from "react"
+import React, {useEffect, useState, useContext} from "react"
+import axios from "axios";
 
 // Importing pages
 import UserPage from './UserPage';
@@ -15,31 +16,45 @@ import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import PopoverText from "../components/common/Popover";
 
 // Importing types
-import { CurrencyValues, Transaction, TransactionValues, Comparator } from "../type";
+import { Transaction, TransactionValues, Comparator, calculateColor } from "../type";
 import InputText from "../components/common/InputText";
 
 // Importing static stuff
 import { K } from "../K";
 
+// Importing context
+import AppContext from "../appContext";
+
 const Transactions = () => {
 
-    const [transactions, setTransactions] = useState<Transaction[]>([
-        {type: {text: "expense", color: "red"}, description: "Spesa al supermercato con Ivano da 500000 euro, voglio una bugatti", money: {amount: 500, currency: CurrencyValues.EUR}, date: new Date("2023-12-05")},
-        {type: {text: "income", color: "lime"}, description: "Stipendio: sono un programmatore della Google", money: {amount: 10500, currency: CurrencyValues.JPY}, date: new Date("2023-12-04")},
-        {type: {text: "expense", color: "red"}, description: "Benzina", money: {amount: -150.23, currency: CurrencyValues.USD}, date: new Date("2023-11-30")},
-        {type: {text: "expense", color: "red"}, description: "Spesa", money: {amount: -123.45, currency: CurrencyValues.USD}, date: new Date("2023-11-27")},
-        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: -123.24, currency: CurrencyValues.USD}, date: new Date("2023-12-04")},
-        {type: {text: "expense", color: "red"}, description: "Pagamento mensile palestra", money: {amount: -79.99, currency: CurrencyValues.USD}, date: new Date("2023-12-01")},
-    ]);
-
+    const {transactions} = useContext(AppContext);
     const [curTransactions, setCurTransactions] = useState<Transaction[]>(transactions);
 
-    // const [comparatorType]
+    const [addModalOpen, setAddModalOpen] = useState<boolean>(false); // opens popup on click of "Add transaction"
+
+    const handleCreateTransaction = () => {
+
+    }
+
+    useEffect(() => {
+        console.log(transactions);
+        setCurTransactions(transactions);
+    }, [transactions]);
 
     return (  
         <UserPage>
-            <Title title="Transactions" />
-            <Description description="Last transaction addeed 2d ago"/>
+            {/* Add transaction modal */}
+            <Modal open={addModalOpen} setOpen={setAddModalOpen} title="Add transaction" description="Insert values for all fields to create a transaction" buttonLabel="Add" onSubmitClick={handleCreateTransaction}>
+                {/* TODO: add content here */}
+            </Modal>
+
+            <div className="flex w-full justify-between items-center">
+                <div className="flex flex-col">
+                    <Title title="Transactions" />
+                    <Description description="Last transaction added 2d ago"/>
+                </div>
+                <ButtonIcon text="Add transaction" iconSrc={require("../assets/icons/plus.svg").default} color="active" handleClick={() => setAddModalOpen(!addModalOpen)}/>
+            </div>
             
             <Spacer height="2rem"/>
 
@@ -82,7 +97,6 @@ const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, set
     const [newType, setNewType] = useState("expense");
     const [newDescription, setNewDescription] = useState<string>("");
     const [newAmount, setNewAmount] = useState<number>(0);
-    const [newCurrency, setNewCurrency] = useState<string>(CurrencyValues.EUR);
     const [newDate, setNewDate] = useState<DateValueType>({
         startDate: new Date(),
         endDate: new Date(),
@@ -99,7 +113,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, set
         setNewDate(newValue);
     }
 
-    const handleEditTransaction = ({type, description, money, date}: Transaction) => {
+    const handleEditTransaction = (t: Transaction) => {
         setEditModalOpen(!editModalOpen);
     }
 
@@ -115,6 +129,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, set
 
     return (
         <div className="w-full bg-white rounded-xl shadow-lg p-8">
+
             {/* Edit modal */}
             <Modal open={editModalOpen} setOpen={setEditModalOpen} title="Edit transaction" description="In this section you'll be able to edit your transaction modifying type, description, money and date" buttonLabel="Save" onSubmitClick={handleSaveTransaction}>
                 <div className="flex flex-col justify-start gap-4">
@@ -158,23 +173,23 @@ const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, set
                         </tr>
                     </thead>
                     <tbody className="relative">
-                        {visibleTransactions.map(({ type, description, money, date }: Transaction, i) => {
+                        {visibleTransactions.map((t: Transaction, i) => {
                             const rowStyles = "border-b-[1px] relative border-main-100";
                             return <tr className={i % 2 === 0 ? rowStyles : rowStyles + " bg-gray-100"} style={{ width: '100%' }} key={i}>
                                 <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-main">
                                     <div className="relative w-[1.5rem] h-[1.5rem]">
-                                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1.5rem] h-[1.5rem] rounded-full" style={{ backgroundColor: type.color, opacity: 0.2 }}>
+                                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1.5rem] h-[1.5rem] rounded-full" style={{ backgroundColor: calculateColor(t.type), opacity: 0.2 }}>
                                         </div>
-                                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[0.8rem] h-[0.8rem] rounded-full" style={{ backgroundColor: type.color }}>
+                                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[0.8rem] h-[0.8rem] rounded-full" style={{ backgroundColor: calculateColor(t.type) }}>
                                         </div>
                                     </div>
                                 </th>
-                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base whitespace-nowrap p-4"><p className="w-[300px] leading-8 whitespace-normal line-clamp-1">{description}</p></td>
-                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-secondary">{date.getDate()}/{date.getMonth()+1}/{date.getFullYear()}</td>
-                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4" style={{ color: type.color }}>{money.amount}</td>
+                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base whitespace-nowrap p-4"><p className="w-[300px] leading-8 whitespace-normal line-clamp-1">{t.description}</p></td>
+                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-secondary">{t.date.getDate()}/{t.date.getMonth()+1}/{t.date.getFullYear()}</td>
+                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4" style={{ color: calculateColor(t.type) }}>{t.money}</td>
                                 {/* Edit transaction */}
                                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                                    <button onClick={(e) => handleEditTransaction({ type, description, money, date })} className="p-2 rounded-md text-white flex justify-center items-center transition duration-300 hover:opacity-70 hover:bg-slate-100">
+                                    <button onClick={(e) => handleEditTransaction(t)} className="p-2 rounded-md text-white flex justify-center items-center transition duration-300 hover:opacity-70 hover:bg-slate-100">
                                         <img src={require("../assets/icons/edit.svg").default} alt="edit-icon" />
                                     </button>
                                 </td>
@@ -231,9 +246,9 @@ const SearchBar: React.FC<SearchBarProps> = ({transactions, curTransactions, set
     ]
 
     const [sortBy, setSortBy] = useState<Comparator>(sortByList[0]); // used in select
-    const [typeFilter, setTypeFilter] = useState<string>(TransactionValues.EXPENSE); // used in select
-    const [startDateFilter, setStartDateFilter] = useState<Date>(new Date(Date.now())); // used in select
-    const [endDateFilter, setEndDateFilter] = useState<Date>(new Date(Date.now())); // used in select
+    const [typeFilter, setTypeFilter] = useState<string>(TransactionValues.ALL); // used in select
+    const [startDateFilter, setStartDateFilter] = useState<Date>(); // used in select
+    const [endDateFilter, setEndDateFilter] = useState<Date>(); // used in select
     const [amountFilter, setAmountFilter] = useState<string>(""); // used in select
 
     const searchIconSrc: string = require("../assets/icons/search.svg").default;
@@ -259,17 +274,17 @@ const SearchBar: React.FC<SearchBarProps> = ({transactions, curTransactions, set
                 curTransactions.sort((a: Transaction, b: Transaction) => a.date.getTime() - b.date.getTime());
                 break;
             case "amount":
-                curTransactions.sort((a: Transaction, b: Transaction) => a.money.amount - b.money.amount);
+                curTransactions.sort((a: Transaction, b: Transaction) => a.money - b.money);
                 break;
         }
 
         setCurTransactions([...curTransactions]);
     }
 
-    const handleFilterByChange = (typeFilter: string, startDateFilter: Date, endDateFilter: Date, amountFilter: string) => {
+    const handleFilterByChange = (typeFilter: string, startDateFilter: Date | null, endDateFilter: Date | null, amountFilter: string) => {
         // Type filtering
         if (typeFilter != TransactionValues.ALL) {
-            curTransactions = transactions.filter((t: Transaction) => t.type.text === typeFilter);
+            curTransactions = transactions.filter((t: Transaction) => t.type === typeFilter);
         } else {
             curTransactions = transactions;
         }
@@ -281,14 +296,14 @@ const SearchBar: React.FC<SearchBarProps> = ({transactions, curTransactions, set
 
         // Amount filtering
         if (amountFilter != "") { 
-            curTransactions = transactions.filter((t: Transaction) => t.money.amount >= parseFloat(amountFilter));
+            curTransactions = transactions.filter((t: Transaction) => t.money >= parseFloat(amountFilter));
         }
 
         setCurTransactions([...curTransactions]);
     }
 
     useEffect(() => {
-        handleFilterByChange(typeFilter, startDateFilter, endDateFilter, amountFilter);
+        handleFilterByChange(typeFilter, startDateFilter ?? null, endDateFilter ?? null, amountFilter);
     }, [typeFilter, startDateFilter, amountFilter]);
 
     return (
@@ -305,7 +320,7 @@ const SearchBar: React.FC<SearchBarProps> = ({transactions, curTransactions, set
                     <Select data={sortByList.map(item => item.label)} value={sortBy.label} onChange={handleSortByChange} />
 
                     {/* Filter by */}
-                    <PopoverText typeValue={typeFilter} setTypeValue={setTypeFilter} startDate={startDateFilter} setStartDate={setStartDateFilter} endDate={endDateFilter} setEndDate={setEndDateFilter} amountValue={amountFilter} setAmountValue={setAmountFilter} />
+                    <PopoverText typeValue={typeFilter} setTypeValue={setTypeFilter} startDate={startDateFilter ?? null} setStartDate={setStartDateFilter} endDate={endDateFilter ?? null} setEndDate={setEndDateFilter} amountValue={amountFilter} setAmountValue={setAmountFilter} />
                 </div>
 
         </div>

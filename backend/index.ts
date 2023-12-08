@@ -10,7 +10,7 @@ import budgetRouter from './router/budget';
 import walletRouter from './router/wallet';
 import transactionRouter from './router/transaction';
 
-// Iternal utilities and Middlewares
+// Internal utilities and Middlewares
 import { checker } from './controller/checker';
 
 // Load the environment variables from the .env file

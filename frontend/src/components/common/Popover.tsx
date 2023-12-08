@@ -14,9 +14,9 @@ import { K } from '../../K';
 type PopoverTextProps = {
     typeValue: string,
     setTypeValue: (s: string) => void,
-    startDate: Date,
+    startDate: Date | null,
     setStartDate: (s: Date) => void,
-    endDate: Date,
+    endDate: Date | null,
     setEndDate: (s: Date) => void,
     amountValue: string,
     setAmountValue: (s: string) => void,

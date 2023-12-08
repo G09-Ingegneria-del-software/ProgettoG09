@@ -18,9 +18,9 @@ interface ButtonIconProps extends ButtonTextProps {
     iconSrc: string
 }
 
-export const ButtonIcon: React.FC<ButtonIconProps> = ({text, color, iconSrc}: ButtonIconProps) => {
+export const ButtonIcon: React.FC<ButtonIconProps> = ({text, color, iconSrc, handleClick}: ButtonIconProps) => {
     return (
-        <button className={`px-6 py-3 rounded-lg shadow-xl text-white bg-${color} transition ease-in-out duration-150 hover:scale-105 hover:opacity-[0.9]`}>
+        <button onClick={handleClick} className={`px-6 py-3 rounded-lg shadow-xl text-white bg-${color} transition ease-in-out duration-150 hover:scale-105 hover:opacity-[0.9]`}>
             <div className="flex justify-center gap-2 items-center">
                 {text}
                 <img src={iconSrc} alt="icon" />

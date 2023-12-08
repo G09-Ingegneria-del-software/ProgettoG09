@@ -15,14 +15,40 @@ import Subtitle from '../components/common/Subtitle';
 import Line from "../components/common/Line";
 import Spacer from "../components/common/Spacer";
 
+import Modal from "../components/common/Modal";
+
 // Importing types
-import { Transaction, CurrencyValues } from '../type';
+import { Transaction, calculateColor } from '../type';
 
 const Dashboard = () => {
+
+    const [open, setOpen] = useState<boolean>(false);
+
+    const createTransaction = (e: React.FormEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+
+        console.log(e);
+    }
+
+    const handleCreateTransaction = () => {
+        
+    }
+
     return (
         <UserPage>
-            <Title title="Dashboard" />
-            <Description description="Updated 12 hrs ago"/>
+            {/* Modal popup for adding transaction */}
+            <Modal open={open} setOpen={setOpen} title="Add transaction" description="Insert values for all fields to create a transaction" buttonLabel="Add" onSubmitClick={handleCreateTransaction}>
+                {/* TODO: add content here */}
+            </Modal>
+
+            {/* Title container */}
+            <div className="flex w-full justify-between items-center">
+                <div className="flex flex-col">
+                    <Title title="Dashboard" />
+                    <Description description="Updated 12 hrs ago"/>
+                </div>
+                <ButtonIcon text="Add transaction" iconSrc={require("../assets/icons/plus.svg").default} color="active" handleClick={() => setOpen(!open)}/>
+            </div>
 
             <Spacer height="2rem"/>
 
@@ -91,113 +117,28 @@ const LatestTransactionsSection = () => {
     const [lastTransactions, setLastTransactions] = useState<Transaction[]>([]); 
     
     useEffect(() => {
-        setLastTransactions([
-            {
-                description: "Spesa da 500€ con Ivano", 
-                type: {
-                    text: "expense",
-                    color: "red"
-                }, 
-                money: {amount: 500.00, currency: CurrencyValues.EUR}, 
-                date: new Date(Date.now())
-            },
-            {
-                description: "Spesa da 500€ con Ivano", 
-                type: {
-                    text: "expense",
-                    color: "red"
-                }, 
-                money: {amount: 500.00, currency: CurrencyValues.EUR}, 
-                date: new Date(Date.now())
-            },
-            {
-                description: "Spesa da 500€ con Ivano", 
-                type: {
-                    text: "expense",
-                    color: "red"
-                }, 
-                money: {amount: 500.00, currency: CurrencyValues.EUR}, 
-                date: new Date(Date.now())
-            },
-            {
-                description: "Spesa da 500€ con Ivano", 
-                type: {
-                    text: "expense",
-                    color: "red"
-                }, 
-                money: {amount: 500.00, currency: CurrencyValues.EUR}, 
-                date: new Date(Date.now())
-            },
-            {
-                description: "Spesa da 500€ con Ivano", 
-                type: {
-                    text: "expense",
-                    color: "red"
-                }, 
-                money: {amount: 500.00, currency: CurrencyValues.EUR}, 
-                date: new Date(Date.now())
-            },
-            {
-                description: "Spesa da 500€ con Ivano", 
-                type: {
-                    text: "expense",
-                    color: "red"
-                }, 
-                money: {amount: 500.00, currency: CurrencyValues.EUR}, 
-                date: new Date(Date.now())
-            },
-            {
-                description: "Spesa da 500€ con Ivano", 
-                type: {
-                    text: "expense",
-                    color: "red"
-                }, 
-                money: {amount: 500.00, currency: CurrencyValues.EUR}, 
-                date: new Date(Date.now())
-            },
-            {
-                description: "Spesa da 500€ con Ivano", 
-                type: {
-                    text: "expense",
-                    color: "red"
-                }, 
-                money: {amount: 500.00, currency: CurrencyValues.EUR}, 
-                date: new Date(Date.now())
-            },
-            {
-                description: "Spesa da 500€ con Ivano", 
-                type: {
-                    text: "expense",
-                    color: "red"
-                }, 
-                money: {amount: 500.00, currency: CurrencyValues.EUR}, 
-                date: new Date(Date.now())
-            },
-
-        ]);
-    }, []);
+        setLastTransactions([]);
+    }, [window.location.href]);
 
     return (  
         <div className="w-full bg-white rounded-lg shadow-lg px-8 py-4 h-[320px] overflow-y-scroll">
             <ul className="">
-                {lastTransactions.map(({description, money, type, date}: Transaction, i) => {
-                    const {color} = type;
-                    
+                {lastTransactions.map((t: Transaction, i) => {                    
                     return <li key={i}>
                             <div className="flex justify-between items-center gap-2">
                                 <div className="relative w-[2rem] h-[2rem]">
-                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[2rem] h-[2rem] rounded-full" style={{backgroundColor: color, opacity: 0.2}}>
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[2rem] h-[2rem] rounded-full" style={{backgroundColor: calculateColor(t.type), opacity: 0.2}}>
                                     </div>
-                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1.2rem] h-[1.2rem] rounded-full" style={{backgroundColor: color}}>
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1.2rem] h-[1.2rem] rounded-full" style={{backgroundColor: calculateColor(t.type)}}>
                                     </div>
                                 </div>
                                 <div className="flex flex-col justify-center items-start gap-1">
-                                    <p className=''>{description}</p>
-                                    <small className="text-secondary">{date.toDateString()}</small>
+                                    <p className=''>{t.description}</p>
+                                    <small className="text-secondary">{t.date.toDateString()}</small>
                                 </div>
                                 <div className="">
-                                    <p className="weight-800" style={{color: color}}>
-                                        {type.text === "expense" ? "-" : "+"}{money.amount}€
+                                    <p className="weight-800" style={{color: calculateColor(t.type)}}>
+                                        {t.type === "expense" ? "-" : "+"}{t.money}€
                                     </p>
                                 </div>
                             </div>

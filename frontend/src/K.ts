@@ -1,5 +1,4 @@
 // Importing types
-import { CurrencyValues } from "./type"
 
 export const K = {
     currencies: [

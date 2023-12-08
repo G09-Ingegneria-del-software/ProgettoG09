@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 export const generateToken = (secret: string, expiresIn: Number, payload: object) => {
-  return jwt.sign(payload, secret, { expiresIn: expiresIn });
+  return jwt.sign(payload, secret, { expiresIn });
 }
 
 export const verifyToken = (secret: string, token: string) => {

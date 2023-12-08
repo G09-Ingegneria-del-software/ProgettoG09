@@ -88,7 +88,7 @@ const Settings = () => {
                     </div>
                     <div className="w-full flex justify-between items-center">
                         <Spacer width="80%"/>
-                        <ButtonIcon text="Save" color="active" handleClick={e => handleSubmit(e)} iconSrc={require("../assets/icons/check.svg").default}/>
+                        <ButtonIcon text="Save" color="active" handleClick={handleSubmit} iconSrc={require("../assets/icons/check.svg").default}/>
                     </div>
                 </form>
             </section>

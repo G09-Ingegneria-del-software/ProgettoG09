@@ -22,7 +22,7 @@ export const createTransaction = async (req: express.Request, res: express.Respo
             res.status(404).send('Wallet not found');
         }
         
-        await newTransaction.save();
+        let data = await newTransaction.save();
         if (req.body.type === 'income') {
             wallet!.money += req.body.money;
         }else {
@@ -39,7 +39,7 @@ export const createTransaction = async (req: express.Request, res: express.Respo
             }
         }
 
-        res.status(201).send('Transaction created');
+        res.status(201).send(data);
     } catch (err) {
         console.error(err);
         res.status(500).send('Internal Server Error');

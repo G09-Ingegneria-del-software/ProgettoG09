@@ -22,7 +22,7 @@ export const signUp = (req: express.Request, res: express.Response) => {
 
             newUser.save()
             .then((data: UserType) => {
-                res.status(201).send('User created');
+                res.status(201).send(data);
             })
             .catch((err: Error) => {
                 console.log(err)

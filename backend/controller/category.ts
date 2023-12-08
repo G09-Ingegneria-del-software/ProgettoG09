@@ -16,7 +16,7 @@ export const createCategory = (req: express.Request, res: express.Response) => {
     
             newCategory.save()
             .then((data: CategoryType) => {
-                res.status(201).send(`Category created ${data}`);
+                res.status(201).send(data);
             })
             .catch((err: Error) => {
                 if (err.message.includes('duplicate key error')) {

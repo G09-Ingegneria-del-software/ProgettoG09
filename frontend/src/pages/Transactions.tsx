@@ -64,8 +64,7 @@ const Transactions = () => {
                     const transactionData = res.data;
                     delete transactionData.__v; delete transactionData._id;
                     transactionData.date = new Date(transactionData.date);
-                    transactions.push(transactionData);
-                    setCurTransactions([...curTransactions, transactionData]);
+                    setTransactions ? setTransactions([...transactions, transactionData]) : console.log();
                 })
                 .catch(err => console.log(err.message))
 
@@ -74,7 +73,6 @@ const Transactions = () => {
     }
 
     useEffect(() => {
-        console.log(transactions.length)
         setCurTransactions(transactions);
     }, [transactions]);
 
@@ -158,10 +156,13 @@ const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, set
     });
 
     useEffect(() => {
-        console.log(curTransactions);
         setNumPages(Math.ceil(curTransactions.length/limit));
         setVisibleTransactions(curTransactions.slice((curPage-1)*limit, (curPage)*limit));
     }, [curPage, curTransactions]);
+
+    useEffect(() => {
+        console.log(selectedIndex)
+    }, [selectedIndex])
 
     // Event handlers
     const handleDateChange = (newValue: DateValueType) => {
@@ -173,24 +174,23 @@ const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, set
     }
 
     const handleDeleteTransaction = () => {
-
-        const t: Transaction = transactions[selectedIndex];
-        transactions.splice(selectedIndex, 1);
-        
-        setTransactions ? setTransactions(transactions) : console.log("setTransactions undefined");
-        setCurTransactions(transactions);
-        if (visibleTransactions.length === 1) {
-            setCurPage(--curPage);
-            setNumPages(Math.ceil(curTransactions.length/limit));
-        }
-        setVisibleTransactions(curTransactions.slice((curPage-1)*limit, (curPage)*limit));
-
         const token = localStorage.getItem("token") || "";
         const configRequest = {"Content-type": "application/json", "x-access-token": token};
 
+        const t: Transaction = transactions[selectedIndex];
         if (token) {
             axios.delete(`/api/transaction/${t.id}`, {headers: configRequest})
-                .then(res => console.log(res))
+                .then(res => {
+                    transactions.splice(selectedIndex, 1);
+            
+                    setTransactions ? setTransactions(transactions) : console.log("setTransactions undefined");
+                    setCurTransactions(transactions);
+                    if (visibleTransactions.length === 1) {
+                        setCurPage(--curPage);
+                    }
+                    setNumPages(Math.ceil(curTransactions.length / limit));
+                    setVisibleTransactions(curTransactions.slice((curPage - 1) * limit, (curPage) * limit));
+                })
                 .catch(err => console.log(err.message));
         }
 
@@ -265,13 +265,13 @@ const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, set
                                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4" style={{ color: calculateColor(t.type) }}>{t.money}</td>
                                 {/* Edit transaction */}
                                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                                    <button onClick={(e) => {setEditModalOpen(!editModalOpen); setSelectedIndex(i);}} className="p-2 rounded-md text-white flex justify-center items-center transition duration-300 hover:opacity-70 hover:bg-slate-100">
+                                    <button onClick={(e) => {setEditModalOpen(!editModalOpen); setSelectedIndex((curPage-1)*limit+i);}} className="p-2 rounded-md text-white flex justify-center items-center transition duration-300 hover:opacity-70 hover:bg-slate-100">
                                         <img src={require("../assets/icons/edit.svg").default} alt="edit-icon" />
                                     </button>
                                 </td>
                                 {/* Delete transaction */}
                                 <td className="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-8">
-                                    <button onClick={(e) => {setDeleteModalOpen(!deleteModalOpen); setSelectedIndex(i);}} className="p-2 rounded-md text-white flex justify-center items-center transition duration-300 hover:opacity-70 hover:bg-red-100">
+                                    <button onClick={(e) => {setDeleteModalOpen(!deleteModalOpen); setSelectedIndex((curPage-1)*limit+i);}} className="p-2 rounded-md text-white flex justify-center items-center transition duration-300 hover:opacity-70 hover:bg-red-100">
                                         <img src={require("../assets/icons/trash.svg").default} alt="trash-icon" />
                                     </button>
                                 </td>

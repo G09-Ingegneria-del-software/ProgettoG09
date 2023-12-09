@@ -39,7 +39,7 @@ const PopoverText: React.FC<PopoverTextProps> = ({ typeValue, setTypeValue, star
                     </Popover.Button>
                     <Popover.Panel className="border-2 border-secondary flex justify-center items-center shadow-lg max-w-[350px] w-[350px] bg-white rounded-lg px-4 py-8 t-[4rem] -translate-x-[300px] absolute z-10">
                         <div className=" flex flex-col justify-start items-center gap-2">
-                            <Select label="Type" data={K.transactionTypes} value={typeValue} onChange={setTypeValue} />
+                            <Select label="Type" data={K.transactionSelectTypes} value={typeValue} onChange={setTypeValue} />
                             <div className='w-full flex flex-col gap-1'>
                                 <label className="text-secondary">Start and end dates</label>
                                 <Datepicker value={{startDate, endDate}} onChange={handleDateChange} />

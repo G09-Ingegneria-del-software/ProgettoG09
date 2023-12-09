@@ -32,9 +32,10 @@ export const isLogged = (req: Request, res: Response) => {
 
     try {
         const decoded = verifyToken(SECRET, token);
+        console.log("DECODED: ", decoded);
         return res.status(200).json({ success: true, message: "Valid token" });
-    } catch (error) {
-        return res.status(401).json({ message: "Invalid token" });
+    } catch (error: any) {
+        return res.status(401).json({ message: error.message });
     }
 }
 

@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction } from "react"
 
 export type Selectable = {
     id?: string,
@@ -7,15 +6,17 @@ export type Selectable = {
 
 // User type
 export type User = {
+    id: string,
     firstName: string,
     lastName: string,
     email: string,
     password: string,
-    isBlocked: boolean
+    isBlocked: boolean,
 }
 
 // Transaction type
 export type Transaction = {
+    id: string,
     category: string,
     description: string,
     type: string | TransactionValues.EXPENSE | TransactionValues.INCOME,
@@ -31,12 +32,17 @@ export enum TransactionValues {
     EXPENSE="expense",
     INCOME="income",
 }
-export interface TransactionType extends Selectable {
+export enum TransactionType {
+    EXPENSE="expense",
+    INCOME="income"
+}
+export interface TransactionSelectType extends Selectable {
     title: TransactionValues
 }
 
 // Wallet type
 export type Wallet = {
+    id: string,
     name: string,
     description: string,
     money: number,
@@ -63,6 +69,8 @@ export type AppContextType = {
     setTransactions?: (transactions: Transaction[]) => void, 
     wallets: Wallet[],
     setWallets?: (wallets: Wallet[]) => void, 
+    selectedWallet: Wallet | null,
+    setSelectedWallet?: (wallet: Wallet) => void,
     categories: Category[],
     setCategories?: (categories: Category[]) => void, 
     isLoggedIn: boolean,

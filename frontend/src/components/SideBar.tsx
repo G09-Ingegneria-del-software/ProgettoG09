@@ -1,5 +1,5 @@
 // Importing libraries
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 
 // Importing components
@@ -7,30 +7,26 @@ import Line from './common/Line';
 import Select from './common/Select'
 import Spacer from './common/Spacer';
 
-// Importing static stuff
-import {K} from "../K"
-
-// Importing images
-const logoSrc = require("../assets/logo.svg").default as string;
+// Importing context
+import AppContext from '../appContext';
 
 const SideBar = () => {
 
+    const {wallets} = useContext(AppContext);
+
     const firstName: string = "Mario";
     const lastName: string = "Rossi";
+    const logoSrc = require("../assets/logo.svg").default as string;
 
-    type LinkType = {
-        label: string,
-        href: string
-    }
+    type LinkType = { label: string, href: string }
     const links: LinkType[] = [
         {label: "Dashboard", href: "/"},
         {label: "Wallets", href: "/wallets"},
         {label: "Transactions", href: "/transactions"},
         {label: "Settings", href: "/settings"},
     ]
-
     const [selectedLink, setSelectedLink] = useState<LinkType>(links[0]);
-    const [selectedWallet, setSelectedWallet] = useState<string>(K.wallets[0]);
+    const [selectedWallet, setSelectedWallet] = useState<string>(wallets[0].name);
 
     useEffect(() => {
         const href: string = window.location.href;
@@ -39,8 +35,9 @@ const SideBar = () => {
         } 
     }, [window.location.href]);
 
-    // const handleWalletChange = (value: string) => {
-    // };
+    const handleWalletChange = (value: string) => {
+
+    };
 
     return (  
         <aside className="static flex-1 w-full max-w-[20rem] flex flex-col bg-clip-border rounded-xl bg-[#E4EDFF] p-4 shadow-md shadow-blue-gray-900/5">
@@ -53,7 +50,7 @@ const SideBar = () => {
 
             <section className="my-4 flex flex-col gap-2">
                 <p>Welcome back, <br /> <b>{firstName} {lastName}</b></p>
-                <Select data={K.wallets} value={selectedWallet} onChange={setSelectedWallet}/>
+                <Select data={wallets?.map(({name}) => name) ?? []} value={selectedWallet} onChange={setSelectedWallet}/>
             </section>
 
             <Line />

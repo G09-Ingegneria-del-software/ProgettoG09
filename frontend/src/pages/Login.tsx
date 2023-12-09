@@ -8,7 +8,7 @@ import AppContext from '../appContext';
 
 const Login = () => {
 
-    const {setUser} = useContext(AppContext);
+    const {setUser, setIsLoggedIn} = useContext(AppContext);
 
     const[email, setEmail] = useState<string>('');
     const[password, setPassword] = useState<string>('');
@@ -34,8 +34,8 @@ const Login = () => {
             .then((res: any) => {
                 const {token, id} = res.data;
                 localStorage.setItem("token", token);
+                setIsLoggedIn ? setIsLoggedIn(true) : console.log("Logged in undefined");
                 // TODO: retrieve the user with the given id/email
-                window.location.href = "/dashboard";
                 navigate('/dashboard');
             })
             .catch((err: Error) => console.log(err.message));

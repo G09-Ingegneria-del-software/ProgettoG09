@@ -9,6 +9,10 @@ export const K = {
         "YEN"
     ],
     transactionTypes: [
+        "income",
+        "expense",
+    ],
+    transactionSelectTypes: [
         "all",
         "income",
         "expense",

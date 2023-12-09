@@ -16,7 +16,7 @@ import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import PopoverText from "../components/common/Popover";
 
 // Importing types
-import { Transaction, TransactionValues, Comparator, calculateColor } from "../type";
+import { Transaction, TransactionValues, Comparator, Wallet, calculateColor, TransactionType } from "../type";
 import InputText from "../components/common/InputText";
 
 // Importing static stuff
@@ -27,17 +27,54 @@ import AppContext from "../appContext";
 
 const Transactions = () => {
 
-    const {transactions} = useContext(AppContext);
+    // Using context
+    const { user, transactions, setTransactions, wallets, categories } = useContext(AppContext);
+
     const [curTransactions, setCurTransactions] = useState<Transaction[]>(transactions);
 
     const [addModalOpen, setAddModalOpen] = useState<boolean>(false); // opens popup on click of "Add transaction"
 
-    const handleCreateTransaction = () => {
+    // Transaction state
+    const [type, setType] = useState<string>(TransactionType.EXPENSE);
+    const [description, setDescription] = useState<string>("");
+    const [money, setMoney] = useState<number>(0);
+    const [selectedWallet, setSelectedWallet] = useState<string>(wallets[0].name);
+    const [selectedCategory, setSelectedCategory] = useState<string>(categories[0].name);
+    const [date, setDate] = useState<DateValueType>({
+        startDate: new Date(Date.now()),
+        endDate: new Date(Date.now()),
+    })
 
+    const handleCreateTransaction = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+
+        const token = localStorage.getItem("token") || null;
+        if (token) {
+            const configRequest = {"Content-type": "application/json", "x-access-token": token};
+            const transaction = {
+                user: "mario.rossi@gmail.com",
+                type,
+                money,
+                description,
+                wallet: selectedWallet,
+                category: selectedCategory
+            }
+            axios.post("/api/transaction", transaction, {headers: configRequest})
+                .then(res => {
+                    const transactionData = res.data;
+                    delete transactionData.__v; delete transactionData._id;
+                    transactionData.date = new Date(transactionData.date);
+                    transactions.push(transactionData);
+                    setCurTransactions([...curTransactions, transactionData]);
+                })
+                .catch(err => console.log(err.message))
+
+            setAddModalOpen(!addModalOpen);
+        }
     }
 
     useEffect(() => {
-        console.log(transactions);
+        console.log(transactions.length)
         setCurTransactions(transactions);
     }, [transactions]);
 
@@ -46,6 +83,19 @@ const Transactions = () => {
             {/* Add transaction modal */}
             <Modal open={addModalOpen} setOpen={setAddModalOpen} title="Add transaction" description="Insert values for all fields to create a transaction" buttonLabel="Add" onSubmitClick={handleCreateTransaction}>
                 {/* TODO: add content here */}
+                <div className="flex flex-col justify-start gap-4">
+                    <Select label="Type" data={K.transactionTypes} value={type} onChange={setType}/>
+                    <InputText label="Description" value={description} setValue={setDescription} />
+                    <InputText label="Amount" value={money.toString()} setValue={setMoney} />
+                    <Select label="Wallet" data={wallets.map(({name}) => name)} value={selectedWallet} onChange={setSelectedWallet}/>
+                    <Select label="Category" data={categories.map(({name}) => name)} value={selectedCategory} onChange={setSelectedCategory}/>
+                    {/* <div className="flex flex-col gap-1">
+                        <label className="text-secondary">Date</label>
+                        <div className="focus:outline-none border-1 border-secondary">
+                            <Datepicker primaryColor="indigo" value={date} onChange={setDate} />
+                        </div>
+                    </div> */}
+                </div> 
             </Modal>
 
             <div className="flex w-full justify-between items-center">
@@ -83,9 +133,12 @@ type TransactionTableProps = {
 }
 const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, setCurTransactions}: TransactionTableProps) => {
 
+    // Get all transactions
+    const {transactions, setTransactions} = useContext(AppContext);
+
     const limit: number = 5;
 
-    const [curPage, setCurPage] = useState<number>(1);
+    let [curPage, setCurPage] = useState<number>(1);
     const [numPages, setNumPages] = useState<number>(1);
 
     const [visibleTransactions, setVisibleTransactions] = useState<Transaction[]>(curTransactions);
@@ -93,6 +146,8 @@ const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, set
     // Modal for editing transaction
     const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
     const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
+
+    const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
     const [newType, setNewType] = useState("expense");
     const [newDescription, setNewDescription] = useState<string>("");
@@ -103,21 +158,42 @@ const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, set
     });
 
     useEffect(() => {
-        setVisibleTransactions(curTransactions.slice((curPage-1)*limit, (curPage)*limit));
+        console.log(curTransactions);
         setNumPages(Math.ceil(curTransactions.length/limit));
+        setVisibleTransactions(curTransactions.slice((curPage-1)*limit, (curPage)*limit));
     }, [curPage, curTransactions]);
-
 
     // Event handlers
     const handleDateChange = (newValue: DateValueType) => {
         setNewDate(newValue);
     }
 
-    const handleEditTransaction = (t: Transaction) => {
+    const handleEditTransaction = () => {
         setEditModalOpen(!editModalOpen);
     }
 
-    const handleDeleteTransaction = ({type, description, money, date}: Transaction) => {
+    const handleDeleteTransaction = () => {
+
+        const t: Transaction = transactions[selectedIndex];
+        transactions.splice(selectedIndex, 1);
+        
+        setTransactions ? setTransactions(transactions) : console.log("setTransactions undefined");
+        setCurTransactions(transactions);
+        if (visibleTransactions.length === 1) {
+            setCurPage(--curPage);
+            setNumPages(Math.ceil(curTransactions.length/limit));
+        }
+        setVisibleTransactions(curTransactions.slice((curPage-1)*limit, (curPage)*limit));
+
+        const token = localStorage.getItem("token") || "";
+        const configRequest = {"Content-type": "application/json", "x-access-token": token};
+
+        if (token) {
+            axios.delete(`/api/transaction/${t.id}`, {headers: configRequest})
+                .then(res => console.log(res))
+                .catch(err => console.log(err.message));
+        }
+
         setDeleteModalOpen(!deleteModalOpen);
     }
 
@@ -189,13 +265,13 @@ const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, set
                                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4" style={{ color: calculateColor(t.type) }}>{t.money}</td>
                                 {/* Edit transaction */}
                                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                                    <button onClick={(e) => handleEditTransaction(t)} className="p-2 rounded-md text-white flex justify-center items-center transition duration-300 hover:opacity-70 hover:bg-slate-100">
+                                    <button onClick={(e) => {setEditModalOpen(!editModalOpen); setSelectedIndex(i);}} className="p-2 rounded-md text-white flex justify-center items-center transition duration-300 hover:opacity-70 hover:bg-slate-100">
                                         <img src={require("../assets/icons/edit.svg").default} alt="edit-icon" />
                                     </button>
                                 </td>
                                 {/* Delete transaction */}
                                 <td className="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-8">
-                                    <button onClick={(e) => setDeleteModalOpen(!deleteModalOpen)} className="p-2 rounded-md text-white flex justify-center items-center transition duration-300 hover:opacity-70 hover:bg-red-100">
+                                    <button onClick={(e) => {setDeleteModalOpen(!deleteModalOpen); setSelectedIndex(i);}} className="p-2 rounded-md text-white flex justify-center items-center transition duration-300 hover:opacity-70 hover:bg-red-100">
                                         <img src={require("../assets/icons/trash.svg").default} alt="trash-icon" />
                                     </button>
                                 </td>

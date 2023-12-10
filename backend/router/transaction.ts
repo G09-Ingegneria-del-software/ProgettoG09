@@ -5,8 +5,8 @@ const transactionRouter = express.Router();
 
 transactionRouter.post('/api/transaction/', createTransaction); 
 transactionRouter.get('/api/transaction/', getTransactions); 
-transactionRouter.get('/api/transaction/user/:name', getTransactionById);
-transactionRouter.get('/api/transaction/:id', getTransactionsByUser);
+transactionRouter.get('/api/transaction/user/:name', getTransactionsByUser);
+transactionRouter.get('/api/transaction/:id', getTransactionById);
 transactionRouter.put('/api/transaction/', updateTransactionById);
 transactionRouter.delete('/api/transaction/:id', deleteTransactionById); 
 

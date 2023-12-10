@@ -1,5 +1,6 @@
 import express from "express";
 import Wallet, {WalletType} from "../models/wallet";
+import Transaction from "../models/transaction";
 
 // Create new wallet
 export const createWallet = (req: express.Request, res: express.Response) => {
@@ -11,7 +12,7 @@ export const createWallet = (req: express.Request, res: express.Response) => {
                 name: req.body.name,
                 description: req.body.description,
                 money: req.body.money,
-                categories: req.body.categories,
+                categories: [],
                 color: req.body.color,
                 user: req.body.user,
             });
@@ -90,10 +91,18 @@ export const deleteWallet = (req: express.Request, res: express.Response) => {
     Wallet.findOneAndDelete({name: req.params.name, user: req.params.user})
     .then((data: WalletType | null) => {
         if (data) {
-            res.status(200).send('Wallet deleted');
+            Transaction.deleteMany({wallet: req.params.name, user: req.params.user})
+            .then((data: any) => {
+            if (data) {
+                res.status(200).send('Wallet deleted');
+            } else {
+                res.status(404).send('Wallet not found');
+            }
+        })
         } else {
             res.status(404).send('Wallet not found');
         }
+        
     })
     .catch((err: Error) => {
         console.error(err);

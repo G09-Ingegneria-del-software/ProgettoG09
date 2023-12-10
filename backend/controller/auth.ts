@@ -23,24 +23,23 @@ export const login = async (req: Request, res: Response) => {
     return res.status(200).json({success: true, token: tkn, id:user._id})
 }
 
-export const isLogged = (req: Request, res: Response) => {
-    let token = req.headers['x-access-token'];
-    token = JSON.stringify(token);
+export const isLogged = async (req: Request, res: Response) => {
+    let token = req.headers['x-access-token'] || req.headers['authorization'];
+
     if (!token) {
         return res.status(401).json({ message: "No token provided" });
     }
 
     try {
-        const decoded = verifyToken(SECRET, token);
-        console.log("DECODED: ", decoded);
-        return res.status(200).json({ success: true, message: "Valid token" });
-    } catch (error: any) {
-        return res.status(401).json({ message: error.message });
+        const decoded = await verifyToken(SECRET, token.toString());
+        return res.status(200).json({ success: true, message: "Valid token", email: decoded.email });
+    } catch (error) {
+        return res.status(401).json({ message: "Invalid token" });
     }
 }
 
 export const logout = (req: Request, res: Response) => {
-    let token = req.headers['x-access-token'];
+    let token = req.headers['x-access-token'] || req.headers['authorization'];
     token = JSON.stringify(token);
 
     if (token){

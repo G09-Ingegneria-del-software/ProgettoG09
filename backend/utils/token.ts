@@ -4,10 +4,12 @@ export const generateToken = (secret: string, expiresIn: Number, payload: object
   return jwt.sign(payload, secret, { expiresIn });
 }
 
-export const verifyToken = (secret: string, token: string) => {
+export const verifyToken = async (secret: string, token: string) => {
   try {
-    jwt.verify(token, secret);
-    return true;
+     let x = await jwt.verify(token, secret, (err: any, decoded: any) => {
+      return decoded;
+    });
+    return x;
   }catch(err) {
     return false;
   }

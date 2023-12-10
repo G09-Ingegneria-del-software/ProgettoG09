@@ -719,7 +719,7 @@
                 },
                 "description": {
                   "type": "string",
-                  "example": "Money in Paypla"
+                  "example": "Money in Paypal"
                 },
                 "money": {
                   "type": "number",

@@ -6,6 +6,7 @@ import { AppContextType } from "./type";
 
 const AppContext = createContext<AppContextType>({
     user: null,
+    allTransactions: [],
     transactions: [],
     wallets: [],
     selectedWallet: {

@@ -1,5 +1,6 @@
 // Importing libraries
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
+import axios from "axios";
 
 // Importing pages
 import UserPage from './UserPage';
@@ -11,6 +12,8 @@ import Description from '../components/common/Description';
 import {ButtonIcon} from '../components/common/Button';
 import Card from "../components/Card"
 import Subtitle from '../components/common/Subtitle';
+import Select from "../components/common/Select";
+import InputText from "../components/common/InputText";
 
 import Line from "../components/common/Line";
 import Spacer from "../components/common/Spacer";
@@ -18,27 +21,65 @@ import Spacer from "../components/common/Spacer";
 import Modal from "../components/common/Modal";
 
 // Importing types
-import { Transaction, calculateColor } from '../type';
+import { Transaction, TransactionType, TransactionValues, calculateColor } from '../type';
+
+// Importing static stuff
+import { K } from "../K";
+
+// Importing context
+import AppContext from "../appContext";
 
 const Dashboard = () => {
 
-    const [open, setOpen] = useState<boolean>(false);
+    const {transactions, setTransactions, wallets, categories} = useContext(AppContext);
 
-    const createTransaction = (e: React.FormEvent<HTMLButtonElement>) => {
+    const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
+
+    // Transaction state
+    const [type, setType] = useState<string>(TransactionType.EXPENSE);
+    const [description, setDescription] = useState<string>("");
+    const [money, setMoney] = useState<number>(0);
+    const [selectedWallet, setSelectedWallet] = useState<string>(wallets[0].name);
+    const [selectedCategory, setSelectedCategory] = useState<string>(categories[0].name);
+    
+    const handleCreateTransaction = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
-        console.log(e);
-    }
+        const token = localStorage.getItem("token") || null;
+        if (token) {
+            const configRequest = {"Content-type": "application/json", "x-access-token": token};
+            const transaction = {
+                user: "mario.rossi@gmail.com",
+                type,
+                money,
+                description,
+                wallet: selectedWallet,
+                category: selectedCategory
+            }
+            axios.post("/api/transaction", transaction, {headers: configRequest})
+                .then(res => {
+                    const transactionData = res.data;
+                    delete transactionData.__v; delete transactionData._id;
+                    transactionData.date = new Date(transactionData.date);
+                    setTransactions ? setTransactions([...transactions, transactionData]) : console.log();
+                })
+                .catch(err => console.log(err.message))
 
-    const handleCreateTransaction = () => {
-        
+            setAddModalOpen(!addModalOpen);
+        }
     }
 
     return (
         <UserPage>
             {/* Modal popup for adding transaction */}
-            <Modal open={open} setOpen={setOpen} title="Add transaction" description="Insert values for all fields to create a transaction" buttonLabel="Add" onSubmitClick={handleCreateTransaction}>
-                {/* TODO: add content here */}
+            <Modal open={addModalOpen} setOpen={setAddModalOpen} title="Add transaction" description="Insert values for all fields to create a transaction" buttonLabel="Add" onSubmitClick={handleCreateTransaction}>
+                <div className="flex flex-col justify-start gap-4">
+                    <Select label="Type" data={K.transactionTypes} value={type} onChange={setType}/>
+                    <InputText label="Description" value={description} setValue={setDescription} />
+                    <InputText label="Amount" value={money.toString()} setValue={setMoney} />
+                    <Select label="Wallet" data={wallets.map(({name}) => name)} value={selectedWallet} onChange={setSelectedWallet}/>
+                    <Select label="Category" data={categories.map(({name}) => name)} value={selectedCategory} onChange={setSelectedCategory}/>
+                </div> 
             </Modal>
 
             {/* Title container */}
@@ -47,7 +88,7 @@ const Dashboard = () => {
                     <Title title="Dashboard" />
                     <Description description="Updated 12 hrs ago"/>
                 </div>
-                <ButtonIcon text="Add transaction" iconSrc={require("../assets/icons/plus.svg").default} color="active" handleClick={() => setOpen(!open)}/>
+                <ButtonIcon text="Add transaction" iconSrc={require("../assets/icons/plus.svg").default} color="active" handleClick={() => setAddModalOpen(!addModalOpen)}/>
             </div>
 
             <Spacer height="2rem"/>
@@ -63,7 +104,7 @@ const Dashboard = () => {
                         <div className="flex flex-col gap-2 w-[180px] bg-white shadow-lg rounded-xl px-4 py-6">
                             <div className='flex justify-between'>
                                 <p className="text-[2.25rem]">IN</p>
-                                <img src={require("../assets/icons/short_up.svg").default} alt="arrow-up-icon" />
+                                <img className="rotate-180" src={require("../assets/icons/short_up.svg").default} alt="arrow-up-icon" />
                             </div>
                             <Subtitle subtitle='€ 1920.56' />
                             <Description description='Lorem ipsum dolor sit amet consectetur.'/>
@@ -71,7 +112,7 @@ const Dashboard = () => {
                         <div className="flex flex-col gap-2 w-[180px] bg-white shadow-lg rounded-xl px-4 py-6">
                             <div className='flex justify-between'>
                                 <p className="text-[2.25rem]">OUT</p>
-                                <img className="rotate-180" src={require("../assets/icons/short_up.svg").default} alt="arrow-up-icon" />
+                                <img src={require("../assets/icons/short_up.svg").default} alt="arrow-up-icon" />
                             </div>
                             <Subtitle subtitle='€ 420.123' />
                             <Description description='Lorem ipsum dolor sit amet consectetur.'/>
@@ -113,30 +154,34 @@ const CategoryExpenses = () => {
 
 const LatestTransactionsSection = () => {
     
+    const {transactions} = useContext(AppContext);
    
     const [lastTransactions, setLastTransactions] = useState<Transaction[]>([]); 
     
     useEffect(() => {
-        setLastTransactions([]);
-    }, [window.location.href]);
+        // 1. Take all transactions
+        // 2. Sort them in reverse order
+        // 3. Slice the obtained array to get the last 10
+        setLastTransactions(transactions.sort((a: Transaction, b: Transaction) => b.date.getTime() - a.date.getTime()).slice(0, 10));
+    }, [transactions]);
 
     return (  
         <div className="w-full bg-white rounded-lg shadow-lg px-8 py-4 h-[320px] overflow-y-scroll">
             <ul className="">
                 {lastTransactions.map((t: Transaction, i) => {                    
                     return <li key={i}>
-                            <div className="flex justify-between items-center gap-2">
+                            <div className="flex justify-center items-center gap-8">
                                 <div className="relative w-[2rem] h-[2rem]">
-                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[2rem] h-[2rem] rounded-full" style={{backgroundColor: calculateColor(t.type), opacity: 0.2}}>
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1.5rem] h-[1.5rem] rounded-full" style={{backgroundColor: calculateColor(t.type), opacity: 0.2}}>
                                     </div>
-                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1.2rem] h-[1.2rem] rounded-full" style={{backgroundColor: calculateColor(t.type)}}>
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[0.8rem] h-[0.8rem] rounded-full" style={{backgroundColor: calculateColor(t.type)}}>
                                     </div>
                                 </div>
-                                <div className="flex flex-col justify-center items-start gap-1">
+                                <div className="w-full flex flex-col justify-center items-start gap-1">
                                     <p className=''>{t.description}</p>
                                     <small className="text-secondary">{t.date.toDateString()}</small>
                                 </div>
-                                <div className="">
+                                <div className="relative w-[5rem] flex justify-end">
                                     <p className="weight-800" style={{color: calculateColor(t.type)}}>
                                         {t.type === "expense" ? "-" : "+"}{t.money}€
                                     </p>

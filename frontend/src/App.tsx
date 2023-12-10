@@ -21,6 +21,7 @@ function App() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [user, setUser] = useState<User | null>(null);
+  const [allTransactions, setAllTransactions] = useState<Transaction[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
@@ -64,7 +65,7 @@ function App() {
 
   useEffect(() => {
     if (isLoggedIn) {
-      getData("/api/transaction", setTransactions);
+      getData("/api/transaction", setAllTransactions);
       getData("/api/wallet", setWallets);
       getData("/api/category", setCategories);
 
@@ -74,10 +75,15 @@ function App() {
     }
   }, [isLoggedIn]);
 
+  useEffect(() => {
+    setSelectedWallet(wallets[0]);
+    setTransactions(allTransactions.filter((t: Transaction) => t.wallet === wallets[0].name));
+  }, [allTransactions, wallets]);
+
   if (isLoading) return <Loading />;
 
   return (
-    <AppContext.Provider value={{ user, setUser, transactions, setTransactions, wallets, setWallets, selectedWallet, setSelectedWallet, categories, setCategories, isLoggedIn, setIsLoggedIn }}>
+    <AppContext.Provider value={{ user, setUser, allTransactions, setAllTransactions, transactions, setTransactions, wallets, setWallets, selectedWallet, setSelectedWallet, categories, setCategories, isLoggedIn, setIsLoggedIn }}>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<PrivateOutlet element={<Dashboard />} />} />

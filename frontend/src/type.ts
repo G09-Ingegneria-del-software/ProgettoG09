@@ -65,6 +65,8 @@ export type Category = {
 export type AppContextType = {
     user: User | null, 
     setUser?: (user: User) => void, 
+    allTransactions: Transaction[],
+    setAllTransactions?: (transactions: Transaction[]) => void,
     transactions: Transaction[],
     setTransactions?: (transactions: Transaction[]) => void, 
     wallets: Wallet[],

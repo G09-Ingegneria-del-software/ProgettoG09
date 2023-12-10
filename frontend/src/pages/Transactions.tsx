@@ -40,10 +40,6 @@ const Transactions = () => {
     const [money, setMoney] = useState<number>(0);
     const [selectedWallet, setSelectedWallet] = useState<string>(wallets[0].name);
     const [selectedCategory, setSelectedCategory] = useState<string>(categories[0].name);
-    const [date, setDate] = useState<DateValueType>({
-        startDate: new Date(Date.now()),
-        endDate: new Date(Date.now()),
-    })
 
     const handleCreateTransaction = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
@@ -80,7 +76,6 @@ const Transactions = () => {
         <UserPage>
             {/* Add transaction modal */}
             <Modal open={addModalOpen} setOpen={setAddModalOpen} title="Add transaction" description="Insert values for all fields to create a transaction" buttonLabel="Add" onSubmitClick={handleCreateTransaction}>
-                {/* TODO: add content here */}
                 <div className="flex flex-col justify-start gap-4">
                     <Select label="Type" data={K.transactionTypes} value={type} onChange={setType}/>
                     <InputText label="Description" value={description} setValue={setDescription} />

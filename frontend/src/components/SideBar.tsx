@@ -7,12 +7,15 @@ import Line from './common/Line';
 import Select from './common/Select'
 import Spacer from './common/Spacer';
 
+// Importing types
+import { Transaction, Wallet } from '../type';
+
 // Importing context
 import AppContext from '../appContext';
 
 const SideBar = () => {
 
-    const {wallets} = useContext(AppContext);
+    const {wallets, selectedWallet, setSelectedWallet, allTransactions, setTransactions} = useContext(AppContext);
 
     const firstName: string = "Mario";
     const lastName: string = "Rossi";
@@ -26,7 +29,6 @@ const SideBar = () => {
         {label: "Settings", href: "/settings"},
     ]
     const [selectedLink, setSelectedLink] = useState<LinkType>(links[0]);
-    const [selectedWallet, setSelectedWallet] = useState<string>(wallets[0].name);
 
     useEffect(() => {
         const href: string = window.location.href;
@@ -35,8 +37,16 @@ const SideBar = () => {
         } 
     }, [window.location.href]);
 
-    const handleWalletChange = (value: string) => {
+    const handleWalletChange = (curWallet: string) => {
+        // 1. Set the current wallet to selectedWallet 
+        let wallet: Wallet;
+        if (curWallet) wallet = wallets.find(wallet => wallet.name === curWallet) || wallets[0];
+        else wallet = wallets[0];
+        setSelectedWallet ? setSelectedWallet(wallet) : console.log("setSelectedWallet undefined");
 
+        // 2. Adjust transactions to the selected wallet
+        const transactions: Transaction[] = allTransactions.filter((t: Transaction) => t.wallet === curWallet);
+        setTransactions ? setTransactions(transactions) : console.log("setTransactions undefined");
     };
 
     return (  
@@ -50,7 +60,7 @@ const SideBar = () => {
 
             <section className="my-4 flex flex-col gap-2">
                 <p>Welcome back, <br /> <b>{firstName} {lastName}</b></p>
-                <Select data={wallets?.map(({name}) => name) ?? []} value={selectedWallet} onChange={setSelectedWallet}/>
+                <Select data={wallets?.map(({name}) => name) ?? []} value={selectedWallet?.name || "Select wallet..."} onChange={handleWalletChange}/>
             </section>
 
             <Line />

@@ -8,8 +8,7 @@ import { Transaction, calculateColor } from '../type';
 
 
 const TransactionDashboardCard = () => {
-    
-   
+     
     const [lastTransactions, setLastTransactions] = useState<Transaction[]>([]); 
     
     useEffect(() => {

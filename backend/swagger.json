@@ -725,10 +725,6 @@
                   "type": "number",
                   "example": "112.23"
                 },
-                "categories": {
-                  "type": "string[]",
-                  "example": ["grocery", "home"]
-                },
                 "color": {
                   "type": "string",
                   "example": "#00f"

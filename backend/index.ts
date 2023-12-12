@@ -12,6 +12,7 @@ import transactionRouter from './router/transaction';
 
 // Internal utilities and Middlewares
 import { checker } from './controller/checker';
+import e from 'express';
 
 // Load the environment variables from the .env file
 dotenv.config();
@@ -70,8 +71,9 @@ app.use('', walletRouter);
 app.use('', transactionRouter); 
 
 // Start the Express server, and expose the port
-app.listen(port, () => {
+let server = app.listen(port, () => {
   console.log(`Server started at http://localhost:${port}`);
 });
 
 export default app;
+export { server };

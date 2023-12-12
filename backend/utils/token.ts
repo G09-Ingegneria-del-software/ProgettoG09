@@ -1,16 +1,16 @@
 const jwt = require('jsonwebtoken');
 
 export const generateToken = (secret: string, expiresIn: Number, payload: object) => {
-  return jwt.sign(payload, secret, { expiresIn });
+  try{
+    return jwt.sign(payload, secret, { expiresIn });
+  } catch (err) {
+    return "";
+  }
 }
 
 export const verifyToken = async (secret: string, token: string) => {
-  try {
-     let x = await jwt.verify(token, secret, (err: any, decoded: any) => {
-      return decoded;
-    });
-    return x;
-  }catch(err) {
-    return false;
-  }
+    let x = await jwt.verify(token, secret, (err: any, decoded: any) => {
+    return decoded;
+  });
+  return x ? x : false;
 }

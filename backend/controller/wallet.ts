@@ -22,11 +22,14 @@ export const createWallet = (req: express.Request, res: express.Response) => {
                 res.status(201).send(data);
             })
             .catch((err: Error) => {
-                console.error(err);
-                res.status(500).send('Internal Server Error');
+                if (err.name === 'ValidationError') {
+                    res.status(400).send("Bad Request");
+                }else {
+                    res.status(500).send('Internal Server Error');
+                }
             });
         }else {
-            res.status(500).send('Internal Server Error');
+            res.status(409).send('Wallet name already in use');
         }
     });
 };
@@ -94,7 +97,7 @@ export const deleteWallet = (req: express.Request, res: express.Response) => {
             Transaction.deleteMany({wallet: req.params.name, user: req.params.user})
             .then((data: any) => {
             if (data) {
-                res.status(200).send('Wallet deleted');
+                res.status(204).send('Wallet deleted');
             } else {
                 res.status(404).send('Wallet not found');
             }

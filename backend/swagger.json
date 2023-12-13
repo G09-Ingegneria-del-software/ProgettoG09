@@ -737,6 +737,12 @@
           "201": {
             "description": "Created"
           },
+          "400": {
+            "description": "Bad Request"
+          },
+          "409": {
+            "description": "Wallet name already in use"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -833,8 +839,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
+          "204": {
+            "description": "No Content"
           },
           "404": {
             "description": "Wallet not Found"
@@ -936,6 +942,12 @@
           },
           "401": {
             "description": "No token provided"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "409": {
+            "description": "Alredy exists"
           },
           "404": {
             "description": "Wallet not Found"

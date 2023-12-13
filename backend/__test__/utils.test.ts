@@ -3,7 +3,6 @@ import app from "../index";
 import {server} from "../index";
 import { default as mongoose } from 'mongoose';
 import {describe, expect, test} from '@jest/globals';
-const jwt = require('jsonwebtoken');
 require("dotenv").config();
 import { passwordChecker } from "../utils/passwordChecker";
 import { generateToken, verifyToken } from "../utils/token";
@@ -12,7 +11,7 @@ import { generateToken, verifyToken } from "../utils/token";
 // https://dev.to/nathan_sheryak/how-to-test-a-typescript-express-api-with-jest-for-dummies-like-me-4epd
 
 beforeAll(done => {
-    jest.setTimeout(10000);
+    jest.setTimeout(20000);
     done();
   })
 

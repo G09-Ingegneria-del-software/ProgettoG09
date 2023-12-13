@@ -22,7 +22,11 @@ export const createBudget = (req: express.Request, res: express.Response) => {
                 res.status(201).send(data);
             })
             .catch((err: Error) => {
-                res.status(500).send('Internal Server Error');
+                if (err.name === 'ValidationError') {
+                    res.status(400).send('Bad Request');
+                }else {
+                    res.status(500).send('Internal Server Error');
+                }
             });
 
         }else {
@@ -41,7 +45,7 @@ export const getBudgets = (req: express.Request, res: express.Response) => {
         res.status(200).send(data);
     })
     .catch((err: Error) => {
-        console.error(err);
+
         res.status(500).send('Internal Server Error');
     });
 }
@@ -53,7 +57,7 @@ export const getBudgetsByUser = (req: express.Request, res: express.Response) =>
         res.status(200).send(data);
     })
     .catch((err: Error) => {
-        console.error(err);
+
         res.status(500).send('Internal Server Error');
     });
 }
@@ -69,7 +73,7 @@ export const getBudget = (req: express.Request, res: express.Response) => {
         }
     })
     .catch((err: Error) => {
-        console.error(err);
+
         res.status(500).send('Internal Server Error');
     });
 }
@@ -79,13 +83,13 @@ export const updateBudget = (req: express.Request, res: express.Response) => {
         Budget.findOneAndUpdate({name: req.params.name, user: req.body.user}, req.body, {new: true})
             .then((data: BudgetType | null) => {
                 if (data) {
-                    res.status(200).send(data);
+                    res.status(200).send("Budget updated");
                 } else {
                     res.status(404).send('Budget not found');
                 }
             })
             .catch((err: Error) => {
-                console.error(err);
+        
                 res.status(500).send('Internal Server Error');
             });
 }
@@ -95,13 +99,13 @@ export const deleteBudget = (req: express.Request, res: express.Response) => {
     Budget.findOneAndDelete({name: req.params.name, user: req.params.user})
     .then((data: BudgetType | null) => {
         if (data) {
-            res.status(200).send('Budget deleted');
+            res.status(204).send('Budget deleted');
         } else {
             res.status(404).send('Budget not found');
         }
     })
     .catch((err: Error) => {
-        console.error(err);
+
         res.status(500).send('Internal Server Error');
     });
 }

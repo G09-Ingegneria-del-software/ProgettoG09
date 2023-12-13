@@ -16,19 +16,20 @@ export const createTransaction = async (req: express.Request, res: express.Respo
             date: new Date(),
             user: req.body.user,
         });
-
         let wallet = await Wallet.findOne({name: req.body.wallet, user: req.body.user});
         if (!wallet) {
             res.status(404).send('Wallet not found');
+        } else {
+            let data = await newTransaction.save();
+        if (wallet)
+        {
+            if (req.body.type === 'income') {
+             wallet.money += req.body.money;
+            }else {
+                wallet.money -= req.body.money;
+            }
+            await wallet.save();
         }
-        
-        let data = await newTransaction.save();
-        if (req.body.type === 'income') {
-            wallet!.money += req.body.money;
-        }else {
-            wallet!.money -= req.body.money;
-        }
-        await wallet!.save();
 
         // Try to search for budgets with the given category
         let budgets = await Budget.find({category: req.body.category, user: req.body.user});
@@ -40,9 +41,14 @@ export const createTransaction = async (req: express.Request, res: express.Respo
         }
 
         res.status(201).send(data);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Internal Server Error');
+        }
+    } catch (err: any) {
+        // if there are missing fields
+        if (err.name === 'ValidationError') {
+            res.status(400).send('Bad Request');
+        }else {
+            res.status(500).send('Internal Server Error');
+        }
     }
 }
 
@@ -52,7 +58,6 @@ export const getTransactions = async (req: express.Request, res: express.Respons
         const data = await Transaction.find();
         res.status(200).send(data);
     } catch (err) {
-        console.error(err);
         res.status(500).send('Internal Server Error');
     }
 }
@@ -67,7 +72,6 @@ export const getTransactionById = async (req: express.Request, res: express.Resp
             res.status(404).send('Transaction not found');
         }
     } catch (err) {
-        console.error(err);
         res.status(500).send('Internal Server Error');
     }
 }
@@ -79,34 +83,20 @@ export const getTransactionsByUser = async (req: express.Request, res: express.R
         res.status(200).send(data);
     })
     .catch((err: Error) => {
-        console.error(err);
         res.status(500).send('Internal Server Error');
     });
 }
-
-// // Get transaction by user after a date
-// export const getTransactionsByUserAfterDate = async (req: express.Request, res: express.Response) => {
-//     Transaction.find({user: req.params.user, date: {$gte: new Date(req.params.date)}})
-//     .then((data: TransactionType[]) => {
-//         res.status(200).send(data);
-//     })
-//     .catch((err: Error) => {
-//         console.error(err);
-//         res.status(500).send('Internal Server Error');
-//     });
-// }
 
 // Delete transaction by id
 export const deleteTransactionById = async (req: express.Request, res: express.Response) => {
     try {
         const data = await Transaction.findByIdAndDelete(req.params.id);
         if (data) {
-            res.status(200).send('Transaction deleted');
+            res.status(204).send('Transaction deleted');
         } else {
             res.status(404).send('Transaction not found');
         }
     } catch (err) {
-        console.error(err);
         res.status(500).send('Internal Server Error');
     }
 }
@@ -122,7 +112,6 @@ export const updateTransactionById = async (req: express.Request, res: express.R
         }
     })
     .catch((err: Error) => {
-        console.error(err);
         res.status(500).send('Internal Server Error');
     });
 }

@@ -35,13 +35,12 @@ export const createWallet = (req: express.Request, res: express.Response) => {
 };
 
 // Get all wallets
-export const getWallets = (req: express.Request, res: express.Response) => {
+export const getWallets = (_: express.Request, res: express.Response) => {
     Wallet.find()
     .then((data: WalletType[]) => {
         res.status(200).send(data);
     })
-    .catch((err: Error) => {
-        console.error(err);
+    .catch((_: Error) => {
         res.status(500).send('Internal Server Error');
     });
 }
@@ -52,8 +51,7 @@ export const getWalletsByUser = (req: express.Request, res: express.Response) =>
     .then((data: WalletType[]) => {
         res.status(200).send(data);
     })
-    .catch((err: Error) => {
-        console.error(err);
+    .catch((_: Error) => {
         res.status(500).send('Internal Server Error');
     });
 }
@@ -68,8 +66,7 @@ export const getWallet = (req: express.Request, res: express.Response) => {
             res.status(404).send('Wallet not found');
         }
     })
-    .catch((err: Error) => {
-        console.error(err);
+    .catch((_: Error) => {
         res.status(500).send('Internal Server Error');
     });
 }
@@ -84,8 +81,7 @@ export const updateWallet = (req: express.Request, res: express.Response) => {
                 res.status(404).send('Wallet not found');
             }
         })
-        .catch((err: Error) => {
-            console.error(err);
+        .catch((_: Error) => {
             res.status(500).send('Internal Server Error');
         });
 }
@@ -107,8 +103,7 @@ export const deleteWallet = (req: express.Request, res: express.Response) => {
         }
         
     })
-    .catch((err: Error) => {
-        console.error(err);
+    .catch((_: Error) => {
         res.status(500).send('Internal Server Error');
     });
 }

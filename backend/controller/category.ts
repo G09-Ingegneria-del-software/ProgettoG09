@@ -22,7 +22,11 @@ export const createCategory = (req: express.Request, res: express.Response) => {
                 if (err.message.includes('duplicate key error')) {
                     res.status(409).send('Category name already in use');
                 }else {
-                    res.status(500).send('Internal Server Error');
+                    if (err.name === 'ValidationError') {
+                        res.status(400).send('Bad Request');
+                    }else{
+                        res.status(500).send('Internal Server Error');
+                    }
                 }
             });
     
@@ -30,8 +34,7 @@ export const createCategory = (req: express.Request, res: express.Response) => {
             res.status(409).send('Category name already in use');
         }
     })
-    .catch((err: Error) => {
-        console.error(err);
+    .catch((err: Error) => {   
         res.status(500).send('Internal Server Error');
     });
 };
@@ -43,7 +46,7 @@ export const getCategories = (req: express.Request, res: express.Response) => {
         res.status(200).send(data);
     })
     .catch((err: Error) => {
-        console.error(err);
+        
         res.status(500).send('Internal Server Error');
     });
 }
@@ -54,8 +57,7 @@ export const getCategoriesByUser = (req: express.Request, res: express.Response)
     .then((data: CategoryType[]) => {
         res.status(200).send(data);
     })
-    .catch((err: Error) => {
-        console.error(err);
+    .catch((_: Error) => {
         res.status(500).send('Internal Server Error');
     });
 }
@@ -70,8 +72,7 @@ export const getCategory = (req: express.Request, res: express.Response) => {
             res.status(404).send('Category not found');
         }
     })
-    .catch((err: Error) => {
-        console.error(err);
+    .catch((_: Error) => {
         res.status(500).send('Internal Server Error');
     });
 }
@@ -79,25 +80,17 @@ export const getCategory = (req: express.Request, res: express.Response) => {
 
 // Update category
 export const updateCategory = (req: express.Request, res: express.Response) => {
-    Category.findOne({name: req.body.name, user: req.body.user}).then((data: CategoryType | null) => {
+    Category.findOneAndUpdate({name: req.params.name, user: req.body.user}, req.body, {new: true})
+    .then((data: CategoryType | null) => {
         if (data) {
-            res.status(409).send('Category name already in use');
-        }else {
-            Category.findOneAndUpdate({name: req.params.name, user: req.body.user}, req.body, {new: true})
-                .then((data: CategoryType | null) => {
-                    if (data) {
-                        res.status(200).send(data);
-                    } else {
-                        res.status(404).send('Category not found');
-                    }
-                })
-                .catch((err: Error) => {
-                    console.error(err);
-                    res.status(500).send('Internal Server Error');
-                });
-            }
+            res.status(200).send('Category updated');
+        } else {
+            res.status(404).send('Category not found');
+        }
+    })
+    .catch((_: Error) => {
+        res.status(500).send('Internal Server Error');
     });
-
 }
 
 // Delete category
@@ -105,13 +98,13 @@ export const deleteCategory = (req: express.Request, res: express.Response) => {
     Category.findOneAndDelete({name: req.params.name, user: req.params.user})
     .then((data: CategoryType | null) => {
         if (data) {
-            res.status(200).send('Category deleted');
+            res.status(204).send('Category deleted');
         } else {
             res.status(404).send('Category not found');
         }
     })
-    .catch((err: Error) => {
-        console.error(err);
+    .catch((_: Error) => {
         res.status(500).send('Internal Server Error');
     });
 }
+

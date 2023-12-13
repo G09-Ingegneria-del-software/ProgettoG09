@@ -84,7 +84,7 @@ export const updateData = (req: express.Request, res: express.Response) => {
         if (!data){
             res.status(404).send("User not found");
         }else {
-            res.status(200).send(data);
+            res.status(200).send("User updated");
         }
     })
     .catch((err: Error) => {
@@ -98,7 +98,7 @@ export const updatePassword = (req: express.Request, res: express.Response) => {
         if (!data){
             res.status(404).send("User not found");
         }else {
-            res.status(200).send(data);
+            res.status(200).send("User updated");
         }
     })
     .catch((err: Error) => {

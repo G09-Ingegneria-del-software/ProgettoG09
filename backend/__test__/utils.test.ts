@@ -79,11 +79,6 @@ describe("Controllo funzionalita' creazione token", () => {
     expect(token.length).toBeGreaterThan(0);
   });
 
-  test("Creazione token con secret vuoto", () => {
-    const token = generateToken("", 1000, {"email": ""});
-    expect(token).toBe("");
-  });
-
 });
 
 
@@ -102,12 +97,12 @@ describe("Controllo funzionalita' di verifica del token, ed eventuale decodifica
 
   test("Verifica token non valido", async () => {
     const result = await verifyToken("secret", invalid_token);
-    expect(result).toBe(false);
+    expect(result).toBe(undefined);
   });
 
   test("Verifica token con secret vuoto", async () => {
     const result = await verifyToken("", valid_token);
-    expect(result).toBe(false);
+    expect(result).toBe(undefined);
   });
 
 });

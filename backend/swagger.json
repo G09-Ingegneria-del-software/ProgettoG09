@@ -338,6 +338,9 @@
           "201": {
             "description": "Category created"
           },
+          "400": {
+            "description": "Bad Request"
+          },
           "409": {
             "description": "Category name already in use"
           },
@@ -437,8 +440,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
+          "204": {
+            "description": "No Content"
           },
           "404": {
             "description": "Category not found"
@@ -640,8 +643,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
+          "204": {
+            "description": "No Content"
           },
           "404": {
             "description": "Budget not found"
@@ -1065,8 +1068,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Transaction deleted"
+          "204": {
+            "description": "No Content"
           },
           "404": {
             "description": "Transaction not found"

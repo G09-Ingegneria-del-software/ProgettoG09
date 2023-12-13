@@ -254,4 +254,12 @@ describe("Test API DELETE /api/wallet/:user/:name", () => {
         expect(response.body.message).toBe("Nessun token fornito");
     });
 
+    test("Chiamata all'API con wallet non esistente", async () => {
+        const response = await request(app).delete("/api/wallet/test@test.com/TestWallet123").set("x-access-token", token).set("Content-Type", "application/json").set("Authorization", token).send();
+        expect(response.statusCode).toBe(404);
+        expect(response.body).not.toBeNull();
+        expect(response.body).not.toBeUndefined();
+        expect(response.text).toBe("Wallet not found");
+    });
+
 });

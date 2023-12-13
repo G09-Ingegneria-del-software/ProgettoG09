@@ -10,11 +10,11 @@ export const login = async (req: Request, res: Response) => {
     let user = await User.findOne({ email: email });
 
     if (!user) {
-        return res.status(404).json({ message: "User not found" });
+        return res.status(404).send("User not found");
     }
 
     if (user.password !== password) {
-        return res.status(401).json({ message: "Incorrect credentials" });
+        return res.status(401).send("Incorrect credentials");
     }
 
     var payload = {email: user.email, id: user._id};
@@ -27,14 +27,14 @@ export const isLogged = async (req: Request, res: Response) => {
     let token = req.headers['x-access-token'] || req.headers['authorization'];
 
     if (!token) {
-        return res.status(401).json({ message: "No token provided" });
+        return res.status(401).send("No token provided");
     }
 
     try {
         const decoded = await verifyToken(SECRET, token.toString());
         return res.status(200).json({ success: true, message: "Valid token", email: decoded.email });
     } catch (error) {
-        return res.status(401).json({ message: "Invalid token" });
+        return res.status(401).send("Invalid token");
     }
 }
 
@@ -46,8 +46,8 @@ export const logout = (req: Request, res: Response) => {
         let payload = {};
         let token = generateToken(SECRET, 5, payload);
         res.setHeader('x-access-token', token);
-        return res.status(200).json({success: true, message: "You logged out!"});
+        return res.status(200).send("You logged out!");
     } else {
-        return res.status(200).json({success: true, message: "You alreayd logged out!"});
+        return res.status(200).send("You already logged out!");
     }
 }

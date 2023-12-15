@@ -7,7 +7,6 @@ const schema = new Schema({
     initialMoney: {type: Number, required:true},
     actualMoney: {type: Number, required:true},
     category: {type: String, required:true},
-    color: {type:String},
     user: {type:String, required:true},
 });
 
@@ -18,7 +17,6 @@ interface BudgetType {
     initialMoney: number,
     actualMoney: number,
     category: string,
-    color?: string,
     user: string,
 }
 

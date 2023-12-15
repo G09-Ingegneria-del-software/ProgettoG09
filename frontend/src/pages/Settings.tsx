@@ -1,5 +1,5 @@
 // Importing libraries
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 
 // Importing pages
 import UserPage from './UserPage';
@@ -13,12 +13,18 @@ import InputText from '../components/common/InputText';
 import { ButtonIcon } from "../components/common/Button"
 import Spacer from '../components/common/Spacer';
 
+// Importing context
+import AppContext from '../appContext';
+
 const Settings = () => {
 
-    const [firstName, setFirstName] = useState<string>("");
-    const [secondName, setSecondName] = useState<string>("");
-    const [email, setEmail] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
+    // Use context
+    const {user, setUser} = useContext(AppContext);
+
+    const [firstName, setFirstName] = useState<string>(user?.firstName || "");
+    const [secondName, setSecondName] = useState<string>(user?.lastName || "");
+    const [email, setEmail] = useState<string>(user?.email || "");
+    const [password, setPassword] = useState<string>("abcd");
     const [newPassword, setNewPassword] = useState<string>("");
     const [repeatedNewPassword, setRepeatedNewPassword] = useState<string>("");
     
@@ -42,6 +48,12 @@ const Settings = () => {
             setModalOpen(false);
         }
     }
+
+
+    useEffect(() => {
+        console.log(user?.firstName);
+        console.log(user?.lastName)
+    }, []);
 
     useEffect(() => {
         if (newPassword != repeatedNewPassword) {

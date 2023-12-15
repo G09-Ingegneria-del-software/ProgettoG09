@@ -45,15 +45,20 @@ function App() {
     }
   }
 
-  const getData = (endpoint: string, setValues: React.Dispatch<React.SetStateAction<any[]>>) => {
+  const getData = (endpoint: string, setValues: any) => {
     const token = localStorage.getItem("token") || "";
     const configRequest = {"Content-type": "application/json", "x-access-token": token};
     axios.get(endpoint, {headers: configRequest})
         .then((res: any) => {
-          for (let item of res.data) {
-            item.id = item._id;
-            delete item.__v; delete item._id;
-            if (item.date) item.date = new Date(item.date);
+          console.log(res.data);
+          if (Array.isArray(res.data)) {
+            for (let item of res.data) {
+              item.id = item._id;
+              delete item.__v; delete item._id;
+              if (item.date) item.date = new Date(item.date);
+            }
+          } else {
+            delete res.data.__v; delete res.data._id;
           }
           setValues(res.data);
         })
@@ -64,10 +69,10 @@ function App() {
 
   useEffect(() => {
     if(!isLoggedIn) verifyLoggedIn();
-  }, []);
-
-  useEffect(() => {
-    if (isLoggedIn) {
+    else {
+      const email = localStorage.getItem("email") || "";
+      console.log(email);
+      getData(`/api/user/${email}`, setUser);
       getData("/api/transaction", setAllTransactions);
       getData("/api/wallet", setWallets);
       getData("/api/category", setCategories);
@@ -77,7 +82,7 @@ function App() {
         setIsLoading(false);
       }, 1000);
     }
-  }, [isLoggedIn]);
+  }, []);
 
   useEffect(() => {
     setSelectedWallet(wallets[0]);

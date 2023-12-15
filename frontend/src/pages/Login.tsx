@@ -34,8 +34,8 @@ const Login = () => {
             .then((res: any) => {
                 const {token, id} = res.data;
                 localStorage.setItem("token", token);
+                localStorage.setItem("email", id);
                 setIsLoggedIn ? setIsLoggedIn(true) : console.log("Logged in undefined");
-                // TODO: retrieve the user with the given id/email
                 navigate('/dashboard');
             })
             .catch((err: Error) => console.log(err.message));

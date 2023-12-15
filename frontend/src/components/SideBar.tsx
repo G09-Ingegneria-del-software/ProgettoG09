@@ -26,6 +26,8 @@ const SideBar = () => {
         {label: "Dashboard", href: "/"},
         {label: "Wallets", href: "/wallets"},
         {label: "Transactions", href: "/transactions"},
+        {label: "Categories", href: "/categories"},
+        {label: "Budget", href: "/budget"},
         {label: "Settings", href: "/settings"},
     ]
     const [selectedLink, setSelectedLink] = useState<LinkType>(links[0]);

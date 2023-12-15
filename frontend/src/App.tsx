@@ -15,6 +15,8 @@ import Loading from "./pages/Loading";
 // Importing context
 import AppContext from "./appContext";
 import { User, Transaction, Wallet, Category } from "./type";
+import Categories from "./pages/Categories";
+import Budget from "./pages/Budget";
 
 function App() {
 
@@ -89,6 +91,8 @@ function App() {
           <Route path="/" element={<PrivateOutlet element={<Dashboard />} />} />
           <Route path="/wallets" element={<PrivateOutlet element={<Wallets />} />}/>
           <Route path="/transactions" element={<PrivateOutlet element={<Transactions />} />}/>
+          <Route path="/categories" element={<PrivateOutlet element={<Categories/>} />}/> 
+          <Route path="/budget" element={<PrivateOutlet element={<Budget/>} />}/> 
           <Route path="/settings" element={<PrivateOutlet element={<Settings />} />} />
           <Route path="/sign-up" element={<SignUp />}></Route>
           <Route path="/login" element={<Login />}></Route>

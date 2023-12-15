@@ -61,10 +61,9 @@ const Transactions = () => {
                     delete transactionData.__v; delete transactionData._id;
                     transactionData.date = new Date(transactionData.date);
                     setTransactions ? setTransactions([...transactions, transactionData]) : console.log();
+                    setAddModalOpen(!addModalOpen);
                 })
                 .catch(err => console.log(err.message))
-
-            setAddModalOpen(!addModalOpen);
         }
     }
 

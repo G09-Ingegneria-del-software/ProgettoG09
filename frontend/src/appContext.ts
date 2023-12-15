@@ -18,6 +18,7 @@ const AppContext = createContext<AppContextType>({
         user: ""
     },
     categories: [],
+    budgets: [],
     isLoggedIn: false
 });
 

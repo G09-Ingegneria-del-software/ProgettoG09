@@ -14,9 +14,9 @@ import Loading from "./pages/Loading";
 
 // Importing context
 import AppContext from "./appContext";
-import { User, Transaction, Wallet, Category } from "./type";
+import { User, Transaction, Wallet, Category, Budget } from "./type";
 import Categories from "./pages/Categories";
-import Budget from "./pages/Budget";
+import Budgets from "./pages/Budgets";
 
 function App() {
 
@@ -28,6 +28,7 @@ function App() {
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [budgets, setBudgets] = useState<Budget[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
 
   const verifyLoggedIn = () => {
@@ -70,6 +71,7 @@ function App() {
       getData("/api/transaction", setAllTransactions);
       getData("/api/wallet", setWallets);
       getData("/api/category", setCategories);
+      getData("/api/budget", setBudgets);
 
       setTimeout(() => {
         setIsLoading(false);
@@ -85,14 +87,14 @@ function App() {
   if (isLoading) return <Loading />;
 
   return (
-    <AppContext.Provider value={{ user, setUser, allTransactions, setAllTransactions, transactions, setTransactions, wallets, setWallets, selectedWallet, setSelectedWallet, categories, setCategories, isLoggedIn, setIsLoggedIn }}>
+    <AppContext.Provider value={{ user, setUser, allTransactions, setAllTransactions, transactions, setTransactions, wallets, setWallets, selectedWallet, setSelectedWallet, categories, setCategories, budgets, setBudgets, isLoggedIn, setIsLoggedIn }}>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<PrivateOutlet element={<Dashboard />} />} />
           <Route path="/wallets" element={<PrivateOutlet element={<Wallets />} />}/>
           <Route path="/transactions" element={<PrivateOutlet element={<Transactions />} />}/>
           <Route path="/categories" element={<PrivateOutlet element={<Categories/>} />}/> 
-          <Route path="/budget" element={<PrivateOutlet element={<Budget/>} />}/> 
+          <Route path="/budgets" element={<PrivateOutlet element={<Budgets/>} />}/> 
           <Route path="/settings" element={<PrivateOutlet element={<Settings />} />} />
           <Route path="/sign-up" element={<SignUp />}></Route>
           <Route path="/login" element={<Login />}></Route>

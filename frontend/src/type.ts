@@ -61,6 +61,15 @@ export type Category = {
     user: string
 }
 
+// Budget type
+export type Budget = {
+    name: string,
+    description: string,
+    initialMoney: number,
+    actualMoney: number,
+    category: string,
+}
+
 // App context type
 export type AppContextType = {
     user: User | null, 
@@ -75,6 +84,8 @@ export type AppContextType = {
     setSelectedWallet?: (wallet: Wallet) => void,
     categories: Category[],
     setCategories?: (categories: Category[]) => void, 
+    budgets: Budget[],
+    setBudgets?: (budgets: Budget[]) => void,
     isLoggedIn: boolean,
     setIsLoggedIn?: (isLoggedIn: boolean) => void, 
 };

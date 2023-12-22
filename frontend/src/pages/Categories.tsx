@@ -18,11 +18,12 @@ import Spacer from "../components/common/Spacer";
 
 // Importing context
 import AppContext from "../appContext";
-import MultiSelect from "../components/common/MultiSelect";
+import AuthContext from "../authContext";
 
 const Categories = () => {
 
     // Using AppContext
+    const {user} = useContext(AuthContext);
     const {categories, setCategories} = useContext(AppContext);
 
     const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
@@ -41,7 +42,7 @@ const Categories = () => {
             const configRequest = {"Content-type": "application/json", "x-access-token": token};
             const tagsData = tags.split(",");
             const category = {
-                user: "mario.rossi@gmail.com",
+                user: user?.email || "", 
                 name,
                 tags: tagsData,
                 color

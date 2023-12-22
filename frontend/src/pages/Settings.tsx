@@ -17,6 +17,9 @@ import Spacer from '../components/common/Spacer';
 // Importing types
 import {User} from "../type"
 
+// Importing static stuff
+import {checkPassword} from "../K"
+
 // Importing context
 import AuthContext from '../authContext';
 
@@ -58,13 +61,7 @@ const Settings = () => {
     const changePassword = (e: any) => {
         e.preventDefault();
         setModalOpen(!modalOpen);
-    }
-
-    const checkPassword = (password: string) => { 
-        // Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
-        let regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        return regex.test(password);
-    }
+    }   
 
     const submitPassword = (e: any) => {
         e.preventDefault();

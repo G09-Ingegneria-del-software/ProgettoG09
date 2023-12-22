@@ -17,10 +17,12 @@ import Spacer from "../components/common/Spacer";
 import BudgetCard from "../components/BudgetCard";
 
 // Importing context
+import AuthContext from "../authContext";
 import AppContext from "../appContext";
 
 const Budgets = () => {
     // Using AppContext
+    const {user} = useContext(AuthContext);
     const {categories, budgets, setBudgets} = useContext(AppContext);
 
     const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
@@ -41,7 +43,7 @@ const Budgets = () => {
         if (token) {
             const configRequest = {"Content-type": "application/json", "x-access-token": token};
             const budget = {
-                user: "mario.rossi@gmail.com",
+                user: user?.email || "",
                 color: "red",
                 name,
                 description,

@@ -33,9 +33,8 @@ const Login = () => {
 
         axios.post("/auth/login", {email, password})
             .then((res: any) => {
-                const {token, id} = res.data;
+                const {token} = res.data;
                 localStorage.setItem("token", token);
-                localStorage.setItem("email", id);
                 setAuthenticated ? setAuthenticated(true) : console.log("Logged in undefined");
                 navigate('/dashboard');
             })

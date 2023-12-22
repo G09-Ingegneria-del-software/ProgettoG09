@@ -11,16 +11,18 @@ import Spacer from './common/Spacer';
 import { Transaction, Wallet } from '../type';
 
 // Importing context
+import AuthContext from '../authContext';
 import AppContext from '../appContext';
 
 const SideBar = () => {
 
     const navigate = useNavigate();
 
+    const {user} = useContext(AuthContext);
     const {wallets, selectedWallet, setSelectedWallet, allTransactions, setTransactions} = useContext(AppContext);
 
-    const firstName: string = "Mario";
-    const lastName: string = "Rossi";
+    const firstName: string = user?.firstName || "";
+    const lastName: string = user?.lastName || "";
     const logoSrc = require("../assets/logo.svg").default as string;
 
     type LinkType = { label: string, href: string }
@@ -33,10 +35,6 @@ const SideBar = () => {
         {label: "Settings", href: "/settings"},
     ]
     const [selectedLink, setSelectedLink] = useState<LinkType>(links[0]);
-
-    useEffect(() => {
-        console.log("Wallets update: ", wallets);
-    }, [wallets]);
 
     useEffect(() => {
         const href: string = window.location.href;
@@ -58,6 +56,7 @@ const SideBar = () => {
     };
 
     const handleSignOut = () => {
+        console.log("Logout successful");
         localStorage.removeItem("token");
         localStorage.removeItem("email");
         navigate("/login");

@@ -39,8 +39,10 @@ function App() {
       axios.post("/auth/isLogged", {}, {headers: configRequest})
         .then((res: any) => {
           console.log("Login successful")
+          const {email} = res.data;
+          
           setAuthenticated(true);
-          const email = localStorage.getItem("email");
+          localStorage.setItem("email", email);
           if (email) {
             setIsLoading(true);
             console.log("Updating data");
@@ -87,7 +89,18 @@ function App() {
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
-  }, []);
+  }, [window.location.href]);
+
+  useEffect(() => {
+    if (allTransactions && wallets[0]) {
+      if (selectedWallet) {
+        setTransactions(allTransactions.filter((t: Transaction) => t.wallet === selectedWallet.name)); 
+      } else {
+        setSelectedWallet(wallets[0]);
+        setTransactions(allTransactions.filter((t: Transaction) => t.wallet === wallets[0].name));
+      }
+    }
+  }, [allTransactions, wallets]);
 
   if (isLoading) return <Loading />;
 

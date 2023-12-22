@@ -40,8 +40,8 @@ const Transactions = () => {
     const [type, setType] = useState<string>(TransactionType.EXPENSE);
     const [description, setDescription] = useState<string>("");
     const [money, setMoney] = useState<number>(0);
-    const [selectedWallet, setSelectedWallet] = useState<string>(wallets[0]?.name);
-    const [selectedCategory, setSelectedCategory] = useState<string>(categories[0]?.name);
+    const [selectedWalletName, setSelectedWalletName] = useState<string>(wallets[0]?.name);
+    const [selectedCategoryName, setSelectedCategoryName] = useState<string>(categories[0]?.name);
 
     const handleCreateTransaction = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
@@ -50,19 +50,29 @@ const Transactions = () => {
         if (token) {
             const configRequest = {"Content-type": "application/json", "x-access-token": token};
             const transaction = {
-                user: "mario.rossi@gmail.com",
+                user: user?.email || "",
                 type,
                 money,
                 description,
-                wallet: selectedWallet,
-                category: selectedCategory
+                wallet: selectedWalletName,
+                category: selectedCategoryName
             }
+
             axios.post("/api/transaction", transaction, {headers: configRequest})
                 .then(res => {
                     const transactionData = res.data;
                     delete transactionData.__v; delete transactionData._id;
                     transactionData.date = new Date(transactionData.date);
                     setTransactions ? setTransactions([...transactions, transactionData]) : console.log();
+
+                    const selectedWallet = wallets?.find((w: Wallet) => w.name === selectedWalletName);
+                    
+                    let money = (selectedWallet?.money || 0) + (transaction.type === TransactionType.EXPENSE ? -transaction.money : transaction.money);
+                    axios.put(`/api/wallet/${selectedWalletName}`, {user: user?.email || "", money}, {headers: configRequest})
+                        .then(res => {
+
+                    })
+
                     setAddModalOpen(!addModalOpen);
                 })
                 .catch(err => console.log(err.message))
@@ -81,8 +91,8 @@ const Transactions = () => {
                     <Select label="Type" data={K.transactionTypes} value={type} onChange={setType}/>
                     <InputText label="Description" value={description} setValue={setDescription} />
                     <InputText label="Amount" value={money.toString()} setValue={setMoney} />
-                    <Select label="Wallet" data={wallets.map(({name}) => name)} value={selectedWallet} onChange={setSelectedWallet}/>
-                    <Select label="Category" data={categories.map(({name}) => name)} value={selectedCategory} onChange={setSelectedCategory}/>
+                    <Select label="Wallet" data={wallets.map(({name}) => name)} value={selectedWalletName} onChange={setSelectedWalletName}/>
+                    <Select label="Category" data={categories.map(({name}) => name)} value={selectedCategoryName} onChange={setSelectedCategoryName}/>
                     {/* <div className="flex flex-col gap-1">
                         <label className="text-secondary">Date</label>
                         <div className="focus:outline-none border-1 border-secondary">

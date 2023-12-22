@@ -1,8 +1,18 @@
-import React,{useState,ChangeEvent} from 'react';
+// Importing libraries
+import React,{useState,ChangeEvent, useContext} from 'react';
 import BackgroundImage from '../assets/images/signup_wallpaper.jpg';
 import {useNavigate} from 'react-router-dom';
+import axios from 'axios';
+
+// Importing static stuff
+import { checkPassword } from '../K';
+
+// Importing context
+import AuthContext from '../authContext';
 
 const SignUp = () => {
+
+    const {isAuthenticated, setAuthenticated} = useContext(AuthContext);
 
     const [name, setName] = useState ('');
     const[email, setEmail] = useState('');
@@ -34,11 +44,15 @@ const SignUp = () => {
     const handleSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
-        if (password === confirmPassword){
-            //Le password corrispondono
-            console.log('Email:', email);
-            console.log('Password:', password);
-            setPasswordsMatchError(false);
+        if (password === confirmPassword && checkPassword(password) && checkPassword(confirmPassword)){
+            const firstName = name.split(' ')[0];
+            const lastName = name.split(' ')[1];
+            axios.post("/auth/signup", {firstName, lastName, email, password})
+                .then((res: any) => {
+                    navigate('/login');
+                })
+                .catch((err: Error) => console.log(err.message));
+                setPasswordsMatchError(false);
 
         } else{
             //Le password non corrispondono

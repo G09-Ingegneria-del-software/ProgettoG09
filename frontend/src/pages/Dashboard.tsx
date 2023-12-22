@@ -33,8 +33,8 @@ import AppContext from "../appContext";
 
 const Dashboard = () => {
 
-    const {user, isAuthenticated, setAuthenticated} = useContext(AuthContext);
-    const {transactions, setTransactions, wallets, categories} = useContext(AppContext);
+    const {user} = useContext(AuthContext);
+    const {transactions, setTransactions, wallets, selectedWallet, setSelectedWallet, categories} = useContext(AppContext);
 
     const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
 
@@ -42,9 +42,12 @@ const Dashboard = () => {
     const [type, setType] = useState<string>(TransactionType.EXPENSE);
     const [description, setDescription] = useState<string>("");
     const [money, setMoney] = useState<number>(0);
-    const [selectedWallet, setSelectedWallet] = useState<string>(wallets[0]?.name || "No wallet specified");
-    const [selectedCategory, setSelectedCategory] = useState<string>(categories[0]?.name);
+    const [walletName, setWalletName] = useState<string>(wallets[0]?.name || "No wallet specified");
+    const [categoryName, setCategoryName] = useState<string>(categories[0]?.name);
     
+    const [income, setIncome] = useState<number>(0);
+    const [expense, setExpense] = useState<number>(0);
+
     const handleCreateTransaction = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
@@ -56,21 +59,42 @@ const Dashboard = () => {
                 type,
                 money,
                 description,
-                wallet: selectedWallet,
-                category: selectedCategory
+                wallet: walletName,
+                category: categoryName 
             }
             axios.post("/api/transaction", transaction, {headers: configRequest})
                 .then(res => {
                     const transactionData = res.data;
                     delete transactionData.__v; delete transactionData._id;
                     transactionData.date = new Date(transactionData.date);
-                    setTransactions ? setTransactions([...transactions, transactionData]) : console.log();
+                    setTransactions ? setTransactions([...transactions, transactionData]) : console.log("setTransaction is undefined");
                 })
                 .catch(err => console.log(err.message))
 
             setAddModalOpen(!addModalOpen);
         }
     }
+
+    const calculateIncomeExpense = () => {
+        let newIncome: number = 0;
+        let newExpense: number = 0;
+
+        if (transactions) {
+            const lastTransactions = transactions.filter((t: Transaction) => t.date.getMonth() === new Date(Date.now()).getMonth());
+            const incomeTransactions = lastTransactions.filter((t: Transaction) => t.type === TransactionType.INCOME);
+            const expenseTransactions = lastTransactions.filter((t: Transaction) => t.type === TransactionType.EXPENSE);
+
+            for (let t of incomeTransactions) newIncome += t.money;
+            for (let t of expenseTransactions) newExpense += t.money;
+        }
+
+        setIncome(Math.round(newIncome*100)/100);
+        setExpense(Math.round(newExpense*100)/100);
+    }
+
+    useEffect(() => {
+        calculateIncomeExpense();
+    }, [transactions]);
 
     return (
         <UserPage>
@@ -80,8 +104,8 @@ const Dashboard = () => {
                     <Select label="Type" data={K.transactionTypes} value={type} onChange={setType}/>
                     <InputText label="Description" value={description} setValue={setDescription} />
                     <InputText label="Amount" value={money.toString()} setValue={setMoney} />
-                    <Select label="Wallet" data={wallets.map(({name}) => name)} value={selectedWallet} onChange={setSelectedWallet}/>
-                    <Select label="Category" data={categories.map(({name}) => name)} value={selectedCategory} onChange={setSelectedCategory}/>
+                    <Select label="Wallet" data={wallets.map(({name}) => name)} value={walletName} onChange={setWalletName}/>
+                    <Select label="Category" data={categories.map(({name}) => name)} value={categoryName} onChange={setCategoryName}/>
                 </div> 
             </Modal>
 
@@ -99,26 +123,26 @@ const Dashboard = () => {
             <div className="grid grid-rows-flow grid-cols-2 gap-12">
                 {/* Balance section */}
                 <DashboardSection subtitle='Balance' description='Everything about your balance on the account'>
-                    <Card description='Your current balance' label='€ 1234567.89' />
+                    <Card description='Your current balance' label={`€ ${selectedWallet?.money || "No wallet"}`} />
                 </DashboardSection>
                 {/* Income/expense section */}
-                <DashboardSection subtitle='Income/expenses' description='Track how much money you earn and spend'>
-                    <div className="flex gap-4">
-                        <div className="flex flex-col gap-2 w-[180px] bg-white shadow-lg rounded-xl px-4 py-6">
+                <DashboardSection subtitle='Income/expenses' description='Track how much money you earn and spend every month'>
+                    <div className="w-full flex justify-between gap-4">
+                        <div className="w-full flex flex-col gap-2 bg-white shadow-lg rounded-xl px-4 py-6">
                             <div className='flex justify-between'>
                                 <p className="text-[2.25rem]">IN</p>
                                 <img className="rotate-180" src={require("../assets/icons/short_up.svg").default} alt="arrow-up-icon" />
                             </div>
-                            <Subtitle subtitle='€ 1920.56' />
-                            <Description description='Lorem ipsum dolor sit amet consectetur.'/>
+                            <Subtitle subtitle={`€ ${income}`} />
+                            <Description description={`This number shows how much money you earned this month starting from 01/${new Date(Date.now()).getMonth() + 1}/${new Date(Date.now()).getFullYear()}`}/>
                         </div>
-                        <div className="flex flex-col gap-2 w-[180px] bg-white shadow-lg rounded-xl px-4 py-6">
+                        <div className="w-full flex flex-col gap-2 bg-white shadow-lg rounded-xl px-4 py-6">
                             <div className='flex justify-between'>
                                 <p className="text-[2.25rem]">OUT</p>
                                 <img src={require("../assets/icons/short_up.svg").default} alt="arrow-up-icon" />
                             </div>
-                            <Subtitle subtitle='€ 420.123' />
-                            <Description description='Lorem ipsum dolor sit amet consectetur.'/>
+                            <Subtitle subtitle={`€ ${expense}`} />
+                            <Description description={`This number illustrates the amount of money you spent this month starting from 01/${new Date(Date.now()).getMonth() + 1}/${new Date(Date.now()).getFullYear()}`}/>
                         </div>
                     </div>
                 </DashboardSection>

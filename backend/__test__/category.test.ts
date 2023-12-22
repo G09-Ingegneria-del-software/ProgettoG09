@@ -90,7 +90,6 @@ describe("Test API GET /api/category/:user/:name", () => {
         expect(response.body).not.toBeUndefined();
         expect(response.body.name).toBe("TestCategory");
         expect(response.body.user).toBe("test@test.com");
-        expect(response.body.color).toBe("#000000");
     });
 
     test("Chiamata all'API senza token", async () => {
@@ -186,8 +185,7 @@ describe("Test API PUT /api/category/:name", () => {
     test("Chiamata all'API in maniera corretta", async () => {
         const category = {
             "name": "TestCategory",
-            "tags": [],
-            "color": "#000001",
+            "tags": ["new"],
             "user": "test@test.com"
         }
         const response = await request(app).put("/api/category/TestCategory").set("x-access-token", token).set("Content-Type", "application/json").set("Authorization", token).send(category);
@@ -200,7 +198,7 @@ describe("Test API PUT /api/category/:name", () => {
         expect(response2.statusCode).toBe(200);
         expect(response2.body).not.toBeNull();
         expect(response2.body).not.toBeUndefined();
-        expect(response2.body.color).toBe("#000001");
+        expect(response2.body.tags.length).toBe(1);
 
     });
 

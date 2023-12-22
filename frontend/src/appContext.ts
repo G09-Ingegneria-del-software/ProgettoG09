@@ -5,7 +5,6 @@ import {createContext, useState} from "react"
 import { AppContextType } from "./type";
 
 const AppContext = createContext<AppContextType>({
-    user: null,
     allTransactions: [],
     transactions: [],
     wallets: [],
@@ -19,7 +18,6 @@ const AppContext = createContext<AppContextType>({
     },
     categories: [],
     budgets: [],
-    isLoggedIn: false
 });
 
 export default AppContext;

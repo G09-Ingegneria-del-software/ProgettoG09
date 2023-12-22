@@ -14,12 +14,14 @@ import Select from '../components/common/Select';
 import InputText from '../components/common/InputText';
 
 // Importing context
+import AuthContext from '../authContext';
 import AppContext from '../appContext';
 
 const Wallets = () => {
 
     // App context
-    const {user, wallets, setWallets} = useContext(AppContext);
+    const { user } = useContext(AuthContext);
+    const { wallets, setWallets} = useContext(AppContext);
 
     const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
 
@@ -69,7 +71,7 @@ const Wallets = () => {
             </div>
             <Spacer height="2em"/>
             <section className= "w-full grid grid-cols-2 place-items-center gap-4">
-                {wallets.map(({name, money, description}, index) => <WalletCard key={index} name={name} money={money} description={description} />)}
+                {wallets?.map(({name, money, description}, index) => <WalletCard key={index} name={name} money={money} description={description} />)}
             </section>
         </UserPage>
     );

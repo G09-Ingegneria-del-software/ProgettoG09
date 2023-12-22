@@ -23,12 +23,14 @@ import InputText from "../components/common/InputText";
 import { K } from "../K";
 
 // Importing context
+import AuthContext from "../authContext";
 import AppContext from "../appContext";
 
 const Transactions = () => {
 
     // Using context
-    const { user, transactions, setTransactions, wallets, categories } = useContext(AppContext);
+    const { user } = useContext(AuthContext);
+    const { transactions, setTransactions, wallets, categories } = useContext(AppContext);
 
     const [curTransactions, setCurTransactions] = useState<Transaction[]>(transactions);
 
@@ -38,8 +40,8 @@ const Transactions = () => {
     const [type, setType] = useState<string>(TransactionType.EXPENSE);
     const [description, setDescription] = useState<string>("");
     const [money, setMoney] = useState<number>(0);
-    const [selectedWallet, setSelectedWallet] = useState<string>(wallets[0].name);
-    const [selectedCategory, setSelectedCategory] = useState<string>(categories[0].name);
+    const [selectedWallet, setSelectedWallet] = useState<string>(wallets[0]?.name);
+    const [selectedCategory, setSelectedCategory] = useState<string>(categories[0]?.name);
 
     const handleCreateTransaction = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
@@ -150,13 +152,9 @@ const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, set
     });
 
     useEffect(() => {
-        setNumPages(Math.ceil(curTransactions.length/limit));
-        setVisibleTransactions(curTransactions.slice((curPage-1)*limit, (curPage)*limit));
+        setNumPages(Math.ceil(curTransactions?.length/limit));
+        setVisibleTransactions(curTransactions?.slice((curPage-1)*limit, (curPage)*limit));
     }, [curPage, curTransactions]);
-
-    useEffect(() => {
-        console.log(selectedIndex)
-    }, [selectedIndex])
 
     // Event handlers
     const handleDateChange = (newValue: DateValueType) => {
@@ -243,7 +241,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, set
                         </tr>
                     </thead>
                     <tbody className="relative">
-                        {visibleTransactions.map((t: Transaction, i) => {
+                        {visibleTransactions?.map((t: Transaction, i) => {
                             const rowStyles = "border-b-[1px] relative border-main-100";
                             return <tr className={i % 2 === 0 ? rowStyles : rowStyles + " bg-gray-100"} style={{ width: '100%' }} key={i}>
                                 <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-main">

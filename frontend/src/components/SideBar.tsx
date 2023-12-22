@@ -1,6 +1,6 @@
 // Importing libraries
 import { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Importing components
 import Line from './common/Line';
@@ -14,6 +14,8 @@ import { Transaction, Wallet } from '../type';
 import AppContext from '../appContext';
 
 const SideBar = () => {
+
+    const navigate = useNavigate();
 
     const {wallets, selectedWallet, setSelectedWallet, allTransactions, setTransactions} = useContext(AppContext);
 
@@ -33,6 +35,10 @@ const SideBar = () => {
     const [selectedLink, setSelectedLink] = useState<LinkType>(links[0]);
 
     useEffect(() => {
+        console.log("Wallets update: ", wallets);
+    }, [wallets]);
+
+    useEffect(() => {
         const href: string = window.location.href;
         for (let l of links) {
             if (href.includes(l.href)) setSelectedLink(l);
@@ -50,6 +56,12 @@ const SideBar = () => {
         const transactions: Transaction[] = allTransactions.filter((t: Transaction) => t.wallet === curWallet);
         setTransactions ? setTransactions(transactions) : console.log("setTransactions undefined");
     };
+
+    const handleSignOut = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("email");
+        navigate("/login");
+    }
 
     return (  
         <aside className="static flex-1 w-full max-w-[20rem] flex flex-col bg-clip-border rounded-xl bg-[#E4EDFF] p-4 shadow-md shadow-blue-gray-900/5">
@@ -82,7 +94,7 @@ const SideBar = () => {
 
             <section className="my-4 flex flex-col items-start gap-8">
                 <Link to="/settings"><p>Settings</p></Link>
-                <button className="">Sign out</button>
+                <button onClick={handleSignOut} className="">Sign out</button>
             </section>
       </aside>
       

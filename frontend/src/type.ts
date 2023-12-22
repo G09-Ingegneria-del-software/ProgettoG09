@@ -72,8 +72,6 @@ export type Budget = {
 
 // App context type
 export type AppContextType = {
-    user: User | null, 
-    setUser?: (user: User) => void, 
     allTransactions: Transaction[],
     setAllTransactions?: (transactions: Transaction[]) => void,
     transactions: Transaction[],
@@ -86,10 +84,14 @@ export type AppContextType = {
     setCategories?: (categories: Category[]) => void, 
     budgets: Budget[],
     setBudgets?: (budgets: Budget[]) => void,
-    isLoggedIn: boolean,
-    setIsLoggedIn?: (isLoggedIn: boolean) => void, 
 };
 
+export type AuthContextType = {
+    isAuthenticated: boolean,
+    setAuthenticated?: (isAuthenticated: boolean) => void,
+    user: User | null,
+    setUser?: (user: User) => void,
+}
 
 export type Comparator = {
     label: string, 

@@ -1,5 +1,6 @@
 // Importing libraries
 import { useState, useEffect, useContext } from 'react';
+import axios from 'axios';
 
 // Importing pages
 import UserPage from './UserPage';
@@ -13,18 +14,21 @@ import InputText from '../components/common/InputText';
 import { ButtonIcon } from "../components/common/Button"
 import Spacer from '../components/common/Spacer';
 
+// Importing types
+import {User} from "../type"
+
 // Importing context
-import AppContext from '../appContext';
+import AuthContext from '../authContext';
 
 const Settings = () => {
 
     // Use context
-    const {user, setUser} = useContext(AppContext);
+    const {user, setUser} = useContext(AuthContext);
 
     const [firstName, setFirstName] = useState<string>(user?.firstName || "");
-    const [secondName, setSecondName] = useState<string>(user?.lastName || "");
+    const [lastName, setLastName] = useState<string>(user?.lastName || "");
     const [email, setEmail] = useState<string>(user?.email || "");
-    const [password, setPassword] = useState<string>("abcd");
+    const [password, setPassword] = useState<string>(user?.password || "");
     const [newPassword, setNewPassword] = useState<string>("");
     const [repeatedNewPassword, setRepeatedNewPassword] = useState<string>("");
     
@@ -34,7 +38,21 @@ const Settings = () => {
 
     const handleSubmit = (e: any) => {
         e.preventDefault();
-        console.log("POMODORO");
+        const token = localStorage.getItem("token") || "";
+        const configRequest = {"Content-type": "application/json", "x-access-token": token};
+        axios.put(`/api/user/${user?.email}`, {firstName, lastName}, {headers: configRequest})
+            .then(res => {
+                console.log("User successfully updated")
+
+                if (user) {
+                    user.firstName = firstName;
+                    user.lastName = lastName;
+                    user.password = password;
+
+                    setUser ? setUser(user) : console.log("setUser is undefined");
+                }
+            })
+            .catch(err => console.log("Error: ", err.message));
     }
 
     const changePassword = (e: any) => {
@@ -42,24 +60,34 @@ const Settings = () => {
         setModalOpen(!modalOpen);
     }
 
-    const submitPassword = (e: any) => {
-        e.preventDefault();
-        if (newPassword === repeatedNewPassword) {
-            setModalOpen(false);
-        }
+    const checkPassword = (password: string) => { 
+        // Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
+        let regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        return regex.test(password);
     }
 
+    const submitPassword = (e: any) => {
+        e.preventDefault();
+        if (newPassword === repeatedNewPassword && checkPassword(newPassword) && checkPassword(repeatedNewPassword)) {
+            const token = localStorage.getItem("token") || "";
+            const configRequest = {"Content-type": "application/json", "x-access-token": token};
+            axios.put(`/api/user/${user?.email}`, {password: newPassword}, {headers: configRequest})
+            .then(res => {
+                console.log("User successfully updated")
 
-    useEffect(() => {
-        console.log(user?.firstName);
-        console.log(user?.lastName)
-    }, []);
+                if (user) {
+                    user.firstName = firstName;
+                    user.lastName = lastName;
+                    user.password = password;
 
-    useEffect(() => {
-        if (newPassword != repeatedNewPassword) {
-            console.log("PATATA!!!")
+                    setUser ? setUser(user) : console.log("setUser is undefined");
+                }
+
+                setModalOpen(false);
+            })
+            .catch(err => console.log("Error: ", err.message));
         }
-    }, [newPassword, repeatedNewPassword]);
+    } 
 
     return (  
         <UserPage>
@@ -81,7 +109,7 @@ const Settings = () => {
                 <form action="" className="w-full flex flex-col gap-4">
                     <div className='w-full flex justify-start items-center gap-8'>
                         <InputText label="First name" value={firstName} setValue={setFirstName} />
-                        <InputText label="Second name" value={secondName} setValue={setSecondName} />
+                        <InputText label="Second name" value={lastName} setValue={setLastName} />
                     </div>
                     <div className='w-full flex justify-start items-center gap-8'>
                         <InputText label="Email" value={email} setValue={setEmail} disabled={true} />

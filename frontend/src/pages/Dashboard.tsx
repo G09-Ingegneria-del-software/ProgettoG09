@@ -1,6 +1,7 @@
 // Importing libraries
 import { useState, useEffect, useContext } from "react"
 import axios from "axios";
+import { Navigate, useNavigate } from "react-router-dom";
 
 // Importing pages
 import UserPage from './UserPage';
@@ -27,10 +28,12 @@ import { Transaction, TransactionType, TransactionValues, calculateColor } from 
 import { K } from "../K";
 
 // Importing context
+import AuthContext from "../authContext";
 import AppContext from "../appContext";
 
 const Dashboard = () => {
 
+    const {user, isAuthenticated, setAuthenticated} = useContext(AuthContext);
     const {transactions, setTransactions, wallets, categories} = useContext(AppContext);
 
     const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
@@ -39,8 +42,8 @@ const Dashboard = () => {
     const [type, setType] = useState<string>(TransactionType.EXPENSE);
     const [description, setDescription] = useState<string>("");
     const [money, setMoney] = useState<number>(0);
-    const [selectedWallet, setSelectedWallet] = useState<string>(wallets[0].name);
-    const [selectedCategory, setSelectedCategory] = useState<string>(categories[0].name);
+    const [selectedWallet, setSelectedWallet] = useState<string>(wallets[0]?.name || "No wallet specified");
+    const [selectedCategory, setSelectedCategory] = useState<string>(categories[0]?.name);
     
     const handleCreateTransaction = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
@@ -49,7 +52,7 @@ const Dashboard = () => {
         if (token) {
             const configRequest = {"Content-type": "application/json", "x-access-token": token};
             const transaction = {
-                user: "mario.rossi@gmail.com",
+                user: user?.email,
                 type,
                 money,
                 description,

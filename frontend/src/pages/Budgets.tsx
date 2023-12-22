@@ -31,7 +31,7 @@ const Budgets = () => {
     const [initialMoney, setInitialMoney] = useState<number>(0);
     const [actualMoney, setActualyMoney] = useState<number>(0);
     const [category, setCategory] = useState<string>("");
-    const [selectedCategory, setSelectedCategory] = useState<string>(categories[0].name);
+    const [selectedCategory, setSelectedCategory] = useState<string>(categories[0]?.name);
     
     // Handlers
     const handleCreateBudget = (e: React.MouseEvent<HTMLButtonElement>) => {

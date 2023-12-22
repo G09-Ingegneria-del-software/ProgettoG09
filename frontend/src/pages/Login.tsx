@@ -1,14 +1,15 @@
+// Importing libraries
 import React,{useState, useContext} from 'react';
 import BackgroundImage from "../assets/images/login_wallpaper.jpg";
 import {useNavigate} from 'react-router-dom';
 import axios from 'axios';
 
 // Importing context
-import AppContext from '../appContext';
+import AuthContext from '../authContext';
 
 const Login = () => {
 
-    const {setUser, setIsLoggedIn} = useContext(AppContext);
+    const {setUser, setAuthenticated} = useContext(AuthContext);
 
     const[email, setEmail] = useState<string>('');
     const[password, setPassword] = useState<string>('');
@@ -35,7 +36,7 @@ const Login = () => {
                 const {token, id} = res.data;
                 localStorage.setItem("token", token);
                 localStorage.setItem("email", id);
-                setIsLoggedIn ? setIsLoggedIn(true) : console.log("Logged in undefined");
+                setAuthenticated ? setAuthenticated(true) : console.log("Logged in undefined");
                 navigate('/dashboard');
             })
             .catch((err: Error) => console.log(err.message));

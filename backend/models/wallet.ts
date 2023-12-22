@@ -5,7 +5,6 @@ const schema = new Schema({
     name: {type:String, required:true},
     description: {type: String},
     money: {type: Number, required:true},
-    categories: {type: [String], required:true},
     color: {type:String},
     user: {type:String, required:true},
 });
@@ -15,7 +14,6 @@ interface WalletType {
     name: string,
     description?: string,
     money: number,
-    categories: string[],
     color?: string,
     user: string,
 }

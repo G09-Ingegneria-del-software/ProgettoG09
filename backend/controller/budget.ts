@@ -11,9 +11,8 @@ export const createBudget = (req: express.Request, res: express.Response) => {
                 name: req.body.name,
                 description: req.body.description,
                 initialMoney: req.body.initialMoney,
-                actualMoney: req.body.initialMoney,
+                actualMoney: req.body.actualMoney,
                 category: req.body.category,
-                color: req.body.color,
                 user: req.body.user
             });
 

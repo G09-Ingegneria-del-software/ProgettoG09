@@ -2,9 +2,9 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 module.exports = function(app) {
   app.use(
-    'https://g09-ilya-emeliyanov.vercel.app/',
+    '/',
     createProxyMiddleware({
-      target: 'https://g09-4pmqwb63a-matteopossamai.vercel.app/',
+      target: process.env.REACT_APP_API_URI || 'http://localhost:8000',
       changeOrigin: true,
     })
   );

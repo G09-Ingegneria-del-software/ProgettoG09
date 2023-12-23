@@ -15,7 +15,7 @@ import AuthContext from '../authContext';
 import AppContext from '../appContext';
 
 // Importing utils
-import { getRequestHeaders } from '../utils';
+import { getRequestHeaders, addUnderscore } from '../utils';
 
 type WalletProps = {
     id: string,
@@ -46,13 +46,13 @@ const WalletCard:React.FC<WalletProps> = ({id, name, description, money}: Wallet
 
         const wallet = {
             user: user?.email || "",
-            name: newName,
+            name: addUnderscore(newName),
             description: newDescription,
             money: newMoney,
         };
 
         if (token) {
-            axios.put(`/api/wallet/${name}`, wallet, {headers})
+            axios.put(`/api/wallet/${addUnderscore(name)}`, wallet, {headers})
                 .then(res => {
                     // Find wallet to update
                     const wallet = wallets?.find((w: Wallet) => w.id === id);
@@ -73,7 +73,7 @@ const WalletCard:React.FC<WalletProps> = ({id, name, description, money}: Wallet
         const {token, headers} = getRequestHeaders();
 
         if (token) {
-            axios.delete(`/api/wallet/${user?.email}/${newName}`, {headers})
+            axios.delete(`/api/wallet/${user?.email}/${addUnderscore(newName)}`, {headers})
                 .then(res => {
                     const wallet = wallets?.find((w: Wallet) => w.id === id);
                     if (wallet) {

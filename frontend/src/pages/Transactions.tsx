@@ -12,11 +12,10 @@ import Spacer from "../components/common/Spacer";
 import { ButtonIcon, ButtonText } from "../components/common/Button";
 import Modal from "../components/common/Modal";
 import Select from "../components/common/Select";
-import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import PopoverText from "../components/common/Popover";
 
 // Importing types
-import { Transaction, TransactionValues, Comparator, Wallet, calculateColor, TransactionType, Budget } from "../type";
+import { Transaction, TransactionValues, Comparator, Wallet, TransactionType, Budget } from "../type";
 import InputText from "../components/common/InputText";
 
 // Importing static stuff
@@ -25,7 +24,8 @@ import { K } from "../K";
 // Importing context
 import AuthContext from "../authContext";
 import AppContext from "../appContext";
-import { getRequestHeaders } from "../utils";
+import { addUnderscore, getRequestHeaders } from "../utils";
+import TransactionCard from "../components/TransactionCard";
 
 const Transactions = () => {
 
@@ -54,9 +54,9 @@ const Transactions = () => {
                 user: user?.email || "",
                 type,
                 money: Number(money),
-                description,
-                wallet: selectedWalletName,
-                category: selectedCategoryName
+                description: description,
+                wallet: addUnderscore(selectedWalletName),
+                category: addUnderscore(selectedCategoryName)
             }
 
             axios.post("/api/transaction", transaction, {headers})
@@ -69,7 +69,7 @@ const Transactions = () => {
                     const selectedWallet = wallets?.find((w: Wallet) => w.name === selectedWalletName);
                     
                     let money = (selectedWallet?.money || 0) + (transaction.type === TransactionType.EXPENSE ? -transaction.money : transaction.money);
-                    axios.put(`/api/wallet/${selectedWalletName}`, {user: user?.email || "", money}, {headers})
+                    axios.put(`/api/wallet/${addUnderscore(selectedWalletName)}`, {user: user?.email || "", money}, {headers})
                         .then(res => {
                             if (transaction.type === TransactionType.EXPENSE) {
                                 // Find all budgets with the corresponding category
@@ -81,7 +81,7 @@ const Transactions = () => {
                                             user: user?.email || "", 
                                             actualMoney: Number(b.actualMoney + amount)
                                         }
-                                        axios.put(`/api/budget/${b.name}`, budget, {headers})
+                                        axios.put(`/api/budget/${addUnderscore(b.name)}`, budget, {headers})
                                             .then(res => console.log(res))
                                             .catch(err => console.log(err.message));
                                     }
@@ -153,9 +153,6 @@ type TransactionTableProps = {
 }
 const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, setCurTransactions}: TransactionTableProps) => {
 
-    // Get all transactions
-    const {transactions, setTransactions} = useContext(AppContext);
-
     const limit: number = 5;
 
     let [curPage, setCurPage] = useState<number>(1);
@@ -163,86 +160,13 @@ const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, set
 
     const [visibleTransactions, setVisibleTransactions] = useState<Transaction[]>(curTransactions);
 
-    // Modal for editing transaction
-    const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
-    const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
-
-    const [selectedIndex, setSelectedIndex] = useState<number>(0);
-
-    const [newType, setNewType] = useState("expense");
-    const [newDescription, setNewDescription] = useState<string>("");
-    const [newAmount, setNewAmount] = useState<number>(0);
-    const [newDate, setNewDate] = useState<DateValueType>({
-        startDate: new Date(),
-        endDate: new Date(),
-    });
-
     useEffect(() => {
         setNumPages(Math.ceil(curTransactions?.length/limit));
         setVisibleTransactions(curTransactions?.slice((curPage-1)*limit, (curPage)*limit));
     }, [curPage, curTransactions]);
 
-    // Event handlers
-    const handleDateChange = (newValue: DateValueType) => {
-        setNewDate(newValue);
-    }
-
-    const handleEditTransaction = () => {
-        setEditModalOpen(!editModalOpen);
-    }
-
-    const handleDeleteTransaction = () => {
-        const token = localStorage.getItem("token") || "";
-        const configRequest = {"Content-type": "application/json", "x-access-token": token};
-
-        const t: Transaction = transactions[selectedIndex];
-        if (token) {
-            axios.delete(`/api/transaction/${t.id}`, {headers: configRequest})
-                .then(res => {
-                    transactions.splice(selectedIndex, 1);
-            
-                    setTransactions ? setTransactions(transactions) : console.log("setTransactions undefined");
-                    setCurTransactions(transactions);
-                    if (visibleTransactions.length === 1) {
-                        setCurPage(--curPage);
-                    }
-                    setNumPages(Math.ceil(curTransactions.length / limit));
-                    setVisibleTransactions(curTransactions.slice((curPage - 1) * limit, (curPage) * limit));
-                })
-                .catch(err => console.log(err.message));
-        }
-
-        setDeleteModalOpen(!deleteModalOpen);
-    }
-
-    const handleSaveTransaction = (e: React.MouseEvent<HTMLButtonElement>) => {
-       e.preventDefault();
-       
-       console.log("Transaction saved");
-    }
-
     return (
         <div className="w-full bg-white rounded-xl shadow-lg p-8">
-
-            {/* Edit modal */}
-            <Modal open={editModalOpen} setOpen={setEditModalOpen} title="Edit transaction" description="In this section you'll be able to edit your transaction modifying type, description, money and date" buttonLabel="Save" onSubmitClick={handleSaveTransaction}>
-                <div className="flex flex-col justify-start gap-4">
-                    <Select label="Type" data={K.transactionTypes} value={newType} onChange={setNewType}/>
-                    <InputText label="Description" value={newDescription} setValue={setNewDescription} />
-                    <InputText label="Amount" value={newAmount.toString()} setValue={setNewAmount} />
-                    {/* <Select label="Currency" data={K.currencies} value={newCurrency} onChange={setNewCurrency}/> */}
-                    <div className="flex flex-col gap-1">
-                        <label className="text-secondary">Date</label>
-                        <div className="focus:outline-none border-1 border-secondary">
-                            <Datepicker primaryColor="indigo" value={newDate} onChange={handleDateChange} />
-                        </div>
-                    </div>
-                </div> 
-            </Modal>
-
-            {/* Delete modal open */}
-            <Modal open={deleteModalOpen} setOpen={setDeleteModalOpen} title="Delete transaction" description="Are you sure you want to delete this transaction?" buttonLabel="Delete" onSubmitClick={handleDeleteTransaction} />
-
             <div className="h-[550px]">
                 <table className="items-center bg-transparent w-full border-collapse ">
                     <thead className="rounded-lg">
@@ -268,32 +192,10 @@ const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, set
                         </tr>
                     </thead>
                     <tbody className="relative">
-                        {visibleTransactions?.map((t: Transaction, i) => {
+                        {visibleTransactions?.map(({id, type, description, category, wallet, money, date}: Transaction, i) => {
                             const rowStyles = "border-b-[1px] relative border-main-100";
                             return <tr className={i % 2 === 0 ? rowStyles : rowStyles + " bg-gray-100"} style={{ width: '100%' }} key={i}>
-                                <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-main">
-                                    <div className="relative w-[1.5rem] h-[1.5rem]">
-                                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1.5rem] h-[1.5rem] rounded-full" style={{ backgroundColor: calculateColor(t.type), opacity: 0.2 }}>
-                                        </div>
-                                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[0.8rem] h-[0.8rem] rounded-full" style={{ backgroundColor: calculateColor(t.type) }}>
-                                        </div>
-                                    </div>
-                                </th>
-                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base whitespace-nowrap p-4"><p className="w-[300px] leading-8 whitespace-normal line-clamp-1">{t.description}</p></td>
-                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-secondary">{t.date.getDate()}/{t.date.getMonth()+1}/{t.date.getFullYear()}</td>
-                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4" style={{ color: calculateColor(t.type) }}>{t.money}</td>
-                                {/* Edit transaction */}
-                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                                    <button onClick={(e) => {setEditModalOpen(!editModalOpen); setSelectedIndex((curPage-1)*limit+i);}} className="p-2 rounded-md text-white flex justify-center items-center transition duration-300 hover:opacity-70 hover:bg-slate-100">
-                                        <img src={require("../assets/icons/edit.svg").default} alt="edit-icon" />
-                                    </button>
-                                </td>
-                                {/* Delete transaction */}
-                                <td className="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-8">
-                                    <button onClick={(e) => {setDeleteModalOpen(!deleteModalOpen); setSelectedIndex((curPage-1)*limit+i);}} className="p-2 rounded-md text-white flex justify-center items-center transition duration-300 hover:opacity-70 hover:bg-red-100">
-                                        <img src={require("../assets/icons/trash.svg").default} alt="trash-icon" />
-                                    </button>
-                                </td>
+                                <TransactionCard id={id} type={type} description={description} category={category} wallet={wallet} money={money} date={date}/>
                             </tr>
                         })}
                     </tbody>

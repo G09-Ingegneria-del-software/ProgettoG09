@@ -15,7 +15,7 @@ import AuthContext from '../authContext';
 import AppContext from '../appContext';
 
 // Importing utils
-import { getRequestHeaders } from '../utils';
+import { getRequestHeaders, addUnderscore } from '../utils';
 
 type CategoryCardProps = {
     id: string,
@@ -42,11 +42,11 @@ const CategoryCard:React.FC<CategoryCardProps> = ({id, name}: CategoryCardProps)
 
         const wallet = {
             user: user?.email || "",
-            name: newName,
+            name: addUnderscore(newName),
         };
 
         if (token) {
-            axios.put(`/api/category/${name}`, wallet, {headers})
+            axios.put(`/api/category/${addUnderscore(name)}`, wallet, {headers})
                 .then(res => {
                     // Find wallet to update
                     const category = categories?.find((c: Category) => c.id === id);
@@ -65,7 +65,7 @@ const CategoryCard:React.FC<CategoryCardProps> = ({id, name}: CategoryCardProps)
         const {token, headers} = getRequestHeaders();
 
         if (token) {
-            axios.delete(`/api/category/${user?.email}/${newName}`, {headers})
+            axios.delete(`/api/category/${user?.email}/${addUnderscore(newName)}`, {headers})
                 .then(res => {
                     const category = categories?.find((c: Category) => c.id === id);
                     if (category) {

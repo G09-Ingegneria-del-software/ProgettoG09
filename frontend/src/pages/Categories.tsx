@@ -20,6 +20,9 @@ import Spacer from "../components/common/Spacer";
 import AppContext from "../appContext";
 import AuthContext from "../authContext";
 
+// Importing utils
+import { addUnderscore } from "../utils";
+
 const Categories = () => {
 
     // Using AppContext
@@ -43,7 +46,7 @@ const Categories = () => {
             const tagsData = tags.split(",");
             const category = {
                 user: user?.email || "", 
-                name,
+                name: addUnderscore(name),
                 tags: tagsData,
                 color
             }

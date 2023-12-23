@@ -20,7 +20,7 @@ import Budgets from "./pages/Budgets";
 import AuthContext from "./authContext";
 
 // Importing utils
-import { getRequestHeaders } from "./utils"
+import { getRequestHeaders, removeUnderscore } from "./utils"
 
 function App() {
 
@@ -82,6 +82,9 @@ function App() {
               item.id = item._id;
               delete item.__v; delete item._id;
               if (item.date) item.date = new Date(item.date);
+              if (item.name) item.name = removeUnderscore(item.name);
+              if (item.category) item.category = removeUnderscore(item.category);
+              if (item.wallet) item.wallet = removeUnderscore(item.wallet);
             }
           } else {
             delete res.data.__v; delete res.data._id;

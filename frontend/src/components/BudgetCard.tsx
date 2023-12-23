@@ -16,7 +16,7 @@ import AuthContext from '../authContext';
 import AppContext from '../appContext';
 
 // Importing utils
-import { getRequestHeaders } from '../utils';
+import { getRequestHeaders, addUnderscore } from '../utils';
 
 
 type BudgetCardProps = {
@@ -51,7 +51,7 @@ const BudgetCard:React.FC<BudgetCardProps> = ({id, name, description, initialMon
 
         const budget = {
             user: user?.email || "",
-            name: newName,
+            name: addUnderscore(newName),
             description: newDescription,
             initialMoney: newInitialMoney,
             actualMoney: newActualMoney,
@@ -59,7 +59,7 @@ const BudgetCard:React.FC<BudgetCardProps> = ({id, name, description, initialMon
         };
 
         if (token) {
-            axios.put(`/api/budget/${name}`, budget, {headers})
+            axios.put(`/api/budget/${addUnderscore(name)}`, budget, {headers})
                 .then(res => {
                     // Find wallet to update
                     const wallet = budgets?.find((b: Budget) => b.id === id);

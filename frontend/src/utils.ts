@@ -13,4 +13,5 @@ export const getRequestHeaders = () => {
 
 // When sending names of something like wallets, categories, budgets, transactions
 // For requests that require params in URL like ".../:name"
-export const formatName = (name: string) => name.split(" ").join("_");
+export const addUnderscore = (name: string) => name.split(" ").join("_");
+export const removeUnderscore = (name: string) => name.split("_").join(" ");

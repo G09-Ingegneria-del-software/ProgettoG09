@@ -35,6 +35,7 @@ const Login = () => {
             .then((res: any) => {
                 const {token} = res.data;
                 localStorage.setItem("token", token);
+                localStorage.setItem("email", email);
                 setAuthenticated ? setAuthenticated(true) : console.log("Logged in undefined");
                 navigate('/dashboard');
             })

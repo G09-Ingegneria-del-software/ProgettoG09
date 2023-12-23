@@ -20,6 +20,9 @@ import BudgetCard from "../components/BudgetCard";
 import AuthContext from "../authContext";
 import AppContext from "../appContext";
 
+// Improting utils
+import { addUnderscore } from "../utils";
+
 const Budgets = () => {
     // Using AppContext
     const {user} = useContext(AuthContext);
@@ -44,7 +47,7 @@ const Budgets = () => {
             const budget = {
                 user: user?.email || "",
                 color: "red",
-                name,
+                name: addUnderscore(name),
                 description,
                 initialMoney,
                 actualMoney,

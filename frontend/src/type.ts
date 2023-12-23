@@ -56,6 +56,7 @@ export interface WalletType extends Selectable {
 
 // Category type
 export type Category = {
+    id: string,
     name: string,
     tags: string[],
     user: string
@@ -63,6 +64,7 @@ export type Category = {
 
 // Budget type
 export type Budget = {
+    id: string,
     name: string,
     description: string,
     initialMoney: number,
@@ -88,7 +90,7 @@ export type AppContextType = {
 
 export type AuthContextType = {
     isAuthenticated: boolean,
-    setAuthenticated?: (isAuthenticated: boolean) => void,
+    setAuthenticated: (isAuthenticated: boolean) => void,
     user: User | null,
     setUser?: (user: User) => void,
 }

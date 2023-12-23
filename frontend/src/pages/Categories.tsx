@@ -82,7 +82,7 @@ const Categories = () => {
             <Spacer height="2rem"/>
 
             <section className= "w-full grid grid-cols-2 place-items-center gap-4">
-                {categories.map(({name, tags}, index) => <CategoryCard key={index} name={name} />)}
+                {categories.map(({id, name, tags}, index) => <CategoryCard key={index} id={id} name={name} />)}
             </section>
         </UserPage>
     );

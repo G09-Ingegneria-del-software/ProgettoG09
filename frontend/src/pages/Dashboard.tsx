@@ -22,7 +22,7 @@ import Spacer from "../components/common/Spacer";
 import Modal from "../components/common/Modal";
 
 // Importing types
-import { Transaction, TransactionType, TransactionValues, calculateColor } from '../type';
+import { Category, Transaction, TransactionType, TransactionValues, calculateColor } from '../type';
 
 // Importing static stuff
 import { K } from "../K";
@@ -43,7 +43,7 @@ const Dashboard = () => {
     const [description, setDescription] = useState<string>("");
     const [money, setMoney] = useState<number>(0);
     const [walletName, setWalletName] = useState<string>(wallets[0]?.name || "No wallet specified");
-    const [categoryName, setCategoryName] = useState<string>(categories[0]?.name);
+    const [categoryName, setCategoryName] = useState<string>(categories[0]?.name || "No category specified");
     
     const [income, setIncome] = useState<number>(0);
     const [expense, setExpense] = useState<number>(0);
@@ -68,10 +68,13 @@ const Dashboard = () => {
                     delete transactionData.__v; delete transactionData._id;
                     transactionData.date = new Date(transactionData.date);
                     setTransactions ? setTransactions([...transactions, transactionData]) : console.log("setTransaction is undefined");
+
+                    let money = (selectedWallet?.money || 0) + (transaction.type === TransactionType.EXPENSE ? -transaction.money : transaction.money);
+                    axios.put(`/api/wallet/${walletName}`, {user: user?.email || "", money}, {headers: configRequest})
+                        .then(res => setAddModalOpen(!addModalOpen))
+                        .catch(err => console.log(err.message))
                 })
                 .catch(err => console.log(err.message))
-
-            setAddModalOpen(!addModalOpen);
         }
     }
 
@@ -120,7 +123,7 @@ const Dashboard = () => {
 
             <Spacer height="2rem"/>
 
-            <div className="grid grid-rows-flow grid-cols-2 gap-12">
+            <div className="w-full grid grid-cols-flow grid-cols-2 gap-4">
                 {/* Balance section */}
                 <DashboardSection subtitle='Balance' description='Everything about your balance on the account'>
                     <Card description='Your current balance' label={`€ ${selectedWallet?.money || "No wallet"}`} />
@@ -147,7 +150,7 @@ const Dashboard = () => {
                     </div>
                 </DashboardSection>
                 {/* Last expenses */}
-                <DashboardSection subtitle='Expenses for the last 3 months' description='List of all transactions so far'>
+                <DashboardSection subtitle='Your incomes/expenses divided in categories' description='Check how much you spend or receive by category'>
                     <CategoryExpenses />
                 </DashboardSection>
                 {/* Last transactions */}
@@ -162,19 +165,34 @@ const Dashboard = () => {
 }
 
 const CategoryExpenses = () => {
+    const {transactions, categories} = useContext(AppContext);
 
+    // Money per category
+    type MoneyCategory = {[key: string]: number};
+    const [moneyByCategory, setMoneyByCategory] = useState<MoneyCategory>({});
+
+    const calculateMoneyByCategory = (transactions: Transaction[], categories: Category[]) => {
+        for (let c of categories) moneyByCategory[c.name] = 0;
+        for (let t of transactions) moneyByCategory[t.category] = moneyByCategory[t.category] + (t.type === TransactionType.EXPENSE ? -t.money : t.money);
+
+        setMoneyByCategory(moneyByCategory);
+    }
+
+    useEffect(() => {
+        calculateMoneyByCategory(transactions, categories);
+    }, [transactions, categories]);
 
     return (
         <div className="overflow-y-scroll grid grid-flow-row grid-cols-2 gap-2">
-            <div className="bg-white rounded-lg p-6 shadow-lg">
+            {categories.map((c: Category, i) => <div key={i} className="bg-white rounded-lg p-6 shadow-lg">
                 <div className="flex justify-between items-center gap-2">
-                    <div className="flex flex-col justify-center items-center w-[3rem] h-[3rem] p-1 bg-slate-300 rounded-full">
-                        <img src={require("../assets/icons/home_alt_fill.svg").default} alt="category-icon" />
+                    <div className="flex flex-col justify-center items-center">
+                        <p>{c.name}</p>
                     </div>
-                    <p className="text-[2.25rem]">€ 129.62</p>
+                    <p className="text-[2.25rem]">€ {moneyByCategory[c.name]}</p>
                 </div>
-                <Description description='Spent on home accessories'/>
-            </div>                        
+                {/* <Description description={` ${c.name.toLowerCase()}`}/> */}
+            </div> )}                   
         </div>
     );
 }

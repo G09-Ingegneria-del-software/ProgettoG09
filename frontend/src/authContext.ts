@@ -6,6 +6,7 @@ import { AuthContextType, User } from './type';
 
 const AuthContext = createContext<AuthContextType>({
     isAuthenticated: false,
+    setAuthenticated: () => {},
     user: null,
 });
 

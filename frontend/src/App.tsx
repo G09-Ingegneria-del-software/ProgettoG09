@@ -19,6 +19,9 @@ import Categories from "./pages/Categories";
 import Budgets from "./pages/Budgets";
 import AuthContext from "./authContext";
 
+// Importing utils
+import { getRequestHeaders } from "./utils"
+
 function App() {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -31,12 +34,13 @@ function App() {
   const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [budgets, setBudgets] = useState<Budget[]>([]);
+  
+  // Verifying if the user with the token is logged in
+  const verifyLogin = (callback: () => void) => {
+    const {token, headers} = getRequestHeaders();
 
-  const verifyLoggedIn = () => {
-    const token = localStorage.getItem("token") || "";
-    const configRequest = {"Content-type": "application/json", "x-access-token": token};
     if (token) {
-      axios.post("/auth/isLogged", {}, {headers: configRequest})
+      axios.post("/auth/isLogged", {}, {headers})
         .then((res: any) => {
           console.log("Login successful")
           const {email} = res.data;
@@ -44,13 +48,8 @@ function App() {
           setAuthenticated(true);
           localStorage.setItem("email", email);
           if (email) {
-            setIsLoading(true);
             console.log("Updating data");
-            getData(`/api/user/${email}`, setUser);
-            getData(`/api/transaction/user/${email}`, setAllTransactions);
-            getData(`/api/wallet/user/${email}`, setWallets);
-            getData(`/api/category/user/${email}`, setCategories);
-            getData(`/api/budget/user/${email}`, setBudgets);
+            callback();
           }
         })
         .catch((err: Error) => {
@@ -61,7 +60,18 @@ function App() {
       setAuthenticated(false);
     }
   }
-
+  // Making all the necessary API calls and retrieving information
+  const getInfo = () => {
+    const email: string = localStorage.getItem("email") || "";
+    if (email) {
+      getData(`/api/user/${email}`, setUser);
+      getData(`/api/transaction/user/${email}`, setAllTransactions);
+      getData(`/api/wallet/user/${email}`, setWallets);
+      getData(`/api/category/user/${email}`, setCategories);
+      getData(`/api/budget/user/${email}`, setBudgets);
+    }
+  }
+  // Getting data from single endpoint
   const getData = (endpoint: string, setValues: any) => {
     const token = localStorage.getItem("token") || "";
     const configRequest = {"Content-type": "application/json", "x-access-token": token};
@@ -85,11 +95,8 @@ function App() {
   }
 
   useEffect(() => {
-    verifyLoggedIn();
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-  }, [window.location.href]);
+    verifyLogin(getInfo);
+  }, []);
 
   useEffect(() => {
     if (allTransactions && wallets[0]) {

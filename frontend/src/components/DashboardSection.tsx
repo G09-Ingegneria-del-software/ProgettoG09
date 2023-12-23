@@ -14,7 +14,7 @@ type Props = {
 
 const DashboardSection:React.FC<Props> = ({subtitle, description, children}: Props) => {
     return (
-        <div className="flex flex-col items-start gap-1">
+        <div className="w-full flex flex-col items-start gap-1">
             <Subtitle subtitle={subtitle} />
             <Description description={description}/>
             <Spacer height='2rem'/>

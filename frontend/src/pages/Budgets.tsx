@@ -32,7 +32,6 @@ const Budgets = () => {
     const [description, setDescription] = useState<string>("");
     const [initialMoney, setInitialMoney] = useState<number>(0);
     const [actualMoney, setActualyMoney] = useState<number>(0);
-    const [category, setCategory] = useState<string>("");
     const [selectedCategory, setSelectedCategory] = useState<string>(categories[0]?.name);
     
     // Handlers
@@ -89,7 +88,7 @@ const Budgets = () => {
             <Spacer height="2rem"/>
 
             <section className= "w-full grid grid-cols-2 place-items-center gap-4">
-                {budgets.map(({name, description, initialMoney, actualMoney, category}, index) => <BudgetCard key={index} name={name} description={description} initialMoney={initialMoney} actualMoney={actualMoney} category={category}/>)}
+                {budgets.map(({id, name, description, initialMoney, actualMoney, category}, index) => <BudgetCard key={index} id={id} name={name} description={description} initialMoney={initialMoney} actualMoney={actualMoney} category={category}/>)}
             </section>
         </UserPage>
     );

@@ -16,7 +16,7 @@ import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import PopoverText from "../components/common/Popover";
 
 // Importing types
-import { Transaction, TransactionValues, Comparator, Wallet, calculateColor, TransactionType } from "../type";
+import { Transaction, TransactionValues, Comparator, Wallet, calculateColor, TransactionType, Budget } from "../type";
 import InputText from "../components/common/InputText";
 
 // Importing static stuff
@@ -25,12 +25,13 @@ import { K } from "../K";
 // Importing context
 import AuthContext from "../authContext";
 import AppContext from "../appContext";
+import { getRequestHeaders } from "../utils";
 
 const Transactions = () => {
 
     // Using context
     const { user } = useContext(AuthContext);
-    const { transactions, setTransactions, wallets, categories } = useContext(AppContext);
+    const { transactions, setTransactions, wallets, categories, budgets } = useContext(AppContext);
 
     const [curTransactions, setCurTransactions] = useState<Transaction[]>(transactions);
 
@@ -40,40 +41,55 @@ const Transactions = () => {
     const [type, setType] = useState<string>(TransactionType.EXPENSE);
     const [description, setDescription] = useState<string>("");
     const [money, setMoney] = useState<number>(0);
-    const [selectedWalletName, setSelectedWalletName] = useState<string>(wallets[0]?.name);
-    const [selectedCategoryName, setSelectedCategoryName] = useState<string>(categories[0]?.name);
+    const [selectedWalletName, setSelectedWalletName] = useState<string>(wallets[0]?.name || "No wallet specified");
+    const [selectedCategoryName, setSelectedCategoryName] = useState<string>(categories[0]?.name || "No category specified");
 
     const handleCreateTransaction = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
         const token = localStorage.getItem("token") || null;
         if (token) {
-            const configRequest = {"Content-type": "application/json", "x-access-token": token};
+            const {token, headers} = getRequestHeaders();
             const transaction = {
                 user: user?.email || "",
                 type,
-                money,
+                money: Number(money),
                 description,
                 wallet: selectedWalletName,
                 category: selectedCategoryName
             }
 
-            axios.post("/api/transaction", transaction, {headers: configRequest})
+            axios.post("/api/transaction", transaction, {headers})
                 .then(res => {
                     const transactionData = res.data;
                     delete transactionData.__v; delete transactionData._id;
                     transactionData.date = new Date(transactionData.date);
-                    setTransactions ? setTransactions([...transactions, transactionData]) : console.log();
+                    setTransactions ? setTransactions([...transactions, transactionData]) : console.log("setTransactions is undefined");
 
                     const selectedWallet = wallets?.find((w: Wallet) => w.name === selectedWalletName);
                     
                     let money = (selectedWallet?.money || 0) + (transaction.type === TransactionType.EXPENSE ? -transaction.money : transaction.money);
-                    axios.put(`/api/wallet/${selectedWalletName}`, {user: user?.email || "", money}, {headers: configRequest})
+                    axios.put(`/api/wallet/${selectedWalletName}`, {user: user?.email || "", money}, {headers})
                         .then(res => {
-
-                    })
-
-                    setAddModalOpen(!addModalOpen);
+                            if (transaction.type === TransactionType.EXPENSE) {
+                                // Find all budgets with the corresponding category
+                                const filteredBudgets: Budget[] = budgets?.filter((b: Budget) => b.category === selectedCategoryName);
+                                if (filteredBudgets.length > 0) {
+                                    for (let b of filteredBudgets) {
+                                        const amount: number = +transaction.money;
+                                        const budget = {
+                                            user: user?.email || "", 
+                                            actualMoney: Number(b.actualMoney + amount)
+                                        }
+                                        axios.put(`/api/budget/${b.name}`, budget, {headers})
+                                            .then(res => console.log(res))
+                                            .catch(err => console.log(err.message));
+                                    }
+                                }
+                            }
+                            setAddModalOpen(!addModalOpen);
+                        })
+                        .catch(err => console.log(err.message))
                 })
                 .catch(err => console.log(err.message))
         }
@@ -226,6 +242,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, set
 
             {/* Delete modal open */}
             <Modal open={deleteModalOpen} setOpen={setDeleteModalOpen} title="Delete transaction" description="Are you sure you want to delete this transaction?" buttonLabel="Delete" onSubmitClick={handleDeleteTransaction} />
+
             <div className="h-[550px]">
                 <table className="items-center bg-transparent w-full border-collapse ">
                     <thead className="rounded-lg">

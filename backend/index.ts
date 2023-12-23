@@ -22,7 +22,13 @@ dotenv.config();
 // Creation of the Express application and port number
 const app: Application = express();
 const port = process.env.PORT || 8000;
-app.use(cors())
+app.use(cors());
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 
 // Middleware settings
 app.use(express.json());

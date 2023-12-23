@@ -43,10 +43,9 @@ function App() {
       axios.post("/auth/isLogged", {}, {headers})
         .then((res: any) => {
           console.log("Login successful")
-          const {email} = res.data;
           
           setAuthenticated(true);
-          localStorage.setItem("email", email);
+          const email = localStorage.getItem("email") || "";
           if (email) {
             console.log("Updating data");
             callback();
@@ -73,10 +72,12 @@ function App() {
   }
   // Getting data from single endpoint
   const getData = (endpoint: string, setValues: any) => {
-    const token = localStorage.getItem("token") || "";
-    const configRequest = {"Content-type": "application/json", "x-access-token": token};
-    axios.get(endpoint, {headers: configRequest})
+    const {token, headers} = getRequestHeaders();
+
+    if (token) {
+      axios.get(endpoint, {headers})
         .then((res: any) => {
+          console.log(res.data);
           if (Array.isArray(res.data)) {
             for (let item of res.data) {
               item.id = item._id;
@@ -95,6 +96,7 @@ function App() {
         .catch((err: Error) => {
           return <Navigate replace to="/login"/>
         })
+    }
   }
 
   useEffect(() => {

@@ -59,7 +59,7 @@ const Transactions = () => {
                 category: addUnderscore(selectedCategoryName)
             }
 
-            axios.post("/api/transaction", transaction, {headers})
+            axios.post(process.env.REACT_APP_API_URI + "/api/transaction", transaction, {headers})
                 .then(res => {
                     const transactionData = res.data;
                     delete transactionData.__v; delete transactionData._id;
@@ -69,7 +69,7 @@ const Transactions = () => {
                     const selectedWallet = wallets?.find((w: Wallet) => w.name === selectedWalletName);
                     
                     let money = (selectedWallet?.money || 0) + (transaction.type === TransactionType.EXPENSE ? -transaction.money : transaction.money);
-                    axios.put(`/api/wallet/${addUnderscore(selectedWalletName)}`, {user: user?.email || "", money}, {headers})
+                    axios.put(`${process.env.REACT_APP_API_URI}/api/wallet/${addUnderscore(selectedWalletName)}`, {user: user?.email || "", money}, {headers})
                         .then(res => {
                             if (transaction.type === TransactionType.EXPENSE) {
                                 // Find all budgets with the corresponding category
@@ -81,7 +81,7 @@ const Transactions = () => {
                                             user: user?.email || "", 
                                             actualMoney: Number(b.actualMoney + amount)
                                         }
-                                        axios.put(`/api/budget/${addUnderscore(b.name)}`, budget, {headers})
+                                        axios.put(`${process.env.REACT_APP_API_URI}/api/budget/${addUnderscore(b.name)}`, budget, {headers})
                                             .then(res => console.log(res))
                                             .catch(err => console.log(err.message));
                                     }

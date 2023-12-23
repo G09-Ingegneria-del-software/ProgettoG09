@@ -43,7 +43,7 @@ const Settings = () => {
         e.preventDefault();
         const token = localStorage.getItem("token") || "";
         const configRequest = {"Content-type": "application/json", "x-access-token": token};
-        axios.put(`/api/user/${user?.email}`, {firstName, lastName}, {headers: configRequest})
+        axios.put(`${process.env.REACT_APP_API_URI}/api/user/${user?.email}`, {firstName, lastName}, {headers: configRequest})
             .then(res => {
                 console.log("User successfully updated")
 
@@ -68,7 +68,7 @@ const Settings = () => {
         if (newPassword === repeatedNewPassword && checkPassword(newPassword) && checkPassword(repeatedNewPassword)) {
             const token = localStorage.getItem("token") || "";
             const configRequest = {"Content-type": "application/json", "x-access-token": token};
-            axios.put(`/api/user/${user?.email}`, {password: newPassword}, {headers: configRequest})
+            axios.put(`${process.env.REACT_APP_API_URI}/api/user/${user?.email}`, {password: newPassword}, {headers: configRequest})
             .then(res => {
                 console.log("User successfully updated")
 

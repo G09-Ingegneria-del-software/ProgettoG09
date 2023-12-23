@@ -45,7 +45,7 @@ const Wallets = () => {
         }
 
         if (token) {
-            axios.post("/api/wallet", wallet, {headers})
+            axios.post(process.env.REACT_APP_API_URI + "/api/wallet", wallet, {headers})
                 .then(res => {
                     const newWallet = res.data;
                     setWallets ? setWallets([newWallet, ...wallets]) : console.log("setWallets is undefined");

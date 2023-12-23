@@ -53,7 +53,7 @@ const Budgets = () => {
                 actualMoney,
                 category: selectedCategory, 
             }
-            axios.post("/api/budget", budget, {headers: configRequest})
+            axios.post(process.env.REACT_APP_API_URI + "/api/budget", budget, {headers: configRequest})
                 .then(res => {
                     const budgetData = res.data;
                     delete budgetData.__v; delete budgetData._id;

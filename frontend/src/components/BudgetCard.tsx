@@ -59,7 +59,7 @@ const BudgetCard:React.FC<BudgetCardProps> = ({id, name, description, initialMon
         };
 
         if (token) {
-            axios.put(`/api/budget/${addUnderscore(name)}`, budget, {headers})
+            axios.put(`${process.env.REACT_APP_API_URI}/api/budget/${addUnderscore(name)}`, budget, {headers})
                 .then(res => {
                     // Find budget to edit and update state
                     const budget = budgets?.find((b: Budget) => b.name === name);
@@ -81,7 +81,7 @@ const BudgetCard:React.FC<BudgetCardProps> = ({id, name, description, initialMon
         const {token, headers} = getRequestHeaders();
 
         if (token) {
-            axios.delete(`/api/budget/${user?.email || ""}/${addUnderscore(name)}`, {headers})
+            axios.delete(`${process.env.REACT_APP_API_URI}/api/budget/${user?.email || ""}/${addUnderscore(name)}`, {headers})
                 .then(res => {
                     // Find budget to delete and update state
                     const budget = budgets?.find((b: Budget) => b.id === id);

@@ -46,7 +46,7 @@ const CategoryCard:React.FC<CategoryCardProps> = ({id, name}: CategoryCardProps)
         };
 
         if (token) {
-            axios.put(`/api/category/${addUnderscore(name)}`, wallet, {headers})
+            axios.put(`${process.env.REACT_APP_API_URI}/api/category/${addUnderscore(name)}`, wallet, {headers})
                 .then(res => {
                     // Find category to edit and update state
                     const category = categories?.find((c: Category) => c.id === id);
@@ -65,7 +65,7 @@ const CategoryCard:React.FC<CategoryCardProps> = ({id, name}: CategoryCardProps)
         const {token, headers} = getRequestHeaders();
 
         if (token) {
-            axios.delete(`/api/category/${user?.email}/${addUnderscore(name)}`, {headers})
+            axios.delete(`${process.env.REACT_APP_API_URI}/api/category/${user?.email}/${addUnderscore(name)}`, {headers})
                 .then(res => {
                     // Find category to delete and update state
                     const category = categories?.find((c: Category) => c.name === name);

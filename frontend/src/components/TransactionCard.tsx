@@ -72,7 +72,7 @@ const TransactionCard: FC<TransactionCardProps> = ({id, category, wallet, type, 
         }
 
         if (token) {
-            axios.put(`/api/transaction`, transaction, {headers})
+            axios.put(`${process.env.REACT_APP_API_URI}/api/transaction`, transaction, {headers})
                 .then(res => {
                     // Find transaction to edit and update
                     const transaction = transactions?.find((t: Transaction) => t.id === id);
@@ -93,7 +93,7 @@ const TransactionCard: FC<TransactionCardProps> = ({id, category, wallet, type, 
         const {token, headers} = getRequestHeaders();
 
         if (token) {
-            axios.delete(`/api/transaction/${id}`, {headers})
+            axios.delete(`${process.env.REACT_APP_API_URI}/api/transaction/${id}`, {headers})
                 .then(res => {
                     // Find transaction to delete and update
                     transactions.splice(selectedIndex, 1);

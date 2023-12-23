@@ -50,7 +50,7 @@ const Categories = () => {
                 tags: tagsData,
                 color
             }
-            axios.post("/api/category", category, {headers: configRequest})
+            axios.post(process.env.REACT_APP_API_URI + "/api/category", category, {headers: configRequest})
                 .then(res => {
                     const categoryData = res.data;
                     delete categoryData.__v; delete categoryData._id;

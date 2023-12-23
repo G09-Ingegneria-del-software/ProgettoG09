@@ -1,6 +1,5 @@
 // Importing libraries
-import React, { useContext, useEffect } from "react";
-import axios from "axios";
+import React from "react";
 
 // Importing components
 import SideBar from '../components/SideBar';

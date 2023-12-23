@@ -47,7 +47,7 @@ const SignUp = () => {
         if (password === confirmPassword && checkPassword(password) && checkPassword(confirmPassword)){
             const firstName = name.split(' ')[0];
             const lastName = name.split(' ')[1];
-            axios.post("/auth/signup", {firstName, lastName, email, password})
+            axios.post(process.env.REACT_APP_API_URI + "/auth/signup", {firstName, lastName, email, password})
                 .then((res: any) => {
                     navigate('/login');
                 })

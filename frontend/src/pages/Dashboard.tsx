@@ -62,7 +62,7 @@ const Dashboard = () => {
                 wallet: walletName,
                 category: categoryName 
             }
-            axios.post("/api/transaction", transaction, {headers: configRequest})
+            axios.post(process.env.REACT_APP_API_URI + "/api/transaction", transaction, {headers: configRequest})
                 .then(res => {
                     const transactionData = res.data;
                     delete transactionData.__v; delete transactionData._id;
@@ -70,7 +70,7 @@ const Dashboard = () => {
                     setTransactions ? setTransactions([...transactions, transactionData]) : console.log("setTransaction is undefined");
 
                     let money = (selectedWallet?.money || 0) + (transaction.type === TransactionType.EXPENSE ? -transaction.money : transaction.money);
-                    axios.put(`/api/wallet/${walletName}`, {user: user?.email || "", money}, {headers: configRequest})
+                    axios.put(`${process.env.REACT_APP_API_URI}/api/wallet/${walletName}`, {user: user?.email || "", money}, {headers: configRequest})
                         .then(res => setAddModalOpen(!addModalOpen))
                         .catch(err => console.log(err.message))
                 })

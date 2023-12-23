@@ -52,7 +52,7 @@ const WalletCard:React.FC<WalletProps> = ({id, name, description, money}: Wallet
         };
 
         if (token) {
-            axios.put(`/api/wallet/${addUnderscore(name)}`, wallet, {headers})
+            axios.put(`${process.env.REACT_APP_API_URI}/api/wallet/${addUnderscore(name)}`, wallet, {headers})
                 .then(res => {
                     // Find wallet to edit and update state
                     const wallet = wallets?.find((w: Wallet) => w.id === id);
@@ -73,7 +73,7 @@ const WalletCard:React.FC<WalletProps> = ({id, name, description, money}: Wallet
         const {token, headers} = getRequestHeaders();
 
         if (token) {
-            axios.delete(`/api/wallet/${user?.email || ""}/${addUnderscore(name)}`, {headers})
+            axios.delete(`${process.env.REACT_APP_API_URI}/api/wallet/${user?.email || ""}/${addUnderscore(name)}`, {headers})
                 .then(res => {
                     // Find wallet to delete and update state
                     const wallet = wallets?.find((w: Wallet) => w.name === name);

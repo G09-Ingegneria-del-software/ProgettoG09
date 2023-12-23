@@ -31,7 +31,7 @@ const Login = () => {
     const handleSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
-        axios.post("/auth/login", {email, password})
+        axios.post(process.env.REACT_APP_API_URI + "/auth/login", {email, password})
             .then((res: any) => {
                 const {token} = res.data;
                 localStorage.setItem("token", token);

@@ -40,7 +40,7 @@ function App() {
     const {token, headers} = getRequestHeaders();
 
     if (token) {
-      axios.post("/auth/isLogged", {}, {headers})
+      axios.post(process.env.REACT_APP_API_URI + "/auth/isLogged", {}, {headers})
         .then((res: any) => {
           console.log("Login successful")
           
@@ -75,7 +75,7 @@ function App() {
     const {token, headers} = getRequestHeaders();
 
     if (token) {
-      axios.get(endpoint, {headers})
+      axios.get(process.env.REACT_APP_API_URI + endpoint, {headers})
         .then((res: any) => {
           console.log(res.data);
           if (Array.isArray(res.data)) {

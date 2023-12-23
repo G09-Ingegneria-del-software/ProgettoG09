@@ -13,6 +13,8 @@ import transactionRouter from './router/transaction';
 // Internal utilities and Middlewares
 import { checker } from './controller/checker';
 import e from 'express';
+const cors = require('cors')
+
 
 // Load the environment variables from the .env file
 dotenv.config();
@@ -20,6 +22,7 @@ dotenv.config();
 // Creation of the Express application and port number
 const app: Application = express();
 const port = process.env.PORT || 8000;
+app.use(cors())
 
 // Middleware settings
 app.use(express.json());

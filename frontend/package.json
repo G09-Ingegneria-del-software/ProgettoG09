@@ -21,12 +21,11 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "env-cmd -f .env.development.local react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "proxy": "https://g09-4pmqwb63a-matteopossamai.vercel.app/",
   "eslintConfig": {
     "extends": [
       "react-app",

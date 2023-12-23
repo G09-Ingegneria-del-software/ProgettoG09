@@ -54,14 +54,14 @@ const WalletCard:React.FC<WalletProps> = ({id, name, description, money}: Wallet
         if (token) {
             axios.put(`/api/wallet/${addUnderscore(name)}`, wallet, {headers})
                 .then(res => {
-                    // Find wallet to update
+                    // Find wallet to edit and update state
                     const wallet = wallets?.find((w: Wallet) => w.id === id);
                     if (wallet) {
                         const index: number = wallets?.indexOf(wallet);
                         wallets[index].name = newName;
                         wallets[index].description = newDescription;
                         wallets[index].money = newMoney;
-                        setWallets ? setWallets(wallets) : console.log("setWallets is undefined");
+                        setWallets ? setWallets([...wallets]) : console.log("setWallets is undefined");
                     }
                     setEditModalOpen(false);
                 })
@@ -73,14 +73,18 @@ const WalletCard:React.FC<WalletProps> = ({id, name, description, money}: Wallet
         const {token, headers} = getRequestHeaders();
 
         if (token) {
-            axios.delete(`/api/wallet/${user?.email}/${addUnderscore(newName)}`, {headers})
+            axios.delete(`/api/wallet/${user?.email || ""}/${addUnderscore(name)}`, {headers})
                 .then(res => {
-                    const wallet = wallets?.find((w: Wallet) => w.id === id);
+                    // Find wallet to delete and update state
+                    const wallet = wallets?.find((w: Wallet) => w.name === name);
                     if (wallet) {
                         wallets.splice(wallets.indexOf(wallet), 1);
-                        setWallets ? setWallets(wallets) : console.log("setWallets is undefined");
+                        setWallets ? setWallets([...wallets]) : console.log("setWallets is undefined");
                     }
                     setDeleteModalOpen(false);
+                })
+                .catch(err => {
+                    console.log(err.message);
                 })
         }
     }
@@ -109,7 +113,7 @@ const WalletCard:React.FC<WalletProps> = ({id, name, description, money}: Wallet
                     <Subtitle subtitle={name} textColor='white'/>
                     <div className="relative z-10 flex gap-4 justify-between items-center">
                         <button className="w-[2rem] h-[2rem] bg-red" onClick={() => setEditModalOpen(true)}><img src={require("../assets/icons/edit.svg").default} alt="" /></button>
-                        <button onClick={() => setDeleteModalOpen(true)}><img src={require("../assets/icons/trash.svg").default} alt="" /></button>
+                        <button onClick={() => {console.log(name); setDeleteModalOpen(true)}}><img src={require("../assets/icons/trash.svg").default} alt="" /></button>
                     </div>
                 </div>
                 <p className="text-white opacity-70">{description}</p>

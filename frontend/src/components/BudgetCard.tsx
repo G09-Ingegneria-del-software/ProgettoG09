@@ -61,15 +61,15 @@ const BudgetCard:React.FC<BudgetCardProps> = ({id, name, description, initialMon
         if (token) {
             axios.put(`/api/budget/${addUnderscore(name)}`, budget, {headers})
                 .then(res => {
-                    // Find wallet to update
-                    const wallet = budgets?.find((b: Budget) => b.id === id);
-                    if (wallet) {
-                        const index: number = budgets?.indexOf(wallet);
+                    // Find budget to edit and update state
+                    const budget = budgets?.find((b: Budget) => b.name === name);
+                    if (budget) {
+                        const index: number = budgets?.indexOf(budget);
                         budgets[index].name = newName;
                         budgets[index].description = newDescription;
                         budgets[index].initialMoney = newInitialMoney;
                         budgets[index].actualMoney = newActualMoney;
-                        setBudgets ? setBudgets(budgets) : console.log("setBudgets is undefined");
+                        setBudgets ? setBudgets([...budgets]) : console.log("setBudgets is undefined");
                     }
                     setEditModalOpen(false);
                 })
@@ -81,12 +81,13 @@ const BudgetCard:React.FC<BudgetCardProps> = ({id, name, description, initialMon
         const {token, headers} = getRequestHeaders();
 
         if (token) {
-            axios.delete(`/api/budget/${user?.email || ""}/${newName}`, {headers})
+            axios.delete(`/api/budget/${user?.email || ""}/${addUnderscore(name)}`, {headers})
                 .then(res => {
+                    // Find budget to delete and update state
                     const budget = budgets?.find((b: Budget) => b.id === id);
                     if (budget) {
                         budgets.splice(budgets.indexOf(budget), 1);
-                        setBudgets ? setBudgets(budgets) : console.log("setBudgets is undefined");
+                        setBudgets ? setBudgets([...budgets]) : console.log("setBudgets is undefined");
                     }
                     setDeleteModalOpen(false);
                 })

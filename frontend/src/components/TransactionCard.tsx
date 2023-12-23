@@ -74,14 +74,14 @@ const TransactionCard: FC<TransactionCardProps> = ({id, category, wallet, type, 
         if (token) {
             axios.put(`/api/transaction`, transaction, {headers})
                 .then(res => {
-                    // Find wallet to update
+                    // Find transaction to edit and update
                     const transaction = transactions?.find((t: Transaction) => t.id === id);
                     if (transaction) {
                         const index: number = transactions?.indexOf(transaction);
                         transactions[index].type = newType;
                         transactions[index].description = newDescription;
                         transactions[index].money = newMoney;
-                        setTransactions ? setTransactions(transactions) : console.log("setTransactions is undefined");
+                        setTransactions ? setTransactions([...transactions]) : console.log("setTransactions is undefined");
                     }
                     setEditModalOpen(false);
                 })
@@ -95,9 +95,10 @@ const TransactionCard: FC<TransactionCardProps> = ({id, category, wallet, type, 
         if (token) {
             axios.delete(`/api/transaction/${id}`, {headers})
                 .then(res => {
+                    // Find transaction to delete and update
                     transactions.splice(selectedIndex, 1);
             
-                    setTransactions ? setTransactions(transactions) : console.log("setTransactions undefined");
+                    setTransactions ? setTransactions([...transactions]) : console.log("setTransactions undefined");
                     // setCurTransactions(transactions);
                     // if (visibleTransactions.length === 1) {
                     //     setCurPage(--curPage);

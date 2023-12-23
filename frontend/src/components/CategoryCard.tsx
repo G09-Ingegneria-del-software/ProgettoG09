@@ -48,12 +48,12 @@ const CategoryCard:React.FC<CategoryCardProps> = ({id, name}: CategoryCardProps)
         if (token) {
             axios.put(`/api/category/${addUnderscore(name)}`, wallet, {headers})
                 .then(res => {
-                    // Find wallet to update
+                    // Find category to edit and update state
                     const category = categories?.find((c: Category) => c.id === id);
                     if (category) {
                         const index: number = categories?.indexOf(category);
                         categories[index].name = newName;
-                        setCategories ? setCategories(categories) : console.log("setCategories is undefined");
+                        setCategories ? setCategories([...categories]) : console.log("setCategories is undefined");
                     }
                     setEditModalOpen(false);
                 })
@@ -65,12 +65,13 @@ const CategoryCard:React.FC<CategoryCardProps> = ({id, name}: CategoryCardProps)
         const {token, headers} = getRequestHeaders();
 
         if (token) {
-            axios.delete(`/api/category/${user?.email}/${addUnderscore(newName)}`, {headers})
+            axios.delete(`/api/category/${user?.email}/${addUnderscore(name)}`, {headers})
                 .then(res => {
-                    const category = categories?.find((c: Category) => c.id === id);
+                    // Find category to delete and update state
+                    const category = categories?.find((c: Category) => c.name === name);
                     if (category) {
                         categories.splice(categories.indexOf(category), 1);
-                        setCategories ? setCategories(categories) : console.log("setCategories is undefined");
+                        setCategories ? setCategories([...categories]) : console.log("setCategories is undefined");
                     }
                     setDeleteModalOpen(false);
                 })
@@ -103,7 +104,7 @@ const CategoryCard:React.FC<CategoryCardProps> = ({id, name}: CategoryCardProps)
                     <Subtitle subtitle={name} textColor='white'/>
                     <div className="relative z-10 flex gap-4 justify-between items-center">
                         <button className="w-[2rem] h-[2rem] bg-red" onClick={() => setEditModalOpen(true)}><img src={require("../assets/icons/edit.svg").default} alt="" /></button>
-                        <button onClick={() => setDeleteModalOpen(true)}><img src={require("../assets/icons/trash.svg").default} alt="" /></button>
+                        <button onClick={() => {setDeleteModalOpen(true); console.log(name)}}><img src={require("../assets/icons/trash.svg").default} alt="" /></button>
                     </div>
                 </div>
             </div>

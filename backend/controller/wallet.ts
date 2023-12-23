@@ -12,7 +12,6 @@ export const createWallet = (req: express.Request, res: express.Response) => {
                 name: req.body.name,
                 description: req.body.description,
                 money: req.body.money,
-                categories: [],
                 color: req.body.color,
                 user: req.body.user,
             });

@@ -116,7 +116,7 @@ const Dashboard = () => {
             <div className="flex w-full justify-between items-center">
                 <div className="flex flex-col">
                     <Title title="Dashboard" />
-                    <Description description="Updated 12 hrs ago"/>
+                    <Description description="Welcome to the dashboard! Here you'll be able to look at your financial situation"/>
                 </div>
                 <ButtonIcon text="Add transaction" iconSrc={require("../assets/icons/plus.svg").default} color="active" handleClick={() => setAddModalOpen(!addModalOpen)}/>
             </div>

@@ -1,5 +1,6 @@
 // Importing libraries
 import React,{useState,ChangeEvent, useContext} from 'react';
+import { motion } from "framer-motion"
 import BackgroundImage from '../assets/images/signup_wallpaper.jpg';
 import {useNavigate} from 'react-router-dom';
 import axios from 'axios';
@@ -67,7 +68,7 @@ const SignUp = () => {
     };
 
     return (
-        <div className="flex overflow-hidden">
+        <motion.div initial={{ opacity: 0.5}} animate={{ opacity: 1}} className="flex overflow-hidden">
             <div className="w-1/2 h-screen">
             <div className=" grid grid-cols-6 h-screen">
                     <div className="col-span-1  h-screen"></div>
@@ -143,7 +144,7 @@ const SignUp = () => {
                     <p className ="text-bigger leading-none">JOURNEY</p>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 }
  

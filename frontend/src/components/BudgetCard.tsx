@@ -123,7 +123,7 @@ const BudgetCard:React.FC<BudgetCardProps> = ({id, name, description, initialMon
                     <Subtitle subtitle={name} textColor='white'/>
                     <div className="relative z-10 flex gap-4 justify-between items-center">
                         <button className="w-[2rem] h-[2rem] bg-red" onClick={() => setEditModalOpen(true)}><img src={require("../assets/icons/edit.svg").default} alt="" /></button>
-                        <button onClick={() => setDeleteModalOpen(true)}><img src={require("../assets/icons/trash.svg").default} alt="" /></button>
+                        <button onClick={() => setDeleteModalOpen(true)}><img src={require("../assets/icons/trash_white.svg").default} alt="" /></button>
                     </div>
                 </div>
                 <p className="text-white opacity-70">{description}</p>

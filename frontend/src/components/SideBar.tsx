@@ -56,7 +56,6 @@ const SideBar = () => {
     };
 
     const handleSignOut = () => {
-        console.log("Logout successful");
         localStorage.removeItem("token");
         localStorage.removeItem("email");
         navigate("/login");

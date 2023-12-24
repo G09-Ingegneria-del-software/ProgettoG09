@@ -3,6 +3,7 @@ import { useState, useContext } from 'react'
 import axios from 'axios';
 
 // Importing components
+import Title from './common/Title';
 import Subtitle from './common/Subtitle';
 import Modal from '../components/common/Modal';
 import InputText from '../components/common/InputText';
@@ -100,13 +101,11 @@ const CategoryCard:React.FC<CategoryCardProps> = ({id, name}: CategoryCardProps)
             <div className={cardClasses}
             >
                 <div className="absolute top-[-20px] right-[-20px] w-[140px] h-[140px] rounded-full bg-white opacity-10"></div>
-                <div className="flex justify-between items-center">
-                    <Subtitle subtitle={name} textColor='white'/>
-                    <div className="relative z-10 flex gap-4 justify-between items-center">
-                        <button className="w-[2rem] h-[2rem] bg-red" onClick={() => setEditModalOpen(true)}><img src={require("../assets/icons/edit.svg").default} alt="" /></button>
-                        <button onClick={() => {setDeleteModalOpen(true); console.log(name)}}><img src={require("../assets/icons/trash.svg").default} alt="" /></button>
-                    </div>
+                <div className="w-full relative z-10 flex gap-4 justify-end items-center">
+                    <button className="w-[2rem] h-[2rem] bg-red" onClick={() => setEditModalOpen(true)}><img src={require("../assets/icons/edit.svg").default} alt="" /></button>
+                    <button onClick={() => { setDeleteModalOpen(true); console.log(name) }}><img src={require("../assets/icons/trash_white.svg").default} alt="" /></button>
                 </div>
+                <Title title={name} textColor='white'/>
             </div>
         </>
     );

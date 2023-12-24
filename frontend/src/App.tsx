@@ -42,32 +42,32 @@ function App() {
     if (token) {
       axios.post(process.env.REACT_APP_API_URI + "/auth/isLogged", {}, {headers})
         .then((res: any) => {
-          console.log("Login successful")
-          
           setAuthenticated(true);
           const email = localStorage.getItem("email") || "";
-          if (email) {
-            console.log("Updating data");
-            callback();
-          }
+          if (email) callback();
         })
         .catch((err: Error) => {
-          console.log("You must login");
           setAuthenticated(false);
         })
     } else {
       setAuthenticated(false);
     }
   }
+  
   // Making all the necessary API calls and retrieving information
   const getInfo = () => {
     const email: string = localStorage.getItem("email") || "";
     if (email) {
+      setIsLoading(true);
       getData(`/api/user/${email}`, setUser);
       getData(`/api/transaction/user/${email}`, setAllTransactions);
       getData(`/api/wallet/user/${email}`, setWallets);
       getData(`/api/category/user/${email}`, setCategories);
       getData(`/api/budget/user/${email}`, setBudgets);
+
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
     }
   }
   // Getting data from single endpoint
@@ -77,7 +77,6 @@ function App() {
     if (token) {
       axios.get(process.env.REACT_APP_API_URI + endpoint, {headers})
         .then((res: any) => {
-          console.log(res.data);
           if (Array.isArray(res.data)) {
             for (let item of res.data) {
               item.id = item._id;
@@ -91,7 +90,6 @@ function App() {
             delete res.data.__v; delete res.data._id;
           }
           setValues(res.data);
-          setIsLoading(false);
         })
         .catch((err: Error) => {
           return <Navigate replace to="/login"/>
@@ -113,8 +111,6 @@ function App() {
       }
     }
   }, [allTransactions, wallets]);
-
-  if (isLoading) return <Loading />;
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, setAuthenticated, user, setUser }}>
@@ -144,7 +140,7 @@ type PrivateRouteProps = {
 const PrivateOutlet: React.FC<PrivateRouteProps> = ({element, isLoading}: PrivateRouteProps) => {
   const { isAuthenticated } = useContext(AuthContext);
   // return isAuthenticated ? (element) : <Navigate replace to="/login" />;
-  return isAuthenticated ? element : <Navigate replace to="/login"/>;
+  return isAuthenticated ? (isLoading ? <Loading isLoading={isLoading}/> : element) : <Navigate replace to="/login"/>;
 }
 
 export default App;

@@ -1,5 +1,6 @@
 // Importing libraries
 import React,{useState, useContext} from 'react';
+import { motion } from 'framer-motion';
 import BackgroundImage from "../assets/images/login_wallpaper.jpg";
 import {useNavigate} from 'react-router-dom';
 import axios from 'axios';
@@ -37,14 +38,15 @@ const Login = () => {
                 localStorage.setItem("token", token);
                 localStorage.setItem("email", email);
                 setAuthenticated ? setAuthenticated(true) : console.log("Logged in undefined");
-                navigate('/dashboard');
+                window.location.href = "/dashboard"; // make state change, with navigate the state doesn't change
+                // navigate('/dashboard');
             })
             .catch((err: Error) => console.log(err.message));
     }; 
 
 
     return (
-        <div className="flex">
+        <motion.div initial={{opacity: 0.5}} animate={{opacity: 1}} className="flex">
             <div className="w-1/2 h-screen" style={{
                 backgroundImage: `url(${BackgroundImage})`,
                 backgroundSize: 'cover',
@@ -108,7 +110,7 @@ const Login = () => {
                     {/*inputs*/ }
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 }
  

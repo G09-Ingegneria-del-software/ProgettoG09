@@ -144,6 +144,7 @@ const TransactionCard: FC<TransactionCardProps> = ({id, category, wallet, type, 
                 </div>
             </th>
             <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base whitespace-nowrap p-4"><p className="w-[300px] leading-8 whitespace-normal line-clamp-1">{description}</p></td>
+            <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base whitespace-nowrap p-4"><p className="w-[300px] leading-8 whitespace-normal line-clamp-1">{category}</p></td>
             <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-secondary">{date.getDate()}/{date.getMonth() + 1}/{date.getFullYear()}</td>
             <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4" style={{ color: calculateColor(type) }}>{money}</td>
             {/* Edit transaction */}

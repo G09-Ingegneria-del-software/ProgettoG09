@@ -1,13 +1,18 @@
 import express from "express";
 import Category, {CategoryType} from "../models/category";
+import Transaction,  {TransactionType} from "../models/transaction";
+import Budget, {BudgetType} from "../models/budget";
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 
 // Create new category
 export const createCategory = (req: express.Request, res: express.Response) => {
     Category.findOne({name: req.body.name, user: req.body.user})
     .then((data: CategoryType | null) => {
+        const customObjectId = new ObjectId();
         if (!data) {
             const newCategory = new Category({
-                _id: req.body.name + req.body.user + Date.now(),
+                _id: customObjectId,
                 name: req.body.name,
                 tags: req.body.tags,
                 color: req.body.color,
@@ -98,16 +103,22 @@ export const updateCategory = (req: express.Request, res: express.Response) => {
 
 // Delete category
 export const deleteCategory = (req: express.Request, res: express.Response) => {
-    Category.findOneAndDelete({name: req.params.name, user: req.params.user})
-    .then((data: CategoryType | null) => {
-        if (data) {
-            res.status(204).send('Category deleted');
-        } else {
-            res.status(404).send('Category not found');
-        }
+    Budget.deleteMany({category: req.params.name, user: req.params.user})
+    .then(() => {
+        Transaction.deleteMany({category: req.params.name, user: req.params.user})
+        .then(() => {
+            Category.findOneAndDelete({name: req.params.name, user: req.params.user})
+            .then((data: CategoryType | null) => {
+                if (data) {
+                    res.status(204).send('Category deleted');
+                } else {
+                    res.status(404).send('Category not found');
+                }
+            })
+            .catch((_: Error) => {
+                res.status(500).send('Internal Server Error');
+            });
+        })
     })
-    .catch((_: Error) => {
-        res.status(500).send('Internal Server Error');
-    });
 }
 

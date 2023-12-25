@@ -95,7 +95,7 @@ const WalletCard:React.FC<WalletProps> = ({id, name, description, money}: Wallet
     return (
         <>
             {/* Edit modal */}
-            <Modal open={editModalOpen} setOpen={setEditModalOpen} title="Edit transaction" description="In this section you'll be able to edit your transaction modifying type, description, money and date" buttonLabel="Save" onSubmitClick={handleEditWallet}>
+            <Modal open={editModalOpen} setOpen={setEditModalOpen} title="Edit wallet" description="In this section you'll be able to edit your wallet modifying type, description, money and date" buttonLabel="Save" onSubmitClick={handleEditWallet}>
                 <div className="flex flex-col justify-start gap-4">
                     <InputText label="Name" value={newName} setValue={setNewName} />
                     <InputText label="Description" value={newDescription} setValue={setNewDescription} />
@@ -104,7 +104,7 @@ const WalletCard:React.FC<WalletProps> = ({id, name, description, money}: Wallet
             </Modal>
 
             {/* Delete modal open */}
-            <Modal open={deleteModalOpen} setOpen={setDeleteModalOpen} title="Delete transaction" description="Are you sure you want to delete this transaction?" buttonLabel="Delete" onSubmitClick={handleDeleteWallet} />
+            <Modal open={deleteModalOpen} setOpen={setDeleteModalOpen} title="Delete wallet" description="Are you sure you want to delete this wallet? By deleting this wallet, you'll also remove every transaction associated to it." buttonLabel="Delete" onSubmitClick={handleDeleteWallet} />
 
             <div className={cardClasses}
             >

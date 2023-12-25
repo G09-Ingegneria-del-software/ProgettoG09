@@ -47,9 +47,8 @@ const Transactions = () => {
     const handleCreateTransaction = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
-        const token = localStorage.getItem("token") || null;
+        const {token, headers} = getRequestHeaders();
         if (token) {
-            const {token, headers} = getRequestHeaders();
             const transaction = {
                 user: user?.email || "",
                 type,
@@ -61,6 +60,9 @@ const Transactions = () => {
 
             axios.post(process.env.REACT_APP_API_URI + "/api/transaction", transaction, {headers})
                 .then(res => {
+                    const budget = budgets.find((b: Budget) => b.category === selectedCategoryName);
+                    if (budget && transaction.money + budget.actualMoney > budget.initialMoney) alert(`Attention! Exceeding your ${transaction.category.toLowerCase()} budget`)
+
                     const transactionData = res.data;
                     delete transactionData.__v; delete transactionData._id;
                     transactionData.date = new Date(transactionData.date);

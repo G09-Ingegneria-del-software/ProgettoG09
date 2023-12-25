@@ -107,8 +107,8 @@ const BudgetCard:React.FC<BudgetCardProps> = ({id, name, description, initialMon
                 <div className="flex flex-col justify-start gap-4">
                     <InputText label="Name" value={newName} setValue={setNewName} />
                     <InputText label="Description" value={newDescription} setValue={setNewDescription} />
-                    <InputText label="Initial amount" value={newInitialMoney.toString()} setValue={setNewInitialMoney} />
                     <InputText label="Actual amount" value={newActualMoney.toString()} setValue={setNewActualMoney} />
+                    <InputText label="Initial amount" value={newInitialMoney.toString()} setValue={setNewInitialMoney} />
                     <Select label="Category" data={categories.map(({name}) => name)} value={newCategoryName} onChange={setNewCategoryName}/>
                 </div> 
             </Modal>

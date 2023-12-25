@@ -89,14 +89,14 @@ const CategoryCard:React.FC<CategoryCardProps> = ({id, name}: CategoryCardProps)
     return (
         <>
             {/* Edit modal */}
-            <Modal open={editModalOpen} setOpen={setEditModalOpen} title="Edit transaction" description="In this section you'll be able to edit your transaction modifying type, description, money and date" buttonLabel="Save" onSubmitClick={handleEditCategory}>
+            <Modal open={editModalOpen} setOpen={setEditModalOpen} title="Edit category" description="In this section you'll be able to edit your category name" buttonLabel="Save" onSubmitClick={handleEditCategory}>
                 <div className="flex flex-col justify-start gap-4">
                     <InputText label="Name" value={newName} setValue={setNewName} />
                 </div> 
             </Modal>
 
             {/* Delete modal open */}
-            <Modal open={deleteModalOpen} setOpen={setDeleteModalOpen} title="Delete transaction" description="Are you sure you want to delete this transaction?" buttonLabel="Delete" onSubmitClick={handleDeleteCategory} />
+            <Modal open={deleteModalOpen} setOpen={setDeleteModalOpen} title="Delete category" description="Are you sure you want to delete this category? By deleting this category, you'll also remove every transaction associated with it." buttonLabel="Delete" onSubmitClick={handleDeleteCategory} />
 
             <div className={cardClasses}
             >

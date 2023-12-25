@@ -21,8 +21,8 @@ const SideBar = () => {
     const {user} = useContext(AuthContext);
     const {wallets, selectedWallet, setSelectedWallet, allTransactions, setTransactions} = useContext(AppContext);
 
-    const firstName: string = user?.firstName || "";
-    const lastName: string = user?.lastName || "";
+    const [firstName, setFirstName] = useState<string>(user?.firstName || "");
+    const [lastName, setLastName] = useState<string>(user?.lastName || "");
     const logoSrc = require("../assets/logo.svg").default as string;
 
     type LinkType = { label: string, href: string }
@@ -60,6 +60,11 @@ const SideBar = () => {
         localStorage.removeItem("email");
         navigate("/login");
     }
+
+    useEffect(() => {
+        setFirstName(user?.firstName || "No account ");
+        setLastName(user?.lastName || "found");
+    }, [user]);
 
     return (  
         <aside className="static flex-1 w-full max-w-[20rem] flex flex-col bg-clip-border rounded-xl bg-[#E4EDFF] p-4 shadow-md shadow-blue-gray-900/5">

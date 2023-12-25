@@ -44,13 +44,13 @@ const TransactionCard: FC<TransactionCardProps> = ({id, category, wallet, type, 
     const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
     const [newType, setNewType] = useState("expense");
-    const [newDescription, setNewDescription] = useState<string>("");
-    const [newMoney, setNewMoney] = useState<number>(0);
+    const [newDescription, setNewDescription] = useState<string>(description);
+    const [newMoney, setNewMoney] = useState<number>(money);
     const [newWalletName, setNewWalletName] = useState<string>(wallet);
     const [newCategoryName, setNewCategoryName] = useState<string>(category);
     const [newDate, setNewDate] = useState<DateValueType>({
-        startDate: new Date(),
-        endDate: new Date(),
+        startDate: date,
+        endDate: date 
     });
 
     // Event handlers
@@ -65,14 +65,15 @@ const TransactionCard: FC<TransactionCardProps> = ({id, category, wallet, type, 
             _id: id,
             user: user?.email || "",
             type: newType,
-            money: Number(money),
-            description: description,
+            money: Number(newMoney),
+            description: newDescription,
             wallet: addUnderscore(newWalletName),
             category: addUnderscore(newCategoryName)
         }
 
         if (token) {
-            axios.put(`${process.env.REACT_APP_API_URI}/api/transaction`, transaction, {headers})
+            console.log("ID: ", id);
+            axios.put(`${process.env.REACT_APP_API_URI}/api/transaction/${id}`, transaction, {headers})
                 .then(res => {
                     // Find transaction to edit and update
                     const transaction = transactions?.find((t: Transaction) => t.id === id);
@@ -93,6 +94,7 @@ const TransactionCard: FC<TransactionCardProps> = ({id, category, wallet, type, 
         const {token, headers} = getRequestHeaders();
 
         if (token) {
+            console.log("ID: ", id);
             axios.delete(`${process.env.REACT_APP_API_URI}/api/transaction/${id}`, {headers})
                 .then(res => {
                     // Find transaction to delete and update

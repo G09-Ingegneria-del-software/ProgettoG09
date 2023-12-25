@@ -19,6 +19,7 @@ export const createCategory = (req: express.Request, res: express.Response) => {
                 res.status(201).send(data);
             })
             .catch((err: Error) => {
+                console.log(err.message);
                 if (err.message.includes('duplicate key error')) {
                     res.status(409).send('Category name already in use');
                 }else {
@@ -31,6 +32,8 @@ export const createCategory = (req: express.Request, res: express.Response) => {
             });
     
         }else {
+            // console.log(data);
+            // console.log("\n");
             res.status(409).send('Category name already in use');
         }
     })

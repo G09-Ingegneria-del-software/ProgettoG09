@@ -21,7 +21,7 @@ import AppContext from "../appContext";
 import AuthContext from "../authContext";
 
 // Importing utils
-import { addUnderscore } from "../utils";
+import { addUnderscore, getRequestHeaders } from "../utils";
 
 const Categories = () => {
 
@@ -40,9 +40,8 @@ const Categories = () => {
     const handleCreateCategory = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
-        const token = localStorage.getItem("token") || null;
+        const {token, headers} = getRequestHeaders();
         if (token) {
-            const configRequest = {"Content-type": "application/json", "x-access-token": token};
             const tagsData = tags.split(",");
             const category = {
                 user: user?.email || "", 
@@ -50,7 +49,8 @@ const Categories = () => {
                 tags: tagsData,
                 color
             }
-            axios.post(process.env.REACT_APP_API_URI + "/api/category", category, {headers: configRequest})
+            console.log(category.user + " " + category.name);
+            axios.post(process.env.REACT_APP_API_URI + "/api/category", category, {headers})
                 .then(res => {
                     const categoryData = res.data;
                     delete categoryData.__v; delete categoryData._id;
@@ -70,7 +70,7 @@ const Categories = () => {
                     {/* <Select label="Type" data={K.transactionTypes} value={type} onChange={setType}/> */}
                     <InputText label="Category name" value={name} setValue={setName} />
                     {/* <Select label="Tags" data={tags.map(({name}) => name)} value={selectedWallet} onChange={setSelectedWallet}/> */}
-                    <InputText label="Tags (separate every tag with ',')" value={tags} setValue={setTags} />
+                    <InputText label={`Tags (separate every tag with ",")`} value={tags} setValue={setTags} />
                 </div> 
             </Modal>
 

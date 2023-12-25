@@ -119,7 +119,7 @@ const SignUp = () => {
 
                             <button className="w-full bg-[#66ccff] text-white py-2 rounded-md hover:bg-[#3399ff]" onClick={handleSubmit}>Sign up</button>
 
-                            <p className="py-16 text-sm text-secondary"> Already registered? <a href='#' className="text-[#66ccff] hover: text-[#3399ff]" onClick = {handleLoginClick}>Login</a></p>
+                            <p className="py-16 text-sm text-secondary"> Already registered? <a href='#' className="text-[#66ccff] hover:text-[#3399ff]" onClick = {handleLoginClick}>Login</a></p>
                         </div>
                     </div>
                     <div className="col-span-1"></div>

@@ -103,7 +103,7 @@ const Login = () => {
                             <button type="submit" className="w-full bg-[#66ccff] text-white py-2 rounded-md hover:bg-[#3399ff]" onClick={handleSubmit}>Login</button>
                         </form>
 
-                        <p className="py-16 text-sm text-secondary"> Not a User yet? <a href='#' className="text-[#66ccff] hover: text-[#3399ff]" onClick = {handleSignUpClick}>Signup</a></p>
+                        <p className="py-16 text-sm text-secondary"> Not a User yet? <a href='#' className="text-[#66ccff] hover:text-[#3399ff]" onClick = {handleSignUpClick}>Signup</a></p>
                     </div>
                     <div className="col-span-1"></div>
 

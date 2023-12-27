@@ -9,7 +9,7 @@ import Modal from '../components/common/Modal';
 import InputText from '../components/common/InputText';
 
 // Importing types
-import { Category } from '../type';
+import { Category, Transaction } from '../type';
 
 // Importing context
 import AuthContext from '../authContext';
@@ -27,7 +27,7 @@ const CategoryCard:React.FC<CategoryCardProps> = ({id, name}: CategoryCardProps)
 
     // Contexts
     const { user } = useContext(AuthContext);
-    const { categories, setCategories } = useContext(AppContext);
+    const { allTransactions, setAllTransactions, categories, setCategories } = useContext(AppContext);
     
     // Edit wallet state
     const [newName, setNewName] = useState<string>(name);
@@ -49,13 +49,21 @@ const CategoryCard:React.FC<CategoryCardProps> = ({id, name}: CategoryCardProps)
         if (token) {
             axios.put(`${process.env.REACT_APP_API_URI}/api/category/${addUnderscore(name)}`, wallet, {headers})
                 .then(res => {
-                    // Find category to edit and update state
+                    // Update category
                     const category = categories?.find((c: Category) => c.id === id);
                     if (category) {
                         const index: number = categories?.indexOf(category);
                         categories[index].name = newName;
                         setCategories ? setCategories([...categories]) : console.log("setCategories is undefined");
                     }
+
+                    // Update transactions related to category
+                    for (let transactionIndex = 0; transactionIndex < allTransactions.length; transactionIndex++) {
+                        if (allTransactions[transactionIndex].category === name)
+                            allTransactions[transactionIndex].category = newName;
+                    }
+                    setAllTransactions ? setAllTransactions([...allTransactions]) : console.log("setAllTransactions is undefined");
+
                     setEditModalOpen(false);
                 })
                 .catch(err => console.log(err.message));
@@ -68,12 +76,15 @@ const CategoryCard:React.FC<CategoryCardProps> = ({id, name}: CategoryCardProps)
         if (token) {
             axios.delete(`${process.env.REACT_APP_API_URI}/api/category/${user?.email}/${addUnderscore(name)}`, {headers})
                 .then(res => {
-                    // Find category to delete and update state
+                    // Update categories
                     const category = categories?.find((c: Category) => c.name === name);
                     if (category) {
                         categories.splice(categories.indexOf(category), 1);
                         setCategories ? setCategories([...categories]) : console.log("setCategories is undefined");
                     }
+
+                    // Update transactions
+                    setAllTransactions ? setAllTransactions(allTransactions.filter((t: Transaction) => t.category !== name)) : console.log("setAllTransactions is undefined");
                     setDeleteModalOpen(false);
                 })
                 .catch(err => {

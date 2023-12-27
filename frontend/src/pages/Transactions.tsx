@@ -83,10 +83,12 @@ const Transactions = () => {
 
                     // Update budget
                     const filteredBudgets = budgets.filter((b: Budget) => b.category === selectedCategoryName);
+                    console.log(filteredBudgets)
                     if (filteredBudgets) {
-                        for (let budgetIndex = 0; budgetIndex < budgets.length; budgetIndex++) {
-                            if (budgets[budgetIndex].actualMoney-Number(transaction.money) < 0)
-                                alert(`Attention! Exceeding your ${transaction.category.toLowerCase()} budget`)
+                        for (let budget of filteredBudgets) {
+                            if (budget.actualMoney-Number(transaction.money) < 0)
+                                alert(`Attention! Exceeding your ${selectedCategoryName.toLowerCase()} budget`)
+                            const budgetIndex: number = budgets.indexOf(budget);
                             budgets[budgetIndex].actualMoney += (transaction.type === TransactionType.INCOME ? Number(transaction.money) : -Number(transaction.money));
                         }
                         setBudgets ? setBudgets([...budgets]) : console.log("setBudgets is undefined");

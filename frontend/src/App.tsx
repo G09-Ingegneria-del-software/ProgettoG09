@@ -37,13 +37,12 @@ function App() {
   
   // Verifying if the user with the token is logged in
   const verifyLogin = (callback: () => void) => {
-    const {token, headers} = getRequestHeaders();
+    const {token, email, headers} = getRequestHeaders();
 
-    if (token) {
+    if (token && email) {
       axios.post(process.env.REACT_APP_API_URI + "/auth/isLogged", {}, {headers})
         .then((res: any) => {
           setAuthenticated(true);
-          const email = localStorage.getItem("email") || "";
           if (email) callback();
         })
         .catch((err: Error) => {

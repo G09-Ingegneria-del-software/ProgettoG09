@@ -49,7 +49,6 @@ const Categories = () => {
                 tags: tagsData,
                 color
             }
-            console.log(category.user + " " + category.name);
             axios.post(process.env.REACT_APP_API_URI + "/api/category", category, {headers})
                 .then(res => {
                     const categoryData = res.data;

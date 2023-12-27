@@ -36,12 +36,13 @@ export const createTransaction = async (req: express.Request, res: express.Respo
 
         // Try to search for budgets with the given category
         let budgets = await Budget.find({category: req.body.category, user: req.body.user});
-        if (budgets && req.body.type === 'expense') {
+        if (budgets) {
             for (let i = 0; i < budgets.length; i++) {
-                budgets[i].actualMoney -= req.body.money;
+                if(req.body.type === 'income') budgets[i].actualMoney += req.body.money;
+                else budgets[i].actualMoney -= req.body.money;
                 await budgets[i].save();
             }
-        }
+        } 
 
         res.status(201).send(data);
         }
@@ -129,20 +130,20 @@ export const updateTransactionById = async (req: express.Request, res: express.R
     let wallet = await Wallet.findOne({name: transaction?.wallet, user: transaction?.user});
     if (wallet && transaction) {
         if (transaction.type === 'income') {
-            wallet.money -= transaction.money;
+            wallet.money = wallet.money - transaction.money + req.body.money;
         }else {
-            wallet.money += transaction.money;
+            wallet.money = wallet.money + transaction.money - req.body.money;
         }
         await wallet.save();
     }
-    let category = await Budget.findOne({category: transaction?.category, user: transaction?.user});
-    if (category && transaction) {
+    let budget = await Budget.findOne({category: transaction?.category, user: transaction?.user});
+    if (budget && transaction) {
         if (transaction.type === 'income') {
-            category.actualMoney -= transaction.money;
+            budget.actualMoney = budget.actualMoney - transaction.money + req.body.money;
         }else {
-            category.actualMoney += transaction.money;
+            budget.actualMoney = budget.actualMoney + transaction.money - req.body.money;
         }
-        await category.save();
+        await budget.save();
     }
     Transaction.findByIdAndUpdate(req.body._id, req.body, {new: true})
     .then((data: TransactionType | null) => {
@@ -154,14 +155,14 @@ export const updateTransactionById = async (req: express.Request, res: express.R
                 wallet.money -= data.money;
             }
             wallet.save();
-            if (data && category) {
+            if (data && budget) {
                 if (data.type === 'income') {
-                    category.actualMoney += data.money;
+                    budget.actualMoney += data.money;
                 }
                 else {
-                    category.actualMoney -= data.money;
+                    budget.actualMoney -= data.money;
                 }
-                category.save();
+                budget.save();
             }
             res.status(200).send('Transaction updated');
         } else {

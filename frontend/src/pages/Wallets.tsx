@@ -17,7 +17,7 @@ import AuthContext from '../authContext';
 import AppContext from '../appContext';
 
 // Improting utils
-import { addUnderscore, getRequestHeaders } from '../utils';
+import { addUnderscore, getRequestHeaders, removeUnderscore } from '../utils';
 
 const Wallets = () => {
 
@@ -48,6 +48,7 @@ const Wallets = () => {
             axios.post(process.env.REACT_APP_API_URI + "/api/wallet", wallet, {headers})
                 .then(res => {
                     const newWallet = res.data;
+                    newWallet.name = removeUnderscore(newWallet.name);
                     setWallets ? setWallets([newWallet, ...wallets]) : console.log("setWallets is undefined");
                     setAddModalOpen(!addModalOpen);
                 })

@@ -1,6 +1,7 @@
 // Adding request headers
 export const getRequestHeaders = () => { 
     const token = localStorage.getItem("token") || "";
+    const email = localStorage.getItem("email") || "";
     const configRequest = {
       "Content-type": "application/json", 
       "x-access-token": token,
@@ -8,7 +9,7 @@ export const getRequestHeaders = () => {
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
       'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
     };
-    return {token, headers: configRequest};
+    return {token, email, headers: configRequest};
 }
 
 // When sending names of something like wallets, categories, budgets, transactions

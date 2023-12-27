@@ -31,7 +31,7 @@ const Transactions = () => {
 
     // Using context
     const { user } = useContext(AuthContext);
-    const { transactions, setTransactions, wallets, categories, budgets } = useContext(AppContext);
+    const { allTransactions, setAllTransactions, transactions, setTransactions, wallets, setWallets, categories, budgets, setBudgets } = useContext(AppContext);
 
     const [curTransactions, setCurTransactions] = useState<Transaction[]>(transactions);
 
@@ -44,62 +44,60 @@ const Transactions = () => {
     const [selectedWalletName, setSelectedWalletName] = useState<string>(wallets[0]?.name || "No wallet specified");
     const [selectedCategoryName, setSelectedCategoryName] = useState<string>(categories[0]?.name || "No category specified");
 
+    useEffect(() => {
+        setTransactions ? setTransactions(allTransactions) : console.log("setTransactions is undefined"); 
+        setCurTransactions(allTransactions);
+    }, [allTransactions]);
+
     const handleCreateTransaction = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
         const {token, headers} = getRequestHeaders();
         if (token) {
-            const transaction = {
+            const transactionData = {
                 user: user?.email || "",
+                category: addUnderscore(selectedCategoryName),
+                wallet: addUnderscore(selectedWalletName),
                 type,
                 money: Number(money),
                 description: description,
-                wallet: addUnderscore(selectedWalletName),
-                category: addUnderscore(selectedCategoryName)
             }
 
-            axios.post(process.env.REACT_APP_API_URI + "/api/transaction", transaction, {headers})
+            axios.post(process.env.REACT_APP_API_URI + "/api/transaction", transactionData, {headers})
                 .then(res => {
-                    const budget = budgets.find((b: Budget) => b.category === selectedCategoryName);
-                    if (budget && transaction.money + budget.actualMoney > budget.initialMoney) alert(`Attention! Exceeding your ${transaction.category.toLowerCase()} budget`)
+                    // Update transactions
+                    const transaction = res.data;
+                    transaction.money = transactionData.money;
+                    transaction.id = transaction._id;
+                    delete transaction.__v; delete transaction._id;
+                    transaction.date = new Date(transaction.date);
+                    setAllTransactions ? setAllTransactions([...allTransactions, transaction]) : console.log("setAllTransactions is undefined");
 
-                    const transactionData = res.data;
-                    delete transactionData.__v; delete transactionData._id;
-                    transactionData.date = new Date(transactionData.date);
-                    setTransactions ? setTransactions([...transactions, transactionData]) : console.log("setTransactions is undefined");
+                    // Update wallet
+                    const wallet = wallets.find((w: Wallet) => w.name === selectedWalletName);
+                    if (wallet) {
+                        const walletIndex: number = wallets.indexOf(wallet);
+                        wallets[walletIndex].money += (transaction.type === TransactionType.INCOME ? Number(transaction.money) : -Number(transaction.money));
+                        setWallets ? setWallets([...wallets]) : console.log("setWallets is undefined");
+                    }
 
-                    const selectedWallet = wallets?.find((w: Wallet) => w.name === selectedWalletName);
-                    
-                    let money = (selectedWallet?.money || 0) + (transaction.type === TransactionType.EXPENSE ? -transaction.money : transaction.money);
-                    axios.put(`${process.env.REACT_APP_API_URI}/api/wallet/${addUnderscore(selectedWalletName)}`, {user: user?.email || "", money}, {headers})
-                        .then(res => {
-                            if (transaction.type === TransactionType.EXPENSE) {
-                                // Find all budgets with the corresponding category
-                                const filteredBudgets: Budget[] = budgets?.filter((b: Budget) => b.category === selectedCategoryName);
-                                if (filteredBudgets.length > 0) {
-                                    for (let b of filteredBudgets) {
-                                        const amount: number = +transaction.money;
-                                        const budget = {
-                                            user: user?.email || "", 
-                                            actualMoney: Number(b.actualMoney + amount)
-                                        }
-                                        axios.put(`${process.env.REACT_APP_API_URI}/api/budget/${addUnderscore(b.name)}`, budget, {headers})
-                                            .then(res => console.log(res))
-                                            .catch(err => console.log(err.message));
-                                    }
-                                }
-                            }
-                            setAddModalOpen(!addModalOpen);
-                        })
-                        .catch(err => console.log(err.message))
+                    // Update budget
+                    const filteredBudgets = budgets.filter((b: Budget) => b.category === selectedCategoryName);
+                    if (filteredBudgets) {
+                        for (let budgetIndex = 0; budgetIndex < budgets.length; budgetIndex++) {
+                            if (budgets[budgetIndex].actualMoney-Number(transaction.money) < 0)
+                                alert(`Attention! Exceeding your ${transaction.category.toLowerCase()} budget`)
+                            budgets[budgetIndex].actualMoney += (transaction.type === TransactionType.INCOME ? Number(transaction.money) : -Number(transaction.money));
+                        }
+                        setBudgets ? setBudgets([...budgets]) : console.log("setBudgets is undefined");
+                    }
+
+                    // Close the add modal popup
+                    setAddModalOpen(!addModalOpen);
                 })
                 .catch(err => console.log(err.message))
         }
     }
-
-    useEffect(() => {
-        setCurTransactions(transactions);
-    }, [transactions]);
 
     return (  
         <UserPage>
@@ -123,7 +121,7 @@ const Transactions = () => {
             <div className="flex w-full justify-between items-center">
                 <div className="flex flex-col">
                     <Title title="Transactions" />
-                    <Description description="Last transaction added 2d ago"/>
+                    <Description description="Welcome to the Transactions page where you can view all your incomes and expense."/>
                 </div>
                 <ButtonIcon text="Add transaction" iconSrc={require("../assets/icons/plus.svg").default} color="active" handleClick={() => setAddModalOpen(!addModalOpen)}/>
             </div>
@@ -165,7 +163,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({curTransactions, set
     useEffect(() => {
         setNumPages(Math.ceil(curTransactions?.length/limit));
         setVisibleTransactions(curTransactions?.slice((curPage-1)*limit, (curPage)*limit));
-    }, [curPage, curTransactions]);
+    }, [curTransactions, curPage]);
 
     return (
         <div className="w-full bg-white rounded-xl shadow-lg p-8">

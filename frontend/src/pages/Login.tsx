@@ -37,7 +37,7 @@ const Login = () => {
                 const {token} = res.data;
                 localStorage.setItem("token", token);
                 localStorage.setItem("email", email);
-                setAuthenticated ? setAuthenticated(true) : console.log("Logged in undefined");
+                setAuthenticated ? setAuthenticated(true) : console.log("setAuthenticated is undefined");
                 window.location.href = "/dashboard"; // make state change, with navigate the state doesn't change
                 // navigate('/dashboard');
             })

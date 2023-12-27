@@ -74,8 +74,8 @@ const Budgets = () => {
                     {/* <Select label="Type" data={K.transactionTypes} value={type} onChange={setType}/> */}
                     <InputText label="Budget name" value={name} setValue={setName} />
                     <InputText label="Description" value={description} setValue={setDescription} />
-                    <InputText label="Initial amount" value={initialMoney.toString()} setValue={setInitialMoney} />
                     <InputText label="Actual amount" value={actualMoney.toString()} setValue={setActualyMoney} />
+                    <InputText label="Initial amount" value={initialMoney.toString()} setValue={setInitialMoney} />
                     <Select label="Category" data={categories.map(({name}) => name)} value={selectedCategory} onChange={setSelectedCategory}/>
                 </div> 
             </Modal>

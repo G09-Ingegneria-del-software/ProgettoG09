@@ -87,9 +87,7 @@ const CategoryCard:React.FC<CategoryCardProps> = ({id, name}: CategoryCardProps)
                     setAllTransactions ? setAllTransactions(allTransactions.filter((t: Transaction) => t.category !== name)) : console.log("setAllTransactions is undefined");
                     setDeleteModalOpen(false);
                 })
-                .catch(err => {
-                    console.log(err.message)
-                })
+                .catch(err => console.log(err.message))
         }
     }
 

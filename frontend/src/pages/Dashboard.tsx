@@ -34,7 +34,7 @@ import AppContext from "../appContext";
 const Dashboard = () => {
 
     const {user} = useContext(AuthContext);
-    const {transactions, setTransactions, wallets, selectedWallet, setSelectedWallet, categories} = useContext(AppContext);
+    const {allTransactions, transactions, setTransactions, wallets, selectedWallet, setSelectedWallet, categories} = useContext(AppContext);
 
     const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
 
@@ -78,7 +78,7 @@ const Dashboard = () => {
         }
     }
 
-    const calculateIncomeExpense = () => {
+    const calculateIncomeExpense = (transactions: Transaction[]) => {
         let newIncome: number = 0;
         let newExpense: number = 0;
 
@@ -96,8 +96,8 @@ const Dashboard = () => {
     }
 
     useEffect(() => {
-        calculateIncomeExpense();
-    }, [transactions]);
+        calculateIncomeExpense(transactions);
+    }, [transactions, selectedWallet]);
 
     return (
         <UserPage>
@@ -149,7 +149,7 @@ const Dashboard = () => {
                         </div>
                     </div>
                 </DashboardSection>
-                {/* Last expenses */}
+                {/* Income/expenses by categories */}
                 <DashboardSection subtitle='Your incomes/expenses divided in categories' description='Check how much you spend or receive by category'>
                     <CategoryExpenses />
                 </DashboardSection>

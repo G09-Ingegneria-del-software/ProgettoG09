@@ -44,7 +44,7 @@ const PopoverText: React.FC<PopoverTextProps> = ({ typeValue, setTypeValue, star
                                 <label className="text-secondary">Start and end dates</label>
                                 <Datepicker value={{startDate, endDate}} onChange={handleDateChange} />
                             </div>
-                            <InputText label="Amount" value={amountValue.toString()} setValue={setAmountValue} />
+                            <InputText label="Amount ≥" value={amountValue.toString()} setValue={setAmountValue} />
                         </div>
                     </Popover.Panel>
                 </>

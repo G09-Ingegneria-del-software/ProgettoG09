@@ -1,5 +1,5 @@
 // Importing pages
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import UserPage from './UserPage';
 import axios from 'axios';
 

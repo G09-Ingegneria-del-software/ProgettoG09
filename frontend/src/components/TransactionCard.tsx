@@ -82,12 +82,11 @@ const TransactionCard: FC<TransactionCardProps> = ({id, category, wallet, type, 
 
                         // Update wallet
                         let updatedMoney = (selectedWallet?.money || 0);
-                        console.log(updatedMoney + " " + money + " " + transaction.money);
                         if (type === TransactionType.EXPENSE) updatedMoney = updatedMoney + money - transaction.money;
                         else if (type === TransactionType.INCOME) updatedMoney = updatedMoney - money + transaction.money;
                         if (selectedWallet) {
                             const walletIndex: number = wallets.indexOf(selectedWallet);
-                            wallets[walletIndex].money = updatedMoney;
+                            wallets[walletIndex].money = Math.round(updatedMoney*100)/100;
                             setWallets ? setWallets([...wallets]) : console.log("setWallets is undefined");
                         }
 
@@ -130,7 +129,7 @@ const TransactionCard: FC<TransactionCardProps> = ({id, category, wallet, type, 
                         else if (type === TransactionType.INCOME) updatedMoney = (updatedMoney - money);
                         if (selectedWallet) {
                             const walletIndex: number = wallets.indexOf(selectedWallet);
-                            wallets[walletIndex].money = updatedMoney;
+                            wallets[walletIndex].money = Math.round(updatedMoney*100)/100;
                             setWallets ? setWallets([...wallets]) : console.log("setWallets is undefined");
                         }
 

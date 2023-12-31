@@ -24,14 +24,14 @@ import { K } from "../K";
 // Importing context
 import AuthContext from "../authContext";
 import AppContext from "../appContext";
-import { addUnderscore, getRequestHeaders } from "../utils";
+import { addUnderscore, getRequestHeaders, removeUnderscore } from "../utils";
 import TransactionCard from "../components/TransactionCard";
 
 const Transactions = () => {
 
     // Using context
     const { user } = useContext(AuthContext);
-    const { allTransactions, setAllTransactions, transactions, setTransactions, wallets, setWallets, categories, budgets, setBudgets } = useContext(AppContext);
+    const { allTransactions, setAllTransactions, transactions, setTransactions, selectedWallet, wallets, setWallets, categories, budgets, setBudgets } = useContext(AppContext);
 
     const [curTransactions, setCurTransactions] = useState<Transaction[]>(transactions);
 
@@ -45,9 +45,12 @@ const Transactions = () => {
     const [selectedCategoryName, setSelectedCategoryName] = useState<string>(categories[0]?.name || "No category specified");
 
     useEffect(() => {
-        setTransactions ? setTransactions(allTransactions) : console.log("setTransactions is undefined"); 
-        setCurTransactions(allTransactions);
-    }, [allTransactions]);
+        if (selectedWallet) {
+            const updatedTransactions: Transaction[] = allTransactions.filter((t: Transaction) => t.wallet === selectedWallet.name)
+            setTransactions ? setTransactions(updatedTransactions) : console.log("setTransactions is undefined"); 
+            setCurTransactions(updatedTransactions);
+        } 
+    }, [allTransactions, selectedWallet]);
 
     const handleCreateTransaction = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
@@ -67,6 +70,7 @@ const Transactions = () => {
                 .then(res => {
                     // Update transactions
                     const transaction = res.data;
+                    transaction.wallet = removeUnderscore(transaction.wallet);
                     transaction.money = transactionData.money;
                     transaction.id = transaction._id;
                     delete transaction.__v; delete transaction._id;
@@ -77,13 +81,12 @@ const Transactions = () => {
                     const wallet = wallets.find((w: Wallet) => w.name === selectedWalletName);
                     if (wallet) {
                         const walletIndex: number = wallets.indexOf(wallet);
-                        wallets[walletIndex].money += (transaction.type === TransactionType.INCOME ? Number(transaction.money) : -Number(transaction.money));
+                        wallets[walletIndex].money += (transaction.type === TransactionType.INCOME ? Math.round(Number(transaction.money)*100)/100 : Math.round(-Number(transaction.money)*100)/100);
                         setWallets ? setWallets([...wallets]) : console.log("setWallets is undefined");
                     }
 
                     // Update budget
                     const filteredBudgets = budgets.filter((b: Budget) => b.category === selectedCategoryName);
-                    console.log(filteredBudgets)
                     if (filteredBudgets) {
                         for (let budget of filteredBudgets) {
                             if (budget.actualMoney-Number(transaction.money) < 0)
@@ -111,12 +114,6 @@ const Transactions = () => {
                     <InputText label="Amount" value={money.toString()} setValue={setMoney} />
                     <Select label="Wallet" data={wallets.map(({name}) => name)} value={selectedWalletName} onChange={setSelectedWalletName}/>
                     <Select label="Category" data={categories.map(({name}) => name)} value={selectedCategoryName} onChange={setSelectedCategoryName}/>
-                    {/* <div className="flex flex-col gap-1">
-                        <label className="text-secondary">Date</label>
-                        <div className="focus:outline-none border-1 border-secondary">
-                            <Datepicker primaryColor="indigo" value={date} onChange={setDate} />
-                        </div>
-                    </div> */}
                 </div> 
             </Modal>
 

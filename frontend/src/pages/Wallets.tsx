@@ -36,6 +36,8 @@ const Wallets = () => {
     const handleCreateWallet = () => {
         const {token, headers} = getRequestHeaders();
 
+        if (!name || !description || !money || money === 0) return;
+
         const wallet = {
             user: user?.email || "",
             name: addUnderscore(name),

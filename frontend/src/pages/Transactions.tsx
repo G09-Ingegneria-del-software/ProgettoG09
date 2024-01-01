@@ -57,6 +57,8 @@ const Transactions = () => {
 
         const {token, headers} = getRequestHeaders();
         if (token) {
+            if (!selectedCategoryName || !selectedWalletName || !type || !money || money === 0 || !description) return;
+
             const transactionData = {
                 user: user?.email || "",
                 category: addUnderscore(selectedCategoryName),

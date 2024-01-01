@@ -43,6 +43,9 @@ const Categories = () => {
         const {token, headers} = getRequestHeaders();
         if (token) {
             const tagsData = tags.split(",");
+
+            if (!name) return;
+
             const category = {
                 user: user?.email || "", 
                 name: addUnderscore(name),

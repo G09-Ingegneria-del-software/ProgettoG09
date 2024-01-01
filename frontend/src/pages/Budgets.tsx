@@ -43,6 +43,9 @@ const Budgets = () => {
 
         const token = localStorage.getItem("token") || null;
         if (token) {
+
+            if (!name || !description || !initialMoney || initialMoney === 0 || !actualMoney || actualMoney === 0 || !selectedCategory) return;
+
             const configRequest = {"Content-type": "application/json", "x-access-token": token};
             const budget = {
                 user: user?.email || "",
